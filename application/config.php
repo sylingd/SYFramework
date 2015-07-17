@@ -34,10 +34,10 @@ return [
 	],
 	//Controller列表
 	'controller' => [
-		'test'
+		'document'
 	],
 	//默认的Router
-	'defaultRouter' => 'test/hello',
+	'defaultRouter' => 'document/hello',
 	//会被Autoload加载的class列表
 	'class' => [
 		'demo\libs\option' => '@app/libs/option.php'

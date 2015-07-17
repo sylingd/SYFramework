@@ -44,6 +44,9 @@ class YRedis {
 	private function connect() {
 		$this->link = new Redis;
 		$this->link->connect($this->connect_info['host'], $this->connect_info['port']);
+		if (!empty($this->connect_info['password'])) {
+			$this->link->auth($this->connect_info['password']);
+		}
 	}
 	/**
 	 * …Ë÷√Server
