@@ -40,7 +40,7 @@ return [
 	'defaultRouter' => 'test/hello',
 	//会被Autoload加载的class列表
 	'class' => [
-		'demo\libs\test' => '@app/libs/test.php'
+		'demo\libs\option' => '@app/libs/option.php'
 	],
 	//虚拟路由表
 	//例如'user'=>'eu_user'

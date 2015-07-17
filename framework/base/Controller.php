@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Coltroller基本�?
+ * Coltroller基本类
  * 
  * @author ShuangYa
  * @package SYFramework
@@ -12,6 +12,7 @@
  */
 
 namespace sy\base;
+use Sy;
 
 class Controller {
 	protected $_m = [];
@@ -22,19 +23,19 @@ class Controller {
 	 * @param string $loadAs
 	 */
 	protected function load_model($modelName, $loadAs) {
-		//是否已经load�?
+		//是否已经加载
 		if (in_array($modelName, $this->_m, TRUE)) {
 			return;
 		}
 		//load
 		$appDir = Sy::$appDir;
-		$fileName = $appDir . 'model/' . $modelName . '.php';
+		$fileName = $appDir . 'models/' . $modelName . '.php';
 		if (!is_file($fileName)) {
-			throw new SYException('Model ' . $fileName . '不存�?, '10004');
+			throw new SYException('Model ' . $fileName . ' 不存在', '10004');
 		}
 		require ($fileName);
 		$this->_m[] = $modelName;
-		//内部Model名称
+		//Model名称
 		$m_file = 'M' . ucfirst($modelName);
 		$this->$loadAs = $m_file::_i();
 	}

@@ -14,6 +14,7 @@
 namespace sy\lib;
 use Sy;
 use \sy\lib\YHtml;
+use \sy\base\SYDBException;
 
 class YMysqli {
 	private $link = NULL;

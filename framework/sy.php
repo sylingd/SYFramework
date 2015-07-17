@@ -13,7 +13,7 @@
 
 @error_reporting(E_ALL &~ E_NOTICE);
 
-require (__DIR__ . '/base/Base.php');
+require (__DIR__ . '/BaseSY.php');
 
 class Sy extends \sy\BaseSY {
 }

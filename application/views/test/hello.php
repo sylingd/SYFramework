@@ -1,3 +1,7 @@
+<?php
+use \sy\lib\YHtml;
+use \demo\libs\option as YOp;
+?>
 <!DOCTYPE html>
 <head>
 	<title>Hello</title>
@@ -8,5 +12,5 @@
 	<h1>I am Hello</h1>
 	<p><?=$url?></p>
 	<p><?=YOp::_i()->set('I am libs')?></p>
-	<p><?=YOp::_i()->get?></p>
+	<p><?=YOp::_i()->get()?></p>
 </body>

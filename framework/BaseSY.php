@@ -12,12 +12,16 @@
  */
 
 namespace sy;
+use \sy\base\SYException;
 
-define(SY_ROOT, rtrim(str_replace('\\', '/', realpath(__DIR__ . '/../')), '/') . '/');
+set_exception_handler(function($e){
+  @header('Content-Type:text/html; charset=utf-8');
+  echo $e;
+  exit;
+});
 
-
-require (SY_ROOT . 'base/Exception.php');
-require (SY_ROOT . 'base/Controller.php');
+define(SY_ROOT, rtrim(str_replace('\\', '/', __DIR__), '/') . '/');
+define(SY_DEBUG, true);
 
 class BaseSY {
 	public static $app;
@@ -37,7 +41,7 @@ class BaseSY {
 			if (is_file($config)) {
 				$config = require ($config);
 			} else {
-				throw new SYException('缺少配置信息', '10005');
+				throw new SYException('配置文件 '.$config.' 不存在', '10005');
 			}
 		} elseif (!is_array($config)) {
 			throw new SYException('无法识别配置信息', '10006');
@@ -48,7 +52,7 @@ class BaseSY {
 		//本程序相对网站根目录所在
 		$now = $_SERVER['PHP_SELF'];
 		$dir = str_replace('\\', '/', dirname($now));
-		$dir !== '/' && $dir = rtrim($dir, '/');
+		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
 		static::$siteDir = $dir;
 		//开始路由分发
 		static::router();
@@ -94,23 +98,16 @@ class BaseSY {
 		if (!is_file($fileName)) {
 			throw new SYException('Controller ' . $controllerName . ' 未找到', '10003');
 		}
-		if (!class_exists($className, FLASE)) {
+		if (!class_exists($className, FALSE)) {
 			require ($fileName);
 		}
 		//初始化Controller
-		$controller = new $controllerName;
+		$controller = new $className;
 		$actionName = 'action' . ucfirst($actionName);
 		if (!method_exists($controller, $actionName)) {
 			static::httpError('404');
 		}
-		//出错都是抛出异常，因此使用try-catch容错
-		try {
-			$controller->$actionName();
-		}
-		catch (SYException $e) {
-			echo $e;
-			exit;
-		}
+		$controller->$actionName();
 	}
 	/**
 	 * 自动加载类
@@ -119,7 +116,7 @@ class BaseSY {
 	 */
 	public static function autoload($className) {
 		//判断是否为框架的class
-		if (strpos($className, 'sy') !== 0) {
+		if (strpos($className, 'sy\\') === FALSE) {
 			//是否为App自有class
 			if (isset(static::$app['class'][$className])) {
 				$fileName = str_replace('@app/', static::$appDir, static::$app['class'][$className]);
@@ -127,16 +124,11 @@ class BaseSY {
 				return;
 			}
 		} else {
-			$fileName = $className;
+			$fileName = substr($className, 3) . '.php';
 			$fileName = SY_ROOT . str_replace('\\', '/', $fileName);
 		}
 		if (is_file($fileName)) {
 			require ($fileName);
-		} else {
-			throw new SYException('类文件 ' . $fileName . ' 不存在', '10000');
-		}
-		if (!class_exists($className, false)) {
-			throw new SYException('类文件 ' . $fileName . ' 存在错误', '10001');
 		}
 	}
 	/**
@@ -209,7 +201,7 @@ class BaseSY {
 	 * @param string $tpl 模板文件
 	 */
 	public static function viewPath($tpl) {
-		return static::$appDir . 'views/' . $_tpl . '.php';
+		return static::$appDir . 'views/' . $tpl . '.php';
 	}
 	/**
 	 * 引入模板

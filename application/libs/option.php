@@ -33,7 +33,7 @@ class option {
 	 * Get
 	 * @access public
 	 */
-	public function get($a) {
+	public function get() {
 		return $this->val;
 	}
 }

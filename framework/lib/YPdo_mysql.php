@@ -14,6 +14,7 @@
 namespace sy\lib;
 use Sy;
 use \sy\lib\YHtml;
+use \sy\base\SYDBException;
 
 class YPdo_mysql {
 	private $link = NULL;
