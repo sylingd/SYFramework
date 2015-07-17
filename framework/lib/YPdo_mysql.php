@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MySQL数据库类（PDO驱动�?
+ * PDO_MySQL支持类
  * 
  * @author ShuangYa
  * @package SYFramework
@@ -27,21 +27,21 @@ class YPdo_mysql {
 		return self::$_instance;
 	}
 	/**
-	 * 构造函数，用于自动连接
+	 * 构造函数，自动连接
 	 * @access public
 	 */
 	public function __construct() {
 		if (!class_exists('PDO', false)) {
-			throw new SYException('不存在PDO�?, '10008');
+			throw new SYException('不存在PDO类', '10008');
 		}
 		if (isset(Sy::$app['mysql'])) {
 			$this->setParam(Sy::$app['mysql']);
 		}
 	}
 	/**
-	 * 设置Server并连�?
+	 * 设置Server
 	 * @access public
-	 * @param array $param MySQL服务�?
+	 * @param array $param MySQL服务器参数
 	 */
 	public function setParam($param) {
 		$this->connect_info = $param;
@@ -49,7 +49,7 @@ class YPdo_mysql {
 		$this->connect();
 	}
 	/**
-	 * 连接数据�?
+	 * 连接到MySQL
 	 * @access private
 	 */
 	private function connect() {
@@ -57,7 +57,7 @@ class YPdo_mysql {
 			connect_info['port'] . ';dbname=' . $this->connect_info['name'] . ';charset=' .
 			Sy::$app['charset'];
 		try {
-			$this->link = new PDO($dsn, $this->connect_info['user'], $this->connect_info['password']); //初始化PDO
+			$this->link = new PDO($dsn, $this->connect_info['user'], $this->connect_info['password']);
 			$this->link->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
 			$this->result = array();
 		}
@@ -75,9 +75,9 @@ class YPdo_mysql {
 		return str_replace('#@__', $this->connect_info['prefix'], $sql);
 	}
 	/**
-	 * 获取所有结�?
+	 * 获取所有结果
 	 * @access public
-	 * @param string $key 结果Key，查询时传�?
+	 * @param string $key
 	 * @return array
 	 */
 	public function GetAll($key) {
@@ -89,8 +89,7 @@ class YPdo_mysql {
 	/**
 	 * 释放结果
 	 * @access public
-	 * @param string $key 结果Key
-	 * @return NULL
+	 * @param string $key
 	 */
 	public function free($key) {
 		$this->result[$key] = NULL;
@@ -104,9 +103,9 @@ class YPdo_mysql {
 		return intval($this->link->lastInsertId());
 	}
 	/**
-	 * 获取结果集中的一个结�?
+	 * 获取一个结果
 	 * @access public
-	 * @param string $key 结果Key
+	 * @param string $key
 	 * @return mixed
 	 */
 	public function GetArray($key) {
@@ -119,12 +118,11 @@ class YPdo_mysql {
 		return $rs;
 	}
 	/**
-	 * 查询主函�?
+	 * 执行查询
 	 * @access public
-	 * @param string $key 结果Key
+	 * @param string $key
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
-	 * @return NULL
 	 */
 	public function Query($key, $sql, $data = NULL) {
 		$prepare_sql = $this->setQuery($sql);
@@ -135,7 +133,7 @@ class YPdo_mysql {
 			}
 		}
 		try {
-			$r = $st->execute(); //执行
+			$r = $st->execute();
 			if ($r === FALSE) {
 				throw new SYDBException(YHtml::encode($st->errorInfo()), 2, $sql);
 			}
@@ -146,7 +144,7 @@ class YPdo_mysql {
 		$this->result[$key] = $st;
 	}
 	/**
-	 * 查询出一个结果，仅支持简单的SQL语句
+	 * 查询并返回一条结果
 	 * @access public
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
@@ -162,14 +160,14 @@ class YPdo_mysql {
 		return $r;
 	}
 	/**
-	 * 事务支持：开始事�?
+	 * 事务：开始
 	 * @access public
 	 */
 	public function beginTransaction() {
 		$this->link->beginTransaction();
 	}
 	/**
-	 * 事务支持：增加语�?
+	 * 事务：添加一句
 	 * @access public
 	 * @param string $sql
 	 */
@@ -177,14 +175,14 @@ class YPdo_mysql {
 		$this->link->exec($this->setQuery($aql));
 	}
 	/**
-	 * 事务支持：提交事�?
+	 * 事务：提交
 	 * @access public
 	 */
 	public function commit() {
 		$this->link->commit();
 	}
 	/**
-	 * 事务支持：回�?
+	 * 事务：回滚
 	 * @access public
 	 */
 	public function rollback() {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MySQL数据库类（MySQLi驱动�?
+ * MySQLi支持类
  * 
  * @author ShuangYa
  * @package SYFramework
@@ -27,21 +27,21 @@ class YMysqli {
 		return self::$_instance;
 	}
 	/**
-	 * 构造函数，用于自动连接
+	 * 构造函数，自动连接
 	 * @access public
 	 */
 	public function __construct() {
 		if (!class_exists('mysqli', false)) {
-			throw new SYException('不存在MySQLi�?, '10009');
+			throw new SYException('不存在MySQLi类', '10009');
 		}
 		if (isset(Sy::$app['mysql'])) {
 			$this->setParam(Sy::$app['mysql']);
 		}
 	}
 	/**
-	 * 设置Server并连�?
+	 * 设置Server
 	 * @access public
-	 * @param array $param MySQL服务�?
+	 * @param array $param MySQL服务器参数
 	 */
 	public function setParam($param) {
 		$this->connect_info = $param;
@@ -49,7 +49,7 @@ class YMysqli {
 		$this->connect();
 	}
 	/**
-	 * 连接数据�?
+	 * 连接到MySQL
 	 * @access private
 	 */
 	private function connect() {
@@ -69,9 +69,9 @@ class YMysqli {
 		return str_replace('#@__', $this->connect_info['prefix'], $sql);
 	}
 	/**
-	 * 获取所有结�?
+	 * 获取所有结果
 	 * @access public
-	 * @param string $key 结果Key，查询时传�?
+	 * @param string $key
 	 * @return array
 	 */
 	public function GetAll($key) {
@@ -82,8 +82,7 @@ class YMysqli {
 	/**
 	 * 释放结果
 	 * @access public
-	 * @param string $key 结果Key
-	 * @return NULL
+	 * @param string $key
 	 */
 	public function free($key) {
 		$this->result[$key]->free();
@@ -98,9 +97,9 @@ class YMysqli {
 		return intval($this->link->insert_id);
 	}
 	/**
-	 * 获取结果集中的一个结�?
+	 * 获取一个结果
 	 * @access public
-	 * @param string $key 结果Key
+	 * @param string $key
 	 * @return mixed
 	 */
 	public function GetArray($key) {
@@ -112,12 +111,11 @@ class YMysqli {
 		return $rs;
 	}
 	/**
-	 * 查询主函�?
+	 * 执行查询
 	 * @access public
-	 * @param string $key 结果Key
+	 * @param string $key
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
-	 * @return NULL
 	 */
 	public function Query($key, $sql, $data = NULL) {
 		$sql = $this->setQuery($sql);
@@ -128,14 +126,14 @@ class YMysqli {
 			}
 		}
 		$r = $this->link->query($sql);
-		//执行失败
+		//执行失败？
 		if ($r !== TRUE) {
 			throw new SYDBException(YHtml::encode($this->link->error), 2, YHtml::encode($sql));
 		}
 		$this->result[$key] = $r;
 	}
 	/**
-	 * 查询出一个结果，仅支持简单的SQL语句
+	 * 查询并返回一条结果
 	 * @access public
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
@@ -151,14 +149,14 @@ class YMysqli {
 		return $r;
 	}
 	/**
-	 * 事务支持：开始事�?
+	 * 事务：开始
 	 * @access public
 	 */
 	public function beginTransaction() {
 		$this->link->autocommit(FALSE);
 	}
 	/**
-	 * 事务支持：增加语�?
+	 * 事务：添加一句
 	 * @access public
 	 * @param string $sql
 	 */
@@ -166,7 +164,7 @@ class YMysqli {
 		$this->link->query($this->setQuery($aql));
 	}
 	/**
-	 * 事务支持：提交事�?
+	 * 事务：提交
 	 * @access public
 	 */
 	public function commit() {
@@ -174,14 +172,14 @@ class YMysqli {
 	}
 
 	/**
-	 * 事务支持：回�?
+	 * 事务：回滚
 	 * @access public
 	 */
 	public function rollback() {
 		$this->link->rollback();
 	}
 	/**
-	 * 析构函数，用于自动断开连接
+	 * 析构函数，自动关闭
 	 * @access public
 	 */
 	public function __destruct() {

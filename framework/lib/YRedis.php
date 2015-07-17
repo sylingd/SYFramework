@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Redis鏁版嵁搴撶被
+ * Redis支持类
  * 
  * @author ShuangYa
  * @package SYFramework
@@ -15,7 +15,6 @@ namespace sy\lib;
 use Sy;
 
 class YRedis {
-	//鏁版嵁搴撹繛鎺?
 	private $link = null;
 	private $connect_info = null;
 	static $_instance = null;
@@ -26,19 +25,19 @@ class YRedis {
 		return self::$_instance;
 	}
 	/**
-	 * 鏋勯�犲嚱鏁帮紝鐢ㄤ簬鑷姩杩炴帴
+	 * 构造函数，自动连接
 	 * @access public
 	 */
 	public function __construct() {
 		if (!class_exists('Redis', false)) {
-			throw new SYException('涓嶅瓨鍦≧edis绫?, '10007');
+			throw new SYException('不存在Redis类', '10007');
 		}
 		if (isset(Sy::$app['redis'])) {
 			$this->setParam(Sy::$app['redis']);
 		}
 	}
 	/**
-	 * 杩炴帴Redis
+	 * 连接到Redis
 	 * @access private
 	 */
 	private function connect() {
@@ -46,9 +45,9 @@ class YRedis {
 		$this->link->connect($this->connect_info['host'], $this->connect_info['port']);
 	}
 	/**
-	 * 璁剧疆Server骞惰繛鎺?
+	 * 设置Server
 	 * @access public
-	 * @param array $param Redis鏈嶅姟鍣?
+	 * @param array $param Redis服务器参数
 	 */
 	public function setParam($param) {
 		$this->connect_info = $param;
@@ -56,9 +55,9 @@ class YRedis {
 		$this->connect();
 	}
 	/**
-	 * 澶勭悊Key
+	 * 处理Key
 	 * @access private
-	 * @param string $key Key
+	 * @param string $sql
 	 * @return string
 	 */
 	private function setQuery($key) {
@@ -74,7 +73,7 @@ class YRedis {
 		return $this->link->get($this->setQuery($key));
 	}
 	/**
-	 * 鏋愭瀯鍑芥暟锛岀敤浜庤嚜鍔ㄦ柇寮�杩炴帴
+	 * 析构函数，自动关闭
 	 * @access public
 	 */
 	public function __destruct() {

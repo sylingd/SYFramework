@@ -50,6 +50,14 @@ return [
 		'host' => '127.0.0.1',
 		'port' => '6379',
 		'password' => '',
-		'prefix' => 'eu_'
+		'prefix' => 'pre_'
+	],
+	'mysql' => [
+		'host' => '127.0.0.1',
+		'port' => '3306',
+		'user' => 'root',
+		'password' => 'root',
+		'name' => 'test',
+		'prefix' => 'pre_'
 	]
 ];
