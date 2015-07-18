@@ -14,6 +14,7 @@
 namespace sy\lib;
 use Sy;
 use \sy\lib\YHtml;
+use \sy\base\SYException;
 use \sy\base\SYDBException;
 
 class YMysqli {
@@ -75,7 +76,7 @@ class YMysqli {
 	 * @param string $key
 	 * @return array
 	 */
-	public function GetAll($key) {
+	public function getAll($key) {
 		$rs = $this->result[$key];
 		$rs = $rs->fetch_all(MYSQLI_ASSOC);
 		return $rs;
@@ -94,7 +95,7 @@ class YMysqli {
 	 * @access public
 	 * @return int
 	 */
-	public function GetLastId() {
+	public function getLastId() {
 		return intval($this->link->insert_id);
 	}
 	/**
@@ -103,7 +104,7 @@ class YMysqli {
 	 * @param string $key
 	 * @return mixed
 	 */
-	public function GetArray($key) {
+	public function getArray($key) {
 		if (!isset($this->result[$key]) || empty($this->result[$key])) {
 			return NULL;
 		}
@@ -118,7 +119,7 @@ class YMysqli {
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
 	 */
-	public function Query($key, $sql, $data = NULL) {
+	public function query($key, $sql, $data = NULL) {
 		$sql = $this->setQuery($sql);
 		if (is_array($data)) {
 			foreach ($data as $v) {
@@ -127,7 +128,7 @@ class YMysqli {
 			}
 		}
 		$r = $this->link->query($sql);
-		//执行失败？
+		//执行失败
 		if ($r !== TRUE) {
 			throw new SYDBException(YHtml::encode($this->link->error), 2, YHtml::encode($sql));
 		}
@@ -140,12 +141,12 @@ class YMysqli {
 	 * @param array $data 参数
 	 * @return array
 	 */
-	public function GetOne($sql, $data = NULL) {
+	public function getOne($sql, $data = NULL) {
 		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
 			$sql .= ' LIMIT 0,1';
 		}
-		$this->Query('one', $sql, $data);
-		$r = $this->GetArray('one');
+		$this->query('one', $sql, $data);
+		$r = $this->getArray('one');
 		$this->free('one');
 		return $r;
 	}

@@ -14,6 +14,7 @@
 namespace sy\lib;
 use Sy;
 use \sy\lib\YHtml;
+use \sy\base\SYException;
 use \sy\base\SYDBException;
 
 class YPdo_mysql {
@@ -81,7 +82,7 @@ class YPdo_mysql {
 	 * @param string $key
 	 * @return array
 	 */
-	public function GetAll($key) {
+	public function getAll($key) {
 		$rs = $this->result[$key];
 		$rs->setFetchMode(PDO::FETCH_ASSOC);
 		$rs = $rs->fetchAll();
@@ -100,7 +101,7 @@ class YPdo_mysql {
 	 * @access public
 	 * @return int
 	 */
-	public function GetLastId() {
+	public function getLastId() {
 		return intval($this->link->lastInsertId());
 	}
 	/**
@@ -109,7 +110,7 @@ class YPdo_mysql {
 	 * @param string $key
 	 * @return mixed
 	 */
-	public function GetArray($key) {
+	public function getArray($key) {
 		if (!isset($this->result[$key]) || empty($this->result[$key])) {
 			return NULL;
 		}
@@ -125,7 +126,7 @@ class YPdo_mysql {
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
 	 */
-	public function Query($key, $sql, $data = NULL) {
+	public function query($key, $sql, $data = NULL) {
 		$prepare_sql = $this->setQuery($sql);
 		$st = $this->link->prepare($prepare_sql);
 		if (is_array($data)) {
@@ -151,12 +152,12 @@ class YPdo_mysql {
 	 * @param array $data 参数
 	 * @return array
 	 */
-	public function GetOne($sql, $data = NULL) {
+	public function getOne($sql, $data = NULL) {
 		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
 			$sql .= ' LIMIT 0,1';
 		}
-		$this->Query('one', $sql, $data);
-		$r = $this->GetArray('one');
+		$this->query('one', $sql, $data);
+		$r = $this->getArray('one');
 		$this->free('one');
 		return $r;
 	}

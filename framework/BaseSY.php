@@ -14,13 +14,11 @@
 namespace sy;
 use \sy\base\SYException;
 
-set_exception_handler(function($e){
-  @header('Content-Type:text/html; charset=utf-8');
-  echo $e;
-  exit;
-});
+set_exception_handler(function ($e) {
+	@header('Content-Type:text/html; charset=utf-8'); echo $e; exit; }
+);
 
-define(SY_ROOT, rtrim(str_replace('\\', '/', __DIR__), '/') . '/');
+define(SY_ROOT, rtrim(str_replace('\\', '/', __DIR__ ), '/') . '/');
 define(SY_DEBUG, true);
 
 class BaseSY {
@@ -28,6 +26,7 @@ class BaseSY {
 	public static $appDir;
 	public static $siteDir;
 	public static $mimeTypes = NULL;
+	public static $httpStatus = NULL;
 	public static $routeParam = 'r';
 	/**
 	 * 初始化：创建Application
@@ -41,19 +40,20 @@ class BaseSY {
 			if (is_file($config)) {
 				$config = require ($config);
 			} else {
-				throw new SYException('配置文件 '.$config.' 不存在', '10005');
+				throw new SYException('配置文件 ' . $config . ' 不存在', '10005');
 			}
 		} elseif (!is_array($config)) {
 			throw new SYException('无法识别配置信息', '10006');
 		}
-		//基本信息
-		static::$app = $config;
-		static::$appDir = rtrim(str_replace('\\', '/', realpath(SY_ROOT . $config['dir'])), '/') . '/';
 		//本程序相对网站根目录所在
 		$now = $_SERVER['PHP_SELF'];
 		$dir = str_replace('\\', '/', dirname($now));
 		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
 		static::$siteDir = $dir;
+		//基本信息
+		$config['cookie']['path'] = str_replace('@app/', $dir, $config['cookie']['path']);
+		static::$app = $config;
+		static::$appDir = rtrim(str_replace('\\', '/', realpath(SY_ROOT . $config['dir'])), '/') . '/';
 		//开始路由分发
 		static::router();
 	}
@@ -61,15 +61,23 @@ class BaseSY {
 	 * 报错：HTTP状态
 	 * @access public
 	 * @param string $status 状态码
+	 * @param boolean $end 是否自动结束当前请求
 	 */
-	public static function httpError($status) {
-		switch ($status) {
-			case '404':
-				header('HTTP/1.0 404 Not Found');
-				echo '您所请求的页面不存在';
-				break;
+	public static function httpStatus($status, $end = FALSE) {
+		if (static::$httpStatus === NULL) {
+			static::$httpStatus = require (SY_ROOT . 'data/httpStatus.php');
 		}
-		exit;
+		$version = ((isset($_SERVER['SERVER_PROTOCOL']) && $_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.0') ? '1.0' : '1.1');
+		if (isset(static::$httpStatus[$status])) {
+			$statusText = static::$httpStatus[$status];
+			@header("HTTP/$version $status $statusText");
+		} else {
+			@header("HTTP/$version $status");
+		}
+		if ($end) {
+			echo isset($statusText) ? $statusText : $status . ' error';
+			exit;
+		}
 	}
 	/**
 	 * 简单Router
@@ -82,7 +90,7 @@ class BaseSY {
 		}
 		$r = explode('/', $r);
 		if (count($r) !== 2) {
-			static::httpError('404');
+			static::httpStatus('404', TRUE);
 		}
 		list($controllerName, $actionName) = $r;
 		//Alias路由表
@@ -91,7 +99,7 @@ class BaseSY {
 		}
 		//controller列表
 		if (!in_array($controllerName, static::$app['controller'], TRUE)) {
-			static::httpError('404');
+			static::httpStatus('404', TRUE);
 		}
 		$fileName = static::$appDir . 'controllers/' . $controllerName . '.php';
 		$className = 'C' . ucfirst($controllerName);
@@ -105,7 +113,7 @@ class BaseSY {
 		$controller = new $className;
 		$actionName = 'action' . ucfirst($actionName);
 		if (!method_exists($controller, $actionName)) {
-			static::httpError('404');
+			static::httpStatus('404', TRUE);
 		}
 		$controller->$actionName();
 	}

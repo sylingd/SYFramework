@@ -45,6 +45,13 @@ return [
 	'alias' => [
 		'doc' => 'document'
 	],
+	//Cookie相关
+	'cookie' => [
+		'prefix' => '',
+		'expire' => 7200,
+		'path' => '@app/',
+		'domain' => $_SERVER['HTTP_HOST']
+	],
 	'redis' => [
 		'host' => '127.0.0.1',
 		'port' => '6379',

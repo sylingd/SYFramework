@@ -13,6 +13,7 @@
 
 namespace sy\lib;
 use Sy;
+use \sy\base\SYException;
 use \sy\base\SYDBException;
 
 class YRedis {
