@@ -7,8 +7,6 @@
  * @package Demo
  * @category Config
  * @link http://www.sylingd.com/
- * @copyright Copyright (c) 2015 ShuangYa
- * @license MIT
  */
 
 return [

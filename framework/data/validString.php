@@ -48,4 +48,13 @@ return [
 		}
 		return $collapsed;
 	}
+	, 'date' => function($date) {
+		if (!preg_match('/^([\d]{4})-([\d]{1,2})-([\d]{1,2})$/', $date)) {
+			return FALSE;
+		}
+		if (strtotime($date) === FALSE) {
+			return FALSE;
+		}
+		return TRUE;
+	}
 ];
