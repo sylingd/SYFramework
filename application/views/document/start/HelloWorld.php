@@ -3,21 +3,22 @@ use \sy\lib\YHtml;
 ?>
 <!DOCTYPE html>
 <head>
-	<title>Hello</title>
+	<title>Hello World</title>
 	<?=YHtml::meta()?>
 	<?=YHtml::css('@root/public/css/bootstrap.min.css')?>
 </head>
 <body>
-	<h1>Hello World</h1>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">Step1.建立应用</h3>
-		</div>
-		<div class="panel-body">
-			<ol>
-				<li>在<code>index.php</code>的同级目录下新建一个文件夹，这里可以取名叫<code>myapp</code></li>
-				<li>复制<code>application/config.php</code>到myapp下，打开<code>config.php</code>，解释如下：</li>
-				<pre>return [
+	<div class="container">
+		<h1>Hello World</h1>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Step1.建立应用</h3>
+			</div>
+			<div class="panel-body">
+				<ol>
+					<li>在<code>index.php</code>的同级目录下新建一个文件夹，这里可以取名叫<code>myapp</code></li>
+					<li>复制<code>application/config.php</code>到myapp下，打开<code>config.php</code>，解释如下：</li>
+					<pre>return [
 	//应用名称，可随意修改
 	'appName' => 'Demo',
 	//调试模式，一般来说，开发的时候设置为TRUE，实际部署设置为FALSE
@@ -68,18 +69,18 @@ use \sy\lib\YHtml;
 		'prefix' => 'pre_'
 	]
 ];</pre>
-			</ol>
+				</ol>
+			</div>
 		</div>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">Step2.编写Controller和模板</h3>
-		</div>
-		<div class="panel-body">
-			<ol>
-				<li>在<code>myapp</code>下建立两个目录：<code>view、controllers</code></li>
-				<li>在<code>controllers</code>下新建一个文件，取名为<code>home.php</code>，<strong>并加入到<code>config.php</code>的controller列表中去</strong>，修改文件，写入以下内容：</li>
-				<pre><?=YHtml::encode('<?php')?>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Step2.编写Controller和模板</h3>
+			</div>
+			<div class="panel-body">
+				<ol>
+					<li>在<code>myapp</code>下建立两个目录：<code>view、controllers</code></li>
+					<li>在<code>controllers</code>下新建一个文件，取名为<code>home.php</code>，<strong>并加入到<code>config.php</code>的controller列表中去</strong>，修改文件，写入以下内容：</li>
+					<pre><?=YHtml::encode('<?php')?>
 
 use \sy\base\Controller;
 use \sy\lib\YHtml;
@@ -95,9 +96,21 @@ class CHome extends Controller {
 		//加载模板，home/hello对应的是view/home/hello.php，以此类推
 		Sy::view('home/hello');
 	}
-}
-</pre>
-			</ol>
+}</pre>
+					<li>在<code>view</code>下建立<code>home/hello.php</code>，输入内容：</li>
+					<pre>Hello World</pre>
+				</ol>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">完成</h3>
+			</div>
+			<div class="panel-body">
+				<ol>
+					<li>打开浏览器，即可看到Hello World</li>
+				</ol>
+			</div>
 		</div>
 	</div>
 </body>

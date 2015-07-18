@@ -25,6 +25,7 @@ use \sy\lib\YHtml;
 		<div class="panel-body">
 			<a href="<?=Sy::createUrl(['document/start', 'title' => 'HelloWorld'])?>">Hello World</a>
 			<a href="<?=Sy::createUrl(['document/start', 'title' => 'Base'])?>">基本构架</a>
+			<a href="<?=Sy::createUrl(['document/start', 'title' => 'Router'])?>">路由（Router）</a>
 		</div>
 	</div>
 	<p><a href=""></a></p>

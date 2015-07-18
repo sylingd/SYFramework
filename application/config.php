@@ -45,6 +45,7 @@ return [
 	//虚拟路由表
 	//例如'user'=>'eu_user'
 	'alias' => [
+		'doc' => 'document'
 	],
 	'redis' => [
 		'host' => '127.0.0.1',
