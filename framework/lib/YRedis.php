@@ -19,6 +19,7 @@ use \sy\base\SYDBException;
 class YRedis {
 	private $link = null;
 	private $connect_info = null;
+	private $transaction = NULL;
 	static $_instance = null;
 	static public function _i() {
 		if (self::$_instance === null) {
@@ -115,7 +116,27 @@ class YRedis {
 					break;
 			}
 		}
-		$r = call_user_func_array([$this->link, $name], $args);
+		if ($this->transaction === NULL) {
+			$r = call_user_func_array([$this->link, $name], $args);
+			return $r;
+		} else {
+			$this->transaction = call_user_func_array([$this->transaction, $name], $args);
+		}
+	}
+	/**
+	 * 事务：开始
+	 * @access public
+	 */
+	public function beginTransaction() {
+		$this->transaction = $this->link->mulit();
+	}
+	/**
+	 * 事务：提交
+	 * @access public
+	 */
+	public function commit() {
+		$r = $this->transaction->exec();
+		$this->transaction = NULL;
 		return $r;
 	}
 	/**
