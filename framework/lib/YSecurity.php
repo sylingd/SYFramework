@@ -121,8 +121,10 @@ class YSecurity {
 	 * 密码加密
 	 * 不采用hash_hmac这类函数的原因，是考虑到数据丢失后恢复的难度
 	 * @access public
+	 * @param string $password 密码
+	 * @return string
 	 */
-	public static function password() {
-		
+	public static function password($password) {
+		return hash('tiger128,3', hash('sha256', $password, TRUE));
 	}
 }

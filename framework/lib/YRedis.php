@@ -67,7 +67,11 @@ class YRedis {
 	 * @return string
 	 */
 	private function setQuery($key) {
-		return $this->connect_info['prefix'] . $key;
+		if (substr($key, 0, 5) === '@root/') {
+			return substr($key, 5);
+		} else {
+			return $this->connect_info['prefix'] . $key;
+		}
 	}
 	/**
 	 * 使用魔术方法，调用phpredis的方法
@@ -76,15 +80,17 @@ class YRedis {
 		if (!method_exists($this->link, $name)) {
 			throw new Exception("Method '$name' not exists");
 		}
-		if (in_array($name, ['mGet', 'sDiff', 'sInter', 'sUnion'], TRUE)) { //均为Key的，如mGet
+		if (in_array($name, ['mGet', 'getMultiple', 'sDiff', 'sInter', 'sUnion'], TRUE)) {
+			//均为Key的，如mGet
 			foreach ($args as $k => $v) {
 				$args[$k] = $this->setQuery($v);
 			}
-		} elseif (!in_array($name, ['mSet', 'migrate', 'sDiffStore', 'sInterStore', 'sMove'], TRUE)) { //不属于特殊处理的
+		} elseif (!in_array($name, ['mSet', 'mSetNX', 'migrate', 'sDiffStore', 'sInterStore', 'sMove', 'rename', 'renameKey', 'renameNx'], TRUE)) { //不属于特殊处理的
 			$args[0] = $this->setQuery($args[0]);
 		} else { //特殊处理
 			switch ($name) {
 				case 'mSet':
+				case 'mSetNX':
 					$keys = $args[0];
 					$new_keys = [];
 					foreach ($keys as $k => $v) {
@@ -107,15 +113,16 @@ class YRedis {
 						$args[$k] = $this->setQuery($v);
 					}
 					break;
+				case 'rename':
+				case 'renameKey':
+				case 'renameNx':
 				case 'sMove':
-					foreach ($args as $k => $v) {
-						if ($k <= 1) {
-							$args[$k] = $this->setQuery($v);
-						}
-					}
+					$args[0] = $this->setQuery($args[0]);
+					$args[1] = $this->setQuery($args[1]);
 					break;
 			}
 		}
+		//对事务的支持
 		if ($this->transaction === NULL) {
 			$r = call_user_func_array([$this->link, $name], $args);
 			return $r;
