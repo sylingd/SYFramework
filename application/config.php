@@ -19,6 +19,10 @@ return [
 	'charset' => 'utf-8',
 	//语言
 	'language' => 'zh-CN',
+	//加密Key，被YSecurity::securityCode使用
+	'securityKey' => 'test',
+	//是否默认开启CSRF验证
+	'csrf' => FALSE,
 	//是否启用URL重写
 	'rewrite' => FALSE,
 	//URL后缀，仅rewrite启用时有效

@@ -54,6 +54,10 @@ class BaseSY {
 		$config['cookie']['path'] = str_replace('@app/', $dir, $config['cookie']['path']);
 		static::$app = $config;
 		static::$appDir = rtrim(str_replace('\\', '/', realpath(SY_ROOT . $config['dir'])), '/') . '/';
+		//是否启用CSRF验证
+		if ($config['csrf']) {
+			\sy\lib\YSecurity::csrfSetCookie();
+		}
 		//开始路由分发
 		static::router();
 	}
