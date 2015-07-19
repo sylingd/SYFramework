@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RedisÖ§³ÖÀà
+ * Redisæ”¯æŒç±»
  * 
  * @author ShuangYa
  * @package SYFramework
@@ -27,19 +27,19 @@ class YRedis {
 		return self::$_instance;
 	}
 	/**
-	 * ¹¹Ôìº¯Êı£¬×Ô¶¯Á¬½Ó
+	 * æ„é€ å‡½æ•°ï¼Œè‡ªåŠ¨è¿æ¥
 	 * @access public
 	 */
 	public function __construct() {
 		if (!class_exists('Redis', false)) {
-			throw new SYException('²»´æÔÚRedisÀà', '10007');
+			throw new SYException('ä¸å­˜åœ¨Redisç±»', '10007');
 		}
 		if (isset(Sy::$app['redis'])) {
 			$this->setParam(Sy::$app['redis']);
 		}
 	}
 	/**
-	 * Á¬½Óµ½Redis
+	 * è¿æ¥åˆ°Redis
 	 * @access private
 	 */
 	private function connect() {
@@ -50,9 +50,9 @@ class YRedis {
 		}
 	}
 	/**
-	 * ÉèÖÃServer
+	 * è®¾ç½®Server
 	 * @access public
-	 * @param array $param Redis·şÎñÆ÷²ÎÊı
+	 * @param array $param RedisæœåŠ¡å™¨å‚æ•°
 	 */
 	public function setParam($param) {
 		$this->connect_info = $param;
@@ -60,7 +60,7 @@ class YRedis {
 		$this->connect();
 	}
 	/**
-	 * ´¦ÀíKey
+	 * å¤„ç†Key
 	 * @access private
 	 * @param string $sql
 	 * @return string
@@ -69,16 +69,57 @@ class YRedis {
 		return $this->connect_info['prefix'] . $key;
 	}
 	/**
-	 * Get
-	 * @access public
-	 * @param string $key
-	 * @return mixed
+	 * ä½¿ç”¨é­”æœ¯æ–¹æ³•ï¼Œè°ƒç”¨phpredisçš„æ–¹æ³•
 	 */
-	public function get($key) {
-		return $this->link->get($this->setQuery($key));
+	public function __call($name, $args) {
+		if (!method_exists($this->link, $name)) {
+			throw new Exception("Method '$name' not exists");
+		}
+		if (in_array($name, ['mGet', 'sDiff', 'sInter', 'sUnion'], TRUE)) { //å‡ä¸ºKeyçš„ï¼Œå¦‚mGet
+			foreach ($args as $k => $v) {
+				$args[$k] = $this->setQuery($v);
+			}
+		} elseif (!in_array($name, ['mSet', 'migrate', 'sDiffStore', 'sInterStore', 'sMove'], TRUE)) { //ä¸å±äºç‰¹æ®Šå¤„ç†çš„
+			$args[0] = $this->setQuery($args[0]);
+		} else { //ç‰¹æ®Šå¤„ç†
+			switch ($name) {
+				case 'mSet':
+					$keys = $args[0];
+					$new_keys = [];
+					foreach ($keys as $k => $v) {
+						$new_k = $this->setQuery($k);
+						$new_keys[$new_k] = $v;
+					}
+					unset($keys);
+					$args[0] = $new_keys;
+					break;
+				case 'migrate':
+					$args[2] = $this->setQuery($args[2]);
+					break;
+				case 'sDiffStore':
+				case 'sInterStore':
+				case 'sUnionStore':
+					foreach ($args as $k => $v) {
+						if ($k === 0) {
+							continue;
+						}
+						$args[$k] = $this->setQuery($v);
+					}
+					break;
+				case 'sMove':
+					foreach ($args as $k => $v) {
+						if ($k <= 1) {
+							$args[$k] = $this->setQuery($v);
+						}
+					}
+					break;
+			}
+		}
+		$r = call_user_func_array([$this->link, $name], $args);
+		return $r;
 	}
 	/**
-	 * Îö¹¹º¯Êı£¬×Ô¶¯¹Ø±Õ
+	 * ææ„å‡½æ•°ï¼Œè‡ªåŠ¨å…³é—­
 	 * @access public
 	 */
 	public function __destruct() {
