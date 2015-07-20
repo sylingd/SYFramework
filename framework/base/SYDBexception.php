@@ -41,9 +41,9 @@ class SYDBException extends SYException {
 			return $this->toString_notDebug();
 		}
 		$r = '<p><strong>SY Framework</strong></p>';
-		$r .= '<p>错误发生于' . $this->dbname . '</p>';
+		$r .= '<p>Error occur in ' . $this->dbname . '</p>';
 		$r .= '<p>Execute:' . $this->execute . '</p>';
-		$r .= '<p>于 ' . $this->getFile() . '，第' . $this->getLine() . '行</p>';
+		$r .= '<p>in ' . $this->getFile() . ' on line ' . $this->getLine() . '</p>';
 		return $r;
 	}
 }

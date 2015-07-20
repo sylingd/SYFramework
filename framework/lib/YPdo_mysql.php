@@ -21,9 +21,9 @@ class YPdo_mysql {
 	private $link = NULL;
 	private $connect_info = NULL;
 	private $result;
-	static $_instance = null;
+	static $_instance = NULL;
 	static public function _i() {
-		if (self::$_instance === null) {
+		if (self::$_instance === NULL) {
 			self::$_instance = new self;
 		}
 		return self::$_instance;
@@ -33,8 +33,8 @@ class YPdo_mysql {
 	 * @access public
 	 */
 	public function __construct() {
-		if (!class_exists('PDO', false)) {
-			throw new SYException('不存在PDO类', '10008');
+		if (!class_exists('PDO', FALSE)) {
+			throw new SYException('Class "PDO" is required', '10008');
 		}
 		if (isset(Sy::$app['mysql'])) {
 			$this->setParam(Sy::$app['mysql']);
@@ -47,7 +47,7 @@ class YPdo_mysql {
 	 */
 	public function setParam($param) {
 		$this->connect_info = $param;
-		$this->link = null;
+		$this->link = NULL;
 		$this->connect();
 	}
 	/**

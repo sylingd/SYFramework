@@ -22,13 +22,13 @@ class SYException extends \Exception {
 		}
 		$r = '<p><strong>SY Framework</strong></p>';
 		$r .= '<p>[' . $this->getCode() . ']' . $this->getMessage();
-		$r .= '</p><p>于 ' . $this->getFile() . '，第' . $this->getLine() . '行</p>';
+		$r .= '</p><p>in ' . $this->getFile() . ' on line ' . $this->getLine() . '</p>';
 		return $r;
 	}
 	protected function toString_notDebug() {
-		$r = '<p><strong>系统内部错误</strong></p>';
-		$r .= '<p>请联系管理员获得帮助</p>';
-		$r .= '<p>如果您是管理员，请修改config.php，打开调试模式</p>';
+		$r = '<p><strong>SY Framework</strong></p>';
+		$r .= '<p>Please contact to the Admin for helps</p>';
+		$r .= '<p>If you are Admin,please enable Debug Mode in config.php</p>';
 		return $r;
 	}
 }

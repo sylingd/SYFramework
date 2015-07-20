@@ -14,9 +14,9 @@ use \sy\lib\YHtml;
 
 class option {
 	public $option = NULL;
-	static $_instance = null;
+	static $_instance = NULL;
 	static public function _i() {
-		if (self::$_instance === null) {
+		if (self::$_instance === NULL) {
 			self::$_instance = new self;
 		}
 		return self::$_instance;

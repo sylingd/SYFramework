@@ -108,7 +108,7 @@ class BaseSY {
 		$fileName = static::$appDir . 'controllers/' . $controllerName . '.php';
 		$className = 'C' . ucfirst($controllerName);
 		if (!is_file($fileName)) {
-			throw new SYException('Controller ' . $controllerName . ' 未找到', '10003');
+			throw new SYException('Controller ' . $controllerName . ' not exists', '10003');
 		}
 		if (!class_exists($className, FALSE)) {
 			require ($fileName);

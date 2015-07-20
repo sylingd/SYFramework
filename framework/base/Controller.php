@@ -32,7 +32,7 @@ class Controller {
 		$appDir = Sy::$appDir;
 		$fileName = $appDir . 'models/' . $modelName . '.php';
 		if (!is_file($fileName)) {
-			throw new SYException('Model ' . $fileName . ' 不存在', '10004');
+			throw new SYException('Model ' . $fileName . ' not exists', '10004');
 		}
 		require ($fileName);
 		$this->_m[] = $modelName;

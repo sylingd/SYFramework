@@ -17,12 +17,12 @@ use \sy\base\SYException;
 use \sy\base\SYDBException;
 
 class YRedis {
-	private $link = null;
-	private $connect_info = null;
+	private $link = NULL;
+	private $connect_info = NULL;
 	private $transaction = NULL;
-	static $_instance = null;
+	static $_instance = NULL;
 	static public function _i() {
-		if (self::$_instance === null) {
+		if (self::$_instance === NULL) {
 			self::$_instance = new self;
 		}
 		return self::$_instance;
@@ -32,8 +32,8 @@ class YRedis {
 	 * @access public
 	 */
 	public function __construct() {
-		if (!class_exists('Redis', false)) {
-			throw new SYException('不存在Redis类', '10007');
+		if (!class_exists('Redis', FALSE)) {
+			throw new SYException('Class "Redis" is required', '10007');
 		}
 		if (isset(Sy::$app['redis'])) {
 			$this->setParam(Sy::$app['redis']);
@@ -57,7 +57,7 @@ class YRedis {
 	 */
 	public function setParam($param) {
 		$this->connect_info = $param;
-		$this->link = null;
+		$this->link = NULL;
 		$this->connect();
 	}
 	/**
@@ -151,7 +151,7 @@ class YRedis {
 	 * @access public
 	 */
 	public function __destruct() {
-		if ($this->link !== null) {
+		if ($this->link !== NULL) {
 			@$this->link->close();
 		}
 	}

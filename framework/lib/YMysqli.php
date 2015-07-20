@@ -21,9 +21,9 @@ class YMysqli {
 	private $link = NULL;
 	private $connect_info = NULL;
 	private $result;
-	static $_instance = null;
+	static $_instance = NULL;
 	static public function _i() {
-		if (self::$_instance === null) {
+		if (self::$_instance === NULL) {
 			self::$_instance = new self;
 		}
 		return self::$_instance;
@@ -33,8 +33,8 @@ class YMysqli {
 	 * @access public
 	 */
 	public function __construct() {
-		if (!class_exists('mysqli', false)) {
-			throw new SYException('不存在MySQLi类', '10009');
+		if (!class_exists('mysqli', FALSE)) {
+			throw new SYException('Class "MySQLi" is required', '10009');
 		}
 		if (isset(Sy::$app['mysql'])) {
 			$this->setParam(Sy::$app['mysql']);
@@ -47,7 +47,7 @@ class YMysqli {
 	 */
 	public function setParam($param) {
 		$this->connect_info = $param;
-		$this->link = null;
+		$this->link = NULL;
 		$this->connect();
 	}
 	/**
@@ -185,10 +185,8 @@ class YMysqli {
 	 * @access public
 	 */
 	public function __destruct() {
-		if ($this->link !== null) {
+		if ($this->link !== NULL) {
 			@$this->link->close();
 		}
 	}
 }
-
-?>
