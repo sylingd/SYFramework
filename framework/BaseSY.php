@@ -222,8 +222,12 @@ class BaseSY {
 	 * @param array $_param 参数
 	 */
 	public static function view($_tpl, $_param = NULL) {
+		//是否启用CSRF验证
+		if ($config['csrf']) {
+			$_csrf_token=\sy\lib\YSecurity::csrfGetHash();
+		}
 		if (is_array($_param)) {
-			unset($_param['_tpl']);
+			unset($_param['_tpl'], $_param['_csrf_token']);
 			extract($_param);
 		}
 		include (static::viewPath($_tpl));
