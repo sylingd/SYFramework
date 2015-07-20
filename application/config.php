@@ -17,7 +17,7 @@ return [
 	'dir' => '../application/',
 	//编码
 	'charset' => 'utf-8',
-	//语言
+	//默认语言
 	'language' => 'zh-CN',
 	//加密Key，被YSecurity::securityCode使用
 	'securityKey' => 'test',

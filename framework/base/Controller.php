@@ -13,6 +13,7 @@
 
 namespace sy\base;
 use Sy;
+use \sy\base\SYException;
 
 class Controller {
 	protected $_m = [];
