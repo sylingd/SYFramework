@@ -13,6 +13,7 @@
 
 namespace sy\lib;
 use Sy;
+use \PDO;
 use \sy\lib\YHtml;
 use \sy\base\SYException;
 use \sy\base\SYDBException;
@@ -55,9 +56,7 @@ class YPdo_mysql {
 	 * @access private
 	 */
 	private function connect() {
-		$dsn = 'mysql:host=' . $this->connect_info['host'] . ';port=' . $this->
-			connect_info['port'] . ';dbname=' . $this->connect_info['name'] . ';charset=' .
-			Sy::$app['charset'];
+		$dsn = 'mysql:host=' . $this->connect_info['host'] . ';port=' . $this->connect_info['port'] . ';dbname=' . $this->connect_info['name'] . ';charset=' . strtolower(str_replace('-', '', Sy::$app['charset']));
 		try {
 			$this->link = new PDO($dsn, $this->connect_info['user'], $this->connect_info['password']);
 			$this->link->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);

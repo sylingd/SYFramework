@@ -200,9 +200,9 @@ class BaseSY {
 			static::$mimeTypes = require (SY_ROOT . 'data/mimeTypes.php');
 		}
 		$type = strtolower($type);
-		$type = (isset(static::$mimeTypes[$type]) ? static::$mimeTypes[$type] : $type);
-		$header = 'Content-type:' . $type . ';';
-		if (in_array($type, ['js', 'json', 'atom', 'rss', 'xhtml'], TRUE) || substr($type, 0, 5) === 'text/') {
+		$mimeType = (isset(static::$mimeTypes[$type]) ? static::$mimeTypes[$type] : $type);
+		$header = 'Content-type:' . $mimeType . ';';
+		if (in_array($type, ['js', 'json', 'atom', 'rss', 'xhtml'], TRUE) || substr($mimeType, 0, 5) === 'text/') {
 			$header .= ' charset=' . static::$app['charset'];
 		}
 		@header($header);

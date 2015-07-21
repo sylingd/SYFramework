@@ -13,6 +13,7 @@
 
 namespace sy\lib;
 use Sy;
+use \Redis;
 use \sy\base\SYException;
 use \sy\base\SYDBException;
 

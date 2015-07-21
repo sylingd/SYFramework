@@ -13,6 +13,7 @@
 
 namespace sy\lib;
 use Sy;
+use \mysqli;
 use \sy\lib\YHtml;
 use \sy\base\SYException;
 use \sy\base\SYDBException;
@@ -55,11 +56,11 @@ class YMysqli {
 	 * @access private
 	 */
 	private function connect() {
-		$this->link = new mysqli($this->connect_info['host'] . ':' . $this->connect_info['port'],
-			$this->connect_info['user'], $this->connect_info['password'], $this->connect_info['name']);
+		$this->link = new mysqli($this->connect_info['host'], $this->connect_info['user'], $this->connect_info['password'], $this->connect_info['name'], $this->connect_info['port']);
 		if ($mysqli->connect_error) {
 			throw new SYDBException(YHtml::encode($this->link->connect_error), 2, 'NULL');
 		}
+		$this->link->set_charset(strtolower(str_replace('-', '', Sy::$app['charset'])));
 	}
 	/**
 	 * 处理Key
