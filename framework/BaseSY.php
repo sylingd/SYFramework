@@ -196,16 +196,28 @@ class BaseSY {
 	 * @param string $type 可为文件扩展名，或者Content-type的值
 	 */
 	public static function setMimeType($type) {
-		if (static::$mimeTypes === NULL) {
-			static::$mimeTypes = require (SY_ROOT . 'data/mimeTypes.php');
+		$mimeType = static::getMimeType($type);
+		if ($mimeType === NULL) {
+			$mimeType = $type;
 		}
-		$type = strtolower($type);
-		$mimeType = (isset(static::$mimeTypes[$type]) ? static::$mimeTypes[$type] : $type);
 		$header = 'Content-type:' . $mimeType . ';';
 		if (in_array($type, ['js', 'json', 'atom', 'rss', 'xhtml'], TRUE) || substr($mimeType, 0, 5) === 'text/') {
 			$header .= ' charset=' . static::$app['charset'];
 		}
 		@header($header);
+	}
+	/**
+	 * 获取扩展名对应的mimeType
+	 * @access public
+	 * @param string $ext
+	 * @return string
+	 */
+	public static function getMimeType($ext) {
+		if (static::$mimeTypes === NULL) {
+			static::$mimeTypes = require (SY_ROOT . 'data/mimeTypes.php');
+		}
+		$ext = strtolower($ext);
+		return isset(static::$mimeTypes[$ext]) ? (static::$mimeTypes[$ext]) : null;
 	}
 	/**
 	 * 获取模板路径
@@ -224,7 +236,7 @@ class BaseSY {
 	public static function view($_tpl, $_param = NULL) {
 		//是否启用CSRF验证
 		if ($config['csrf']) {
-			$_csrf_token=\sy\lib\YSecurity::csrfGetHash();
+			$_csrf_token = \sy\lib\YSecurity::csrfGetHash();
 		}
 		if (is_array($_param)) {
 			unset($_param['_tpl'], $_param['_csrf_token']);
