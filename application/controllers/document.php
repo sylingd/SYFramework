@@ -28,6 +28,19 @@ class CDocument extends Controller {
 	 */
 	public function actionStart() {
 		Sy::setMimeType('html');
-		Sy::view('document/start/'.$_GET['title']);
+		Sy::view('document/start/' . $_GET['title']);
+	}
+	/**
+	 * 测试：验证码
+	 */
+	public function actionCaptcha() {
+		$captcha = \sy\tool\Ycaptcha::_i();
+		$captcha->create(180, 50, 'white');
+		$captcha->setFont(3);
+		$captcha->drawPoint(80);
+		$captcha->drawArc(5);
+		$captcha->write('abcd');
+		Sy::setMimeType('png');
+		$captcha->show('png');
 	}
 }
