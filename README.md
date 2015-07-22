@@ -1,3 +1,3 @@
 # SYFramework
 
-´ËÏîÄ¿»ùÓÚ[Apache License 2.0](http://opensource.org/licenses/Apache-2.0)¿ªÔ´
+æ­¤é¡¹ç›®åŸºäº[Apache License 2.0](http://opensource.org/licenses/Apache-2.0)å¼€æº
