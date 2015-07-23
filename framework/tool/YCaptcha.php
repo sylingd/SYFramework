@@ -164,8 +164,17 @@ class YCaptcha {
 			$this->chineseWord = require (SY_ROOT . 'data/chineseWord.php');
 		}
 		$length = count($this->chineseWord) - 1;
-		$word = array_rand($this->chineseWord, $word_num);
-		return implode('', $word);
+		if ($word_num >= $length) {
+			return NULL;
+		}
+		if ($word_num === 1) {
+			$word = array_rand($this->chineseWord, $word_num);
+			return $this->chineseWord[$word];
+		} else {
+			$word = array_rand($this->chineseWord, $word_num);
+			$word = array_intersect_key($this->chineseWord, $word);
+			return implode('', $word);
+		}
 	}
 	/**
 	 * 输出图像
