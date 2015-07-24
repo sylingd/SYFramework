@@ -17,7 +17,7 @@ use Sy;
 //普通异常类
 class SYException extends \Exception {
 	public function __toString() {
-		if (!Sy::$app['debug'] && !defined('SY_DEBUG')) {
+		if (!Sy::$debug) {
 			return $this->toString_notDebug();
 		}
 		$r = '<p><strong>SY Framework</strong></p>';

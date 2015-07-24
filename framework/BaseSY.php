@@ -19,15 +19,19 @@ set_exception_handler(function ($e) {
 );
 
 define(SY_ROOT, rtrim(str_replace('\\', '/', __DIR__ ), '/') . '/');
-define(SY_DEBUG, true);
 
 class BaseSY {
+	//应用相关设置
 	public static $app;
 	public static $appDir;
 	public static $siteDir;
+	//会从data下的相应文件读取
 	public static $mimeTypes = NULL;
 	public static $httpStatus = NULL;
+	//路由参数名称
 	public static $routeParam = 'r';
+	//调试模式
+	public static $debug = TRUE;
 	/**
 	 * 初始化：创建Application
 	 * @access public
@@ -54,6 +58,9 @@ class BaseSY {
 		$config['cookie']['path'] = str_replace('@app/', $dir, $config['cookie']['path']);
 		static::$app = $config;
 		static::$appDir = rtrim(str_replace('\\', '/', realpath(SY_ROOT . $config['dir'])), '/') . '/';
+		if (isset($config['debug'])) {
+			static::$debug = $config['debug'];
+		}
 		//是否启用CSRF验证
 		if ($config['csrf']) {
 			\sy\lib\YSecurity::csrfSetCookie();
@@ -135,9 +142,11 @@ class BaseSY {
 			} else {
 				return;
 			}
-		} else {
+		} elseif (strpos($className, 'sy\\') === 0) {
 			$fileName = substr($className, 3) . '.php';
 			$fileName = SY_ROOT . str_replace('\\', '/', $fileName);
+		} else {
+			return;
 		}
 		if (is_file($fileName)) {
 			require ($fileName);
@@ -175,7 +184,7 @@ class BaseSY {
 				unset($param[$k]);
 			}
 		} elseif (static::$app['rewrite']) {
-			$url .= static::$$siteDir . $controllerName . '/' . $actionName . '.' . ($ext === NULL ? static::$app['rewriteExt'] : $ext);
+			$url .= static::$siteDir . $controllerName . '/' . $actionName . '.' . ($ext === NULL ? static::$app['rewriteExt'] : $ext);
 		} else {
 			$url .= static::$siteDir . 'index.php?r=' . $controllerName . '/' . $actionName;
 		}

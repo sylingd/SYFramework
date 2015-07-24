@@ -37,7 +37,7 @@ class SYDBException extends SYException {
 		}
 	}
 	public function __toString() {
-		if (!SY::$app['debug'] && !defined('SY_DEBUG')) {
+		if (!Sy::$debug) {
 			return $this->toString_notDebug();
 		}
 		$r = '<p><strong>SY Framework</strong></p>';
