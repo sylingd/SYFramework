@@ -35,7 +35,7 @@ class YMysqli {
 	 */
 	public function __construct() {
 		if (!class_exists('mysqli', FALSE)) {
-			throw new SYException('Class "MySQLi" is required', '10009');
+			throw new SYException('Class "MySQLi" is required', '10020');
 		}
 		if (isset(Sy::$app['mysql'])) {
 			$this->setParam(Sy::$app['mysql']);

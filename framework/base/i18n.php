@@ -31,7 +31,7 @@ class i18n {
 		}
 		$path = Sy::$appDir . 'i18n/' . $i . '.php';
 		if (!is_file($path)) {
-			throw new SYException('The language file not exists', '10010');
+			throw new SYException('The language file not exists', '10011');
 		}
 		static::$language = require ($path);
 	}

@@ -26,6 +26,11 @@ class YMail {
 	protected $mimeType;
 	//发送途径
 	protected $mailer;
+	//邮件相关
+	public $title;
+	public $body;
+	public $textBody;
+	protected $mailHeader;
 	/**
 	 * 构造函数
 	 * @access public

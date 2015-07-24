@@ -34,7 +34,7 @@ class YRedis {
 	 */
 	public function __construct() {
 		if (!class_exists('Redis', FALSE)) {
-			throw new SYException('Class "Redis" is required', '10007');
+			throw new SYException('Class "Redis" is required', '10022');
 		}
 		if (isset(Sy::$app['redis'])) {
 			$this->setParam(Sy::$app['redis']);

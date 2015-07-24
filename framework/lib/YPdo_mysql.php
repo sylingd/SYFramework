@@ -35,7 +35,7 @@ class YPdo_mysql {
 	 */
 	public function __construct() {
 		if (!class_exists('PDO', FALSE)) {
-			throw new SYException('Class "PDO" is required', '10008');
+			throw new SYException('Class "PDO" is required', '10021');
 		}
 		if (isset(Sy::$app['mysql'])) {
 			$this->setParam(Sy::$app['mysql']);

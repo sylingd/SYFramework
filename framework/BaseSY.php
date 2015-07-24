@@ -35,15 +35,15 @@ class BaseSY {
 	 */
 	public static function createApplication($config = NULL) {
 		if ($config === NULL) {
-			throw new SYException('缺少配置信息', '10005');
+			throw new SYException('缺少配置信息', '10001');
 		} elseif (is_string($config)) {
 			if (is_file($config)) {
 				$config = require ($config);
 			} else {
-				throw new SYException('配置文件 ' . $config . ' 不存在', '10005');
+				throw new SYException('配置文件 ' . $config . ' 不存在', '10002');
 			}
 		} elseif (!is_array($config)) {
-			throw new SYException('无法识别配置信息', '10006');
+			throw new SYException('无法识别配置信息', '10003');
 		}
 		//本程序相对网站根目录所在
 		$now = $_SERVER['PHP_SELF'];
@@ -108,7 +108,7 @@ class BaseSY {
 		$fileName = static::$appDir . 'controllers/' . $controllerName . '.php';
 		$className = 'C' . ucfirst($controllerName);
 		if (!is_file($fileName)) {
-			throw new SYException('Controller ' . $controllerName . ' not exists', '10003');
+			throw new SYException('Controller ' . $controllerName . ' not exists', '10004');
 		}
 		if (!class_exists($className, FALSE)) {
 			require ($fileName);
