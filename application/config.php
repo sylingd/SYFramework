@@ -20,6 +20,9 @@ return [
 	//默认语言
 	'language' => 'zh-CN',
 	//加密Key，被YSecurity::securityCode使用
+	'cookieKey' => 'test',
+	//加密Key，被YSecurity::password使用
+	//请在开发过程中定下，实际过程中修改可能导致不可预料的后果
 	'securityKey' => 'test',
 	//是否默认开启CSRF验证
 	'csrf' => FALSE,

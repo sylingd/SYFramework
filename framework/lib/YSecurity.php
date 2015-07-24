@@ -78,7 +78,7 @@ class YSecurity {
 	 */
 	public static function secueityCode($string, $operation = 'ENCODE', $key = '', $expire = 0) {
 		$ckey_length = 4;
-		$key = md5($key ? $key : Sy::$app['securityKey']);
+		$key = md5($key ? $key : Sy::$app['cookieKey']);
 		$keya = md5(substr($key, 0, 16));
 		$keyb = md5(substr($key, 16, 16));
 		$keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length) : substr(md5(microtime()), -$ckey_length)) : '';
@@ -119,12 +119,12 @@ class YSecurity {
 	}
 	/**
 	 * 密码加密
-	 * 不采用hash_hmac这类函数的原因，是考虑到数据丢失后恢复的难度
+	 * 采用hash_hmac，防止对框架的针对性破解
 	 * @access public
 	 * @param string $password 密码
 	 * @return string
 	 */
 	public static function password($password) {
-		return hash('tiger128,3', hash('sha256', $password, TRUE));
+		return hash_hmac('tiger128,3', $password, Sy::$app['securityKey']);
 	}
 }
