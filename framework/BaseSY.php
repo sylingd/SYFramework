@@ -14,9 +14,17 @@
 namespace sy;
 use \sy\base\SYException;
 
+//将系统异常封装为自有异常
 set_exception_handler(function ($e) {
-	@header('Content-Type:text/html; charset=utf-8'); echo $e; exit; }
-);
+	@header('Content-Type:text/html; charset=utf-8');
+	if ($e instanceof SYException) {
+		echo $e;
+	} else {
+		$e = new SYException($e->getMessage(), '10000');
+		echo $e;
+	}
+	exit;
+});
 
 define(SY_ROOT, rtrim(str_replace('\\', '/', __DIR__ ), '/') . '/');
 
@@ -39,15 +47,15 @@ class BaseSY {
 	 */
 	public static function createApplication($config = NULL) {
 		if ($config === NULL) {
-			throw new SYException('缺少配置信息', '10001');
+			throw new SYException('Configuration is required', '10001');
 		} elseif (is_string($config)) {
 			if (is_file($config)) {
 				$config = require ($config);
 			} else {
-				throw new SYException('配置文件 ' . $config . ' 不存在', '10002');
+				throw new SYException('Config file ' . $config . ' not exists', '10002');
 			}
 		} elseif (!is_array($config)) {
-			throw new SYException('无法识别配置信息', '10003');
+			throw new SYException('Config can not be recognised', '10003');
 		}
 		//本程序相对网站根目录所在
 		$now = $_SERVER['PHP_SELF'];

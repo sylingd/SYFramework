@@ -1,5 +1,7 @@
 # 错误代码
 
+* 10000 未知错误
+
 * 10001 初始化Sy::createApplication时，未传入$config BaseSY.php
 
 * 10002 初始化Sy::createApplication时，传入文件路径，但文件不存在 BaseSY.php
