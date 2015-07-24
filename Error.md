@@ -16,7 +16,7 @@
 
 * 10020 需要MySQLi扩展 lib/YMysqli.php
 
-* 10021 需要PDO扩展 lib/YPdo_mysql.php
+* 10021 需要PDO扩展 base/YPdo.php
 
 * 10022 需要phpredis扩展 lib/YRedis.php
 

@@ -8,7 +8,7 @@
 
 * php 5.4及以上 非安全模式
 
-* 部分组件需要curl库，因为数量可能较多，故不一一列举
+* 部分组件需要curl库，数量可能较多，不一一列举
 
 # 其他组件所需支持
 
@@ -16,7 +16,9 @@
 
 * lib\YMysqli MySQLi扩展
 
-* lib\YPdo_mysql PDO扩展和PDO_Mysql驱动
+* lib\YMysql PDO扩展和PDO_Mysql驱动
+
+* lib\YSqlite PDO扩展和PDO_SQlite驱动
 
 * lib\YRedis [phpredis](https://github.com/phpredis/phpredis)
 

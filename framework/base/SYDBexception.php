@@ -24,24 +24,13 @@ class SYDBException extends SYException {
 		$this->message = $message;
 		$this->dbtype = $dbtype;
 		$this->execute = $execute;
-		switch ($dbtype) {
-			case 1:
-				$this->dbname = 'Redis';
-				break;
-			case 2:
-				$this->dbname = 'MySQL';
-				break;
-			default:
-				$this->dbname = 'Unknow';
-				break;
-		}
 	}
 	public function __toString() {
 		if (!Sy::$debug) {
 			return $this->toString_notDebug();
 		}
 		$r = '<p><strong>SY Framework</strong></p>';
-		$r .= '<p>Error occur in ' . $this->dbname . '</p>';
+		$r .= '<p>Error occur in ' . $this->dbtype . '</p>';
 		$r .= '<p>Execute:' . $this->execute . '</p>';
 		$r .= '<p>in ' . $this->getFile() . ' on line ' . $this->getLine() . '</p>';
 		return $r;

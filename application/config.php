@@ -56,12 +56,14 @@ return [
 		'path' => '@app/',
 		'domain' => $_SERVER['HTTP_HOST']
 	],
+	//Redis支持
 	'redis' => [
 		'host' => '127.0.0.1',
 		'port' => '6379',
 		'password' => '',
 		'prefix' => 'pre_'
 	],
+	//MySQL支持
 	'mysql' => [
 		'host' => '127.0.0.1',
 		'port' => '3306',
@@ -69,5 +71,10 @@ return [
 		'password' => 'root',
 		'name' => 'test',
 		'prefix' => 'pre_'
+	],
+	//SQLite支持
+	'sqlite' => [
+		'version' => 'sqlite3',
+		'path' => '@app/data/db.sq3'
 	]
 ];

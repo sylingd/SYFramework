@@ -19,6 +19,7 @@ use \sy\base\SYException;
 use \sy\base\SYDBException;
 
 class YMysqli {
+	protected $dbtype = 'MySQL';
 	private $link = NULL;
 	private $connect_info = NULL;
 	private $result;
@@ -58,7 +59,7 @@ class YMysqli {
 	private function connect() {
 		$this->link = new mysqli($this->connect_info['host'], $this->connect_info['user'], $this->connect_info['password'], $this->connect_info['name'], $this->connect_info['port']);
 		if ($mysqli->connect_error) {
-			throw new SYDBException(YHtml::encode($this->link->connect_error), 2, 'NULL');
+			throw new SYDBException(YHtml::encode($this->link->connect_error), $this->dbtype, 'NULL');
 		}
 		$this->link->set_charset(strtolower(str_replace('-', '', Sy::$app['charset'])));
 	}
@@ -131,7 +132,7 @@ class YMysqli {
 		$r = $this->link->query($sql);
 		//执行失败
 		if ($r !== TRUE) {
-			throw new SYDBException(YHtml::encode($this->link->error), 2, YHtml::encode($sql));
+			throw new SYDBException(YHtml::encode($this->link->error), $this->dbtype, YHtml::encode($sql));
 		}
 		$this->result[$key] = $r;
 	}

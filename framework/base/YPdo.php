@@ -1,34 +1,51 @@
 <?php
 
 /**
- * PDO_MySQL支持类
+ * PDO基本类
+ * 注意：此为抽象类，无法被实例化
  * 
  * @author ShuangYa
  * @package SYFramework
- * @category Library
+ * @category Base
  * @link http://www.sylingd.com/
  * @copyright Copyright (c) 2015 ShuangYa
- * @license http://lab.sylingd.com/go.php?name=framework&type=license
+ * @license http://lab.sylingd.com/go.php?name=frameworkr&type=license
  */
 
-namespace sy\lib;
+namespace sy\base;
 use Sy;
 use \PDO;
-use \sy\lib\YHtml;
 use \sy\base\SYException;
-use \sy\base\SYDBException;
 
-class YPdo_mysql {
-	private $link = NULL;
-	private $connect_info = NULL;
-	private $result;
+abstract class YPdo {
+	protected $link = NULL;
+	protected $connect_info = NULL;
+	protected $result;
 	static $_instance = NULL;
 	static public function _i() {
-		if (self::$_instance === NULL) {
-			self::$_instance = new self;
+		if (static::$_instance === NULL) {
+			static::$_instance = new static;
 		}
-		return self::$_instance;
+		return static::$_instance;
 	}
+	/**
+	 * 抽象函数：自动连接
+	 * @access protected
+	 */
+	abstract protected function autoConnect();
+	/**
+	 * 抽象函数：连接
+	 * @access protected
+	 */
+	abstract protected function connect();
+	/**
+	 * 抽象函数：获取一个结果
+	 * @access public
+	 * @param string $sql
+	 * @param array $data
+	 * @return array
+	 */
+	abstract public function getOne($sql, $data);
 	/**
 	 * 构造函数，自动连接
 	 * @access public
@@ -37,9 +54,7 @@ class YPdo_mysql {
 		if (!class_exists('PDO', FALSE)) {
 			throw new SYException('Class "PDO" is required', '10021');
 		}
-		if (isset(Sy::$app['mysql'])) {
-			$this->setParam(Sy::$app['mysql']);
-		}
+		$this->autoConnect();
 	}
 	/**
 	 * 设置Server
@@ -52,27 +67,12 @@ class YPdo_mysql {
 		$this->connect();
 	}
 	/**
-	 * 连接到MySQL
-	 * @access private
-	 */
-	private function connect() {
-		$dsn = 'mysql:host=' . $this->connect_info['host'] . ';port=' . $this->connect_info['port'] . ';dbname=' . $this->connect_info['name'] . ';charset=' . strtolower(str_replace('-', '', Sy::$app['charset']));
-		try {
-			$this->link = new PDO($dsn, $this->connect_info['user'], $this->connect_info['password']);
-			$this->link->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
-			$this->result = array();
-		}
-		catch (PDOException $e) {
-			throw new SYDBException(YHtml::encode($e->getMessage), 2, $dsn);
-		}
-	}
-	/**
 	 * 处理Key
-	 * @access private
+	 * @access protected
 	 * @param string $sql
 	 * @return string
 	 */
-	private function setQuery($sql) {
+	protected function setQuery($sql) {
 		return str_replace('#@__', $this->connect_info['prefix'], $sql);
 	}
 	/**
@@ -143,50 +143,5 @@ class YPdo_mysql {
 			throw new SYDBException(YHtml::encode($e->getMessage()), 2, $sql);
 		}
 		$this->result[$key] = $st;
-	}
-	/**
-	 * 查询并返回一条结果
-	 * @access public
-	 * @param string $sql SQL语句
-	 * @param array $data 参数
-	 * @return array
-	 */
-	public function getOne($sql, $data = NULL) {
-		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
-			$sql .= ' LIMIT 0,1';
-		}
-		$this->query('one', $sql, $data);
-		$r = $this->getArray('one');
-		$this->free('one');
-		return $r;
-	}
-	/**
-	 * 事务：开始
-	 * @access public
-	 */
-	public function beginTransaction() {
-		$this->link->beginTransaction();
-	}
-	/**
-	 * 事务：添加一句
-	 * @access public
-	 * @param string $sql
-	 */
-	public function addOne($sql) {
-		$this->link->exec($this->setQuery($aql));
-	}
-	/**
-	 * 事务：提交
-	 * @access public
-	 */
-	public function commit() {
-		$this->link->commit();
-	}
-	/**
-	 * 事务：回滚
-	 * @access public
-	 */
-	public function rollback() {
-		$this->link->rollBack();
 	}
 }
