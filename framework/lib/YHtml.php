@@ -22,14 +22,15 @@ class YHtml {
 	 */
 	public static function meta($set = NULL) {
 		$set = (array )$set;
-		$out = ['content-type' => 'text/html; charset=' . Sy::$app['charset'], 'X-UA-Compatible' => 'IE=edge'];
+		$out = ['http-equiv|content-type' => 'text/html; charset=' . Sy::$app['charset'], 'http-equiv|X-UA-Compatible' => 'IE=edge'];
 		$out = array_merge($out, $set);
 		$r = '';
 		foreach ($out as $k => $v) {
 			if (empty($v)) {
 				continue;
 			}
-			$r .= '<meta http-equiv="' . $k . '" content="' . static::encode($v) . '">';
+			list($name, $value) = explode('|', $k);
+			$r .= '<meta ' . $name . '="' . $value . '" content="' . static::encode($v) . '">';
 		}
 		return $r;
 	}

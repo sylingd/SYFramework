@@ -16,9 +16,9 @@
 
 * lib\YMysqli MySQLi扩展
 
-* lib\YMysql PDO扩展和PDO_Mysql驱动
+* lib\YMysql PDO扩展和PDO_MySQL驱动
 
-* lib\YSqlite PDO扩展和PDO_SQlite驱动
+* lib\YSqlite PDO扩展和PDO_SQLite驱动
 
 * lib\YRedis [phpredis](https://github.com/phpredis/phpredis)
 
@@ -40,4 +40,4 @@
 
 * YCaptcha参考了项目[ImageVerifyCode](https://git.oschina.net/reevy/ImageVerifyCode)的代码
 
-* YMail参考了[PHPMailer](https://github.com/PHPMailer/PHPMailer)的部分代码
+* YMail参考了[PHPMailer](https://github.com/PHPMailer/PHPMailer)的部分代码（尚未实现）
