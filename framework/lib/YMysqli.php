@@ -20,9 +20,9 @@ use \sy\base\SYDBException;
 
 class YMysqli {
 	protected $dbtype = 'MySQL';
-	private $link = NULL;
-	private $connect_info = NULL;
-	private $result;
+	protected $link = NULL;
+	protected $connect_info = NULL;
+	protected $result;
 	static $_instance = NULL;
 	static public function _i() {
 		if (self::$_instance === NULL) {
@@ -54,9 +54,9 @@ class YMysqli {
 	}
 	/**
 	 * 连接到MySQL
-	 * @access private
+	 * @access protected
 	 */
-	private function connect() {
+	protected function connect() {
 		$this->link = new mysqli($this->connect_info['host'], $this->connect_info['user'], $this->connect_info['password'], $this->connect_info['name'], $this->connect_info['port']);
 		if ($mysqli->connect_error) {
 			throw new SYDBException(YHtml::encode($this->link->connect_error), $this->dbtype, 'NULL');
@@ -65,11 +65,11 @@ class YMysqli {
 	}
 	/**
 	 * 处理Key
-	 * @access private
+	 * @access protected
 	 * @param string $sql
 	 * @return string
 	 */
-	private function setQuery($sql) {
+	protected function setQuery($sql) {
 		return str_replace('#@__', $this->connect_info['prefix'], $sql);
 	}
 	/**

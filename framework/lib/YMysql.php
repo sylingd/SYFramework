@@ -32,9 +32,9 @@ class YMysql extends YPdo {
 	}
 	/**
 	 * 连接到MySQL
-	 * @access private
+	 * @access protected
 	 */
-	private function connect() {
+	protected function connect() {
 		$dsn = 'mysql:host=' . $this->connect_info['host'] . ';port=' . $this->connect_info['port'] . ';dbname=' . $this->connect_info['name'] . ';charset=' . strtolower(str_replace('-', '', Sy::$app['charset']));
 		try {
 			$this->link = new PDO($dsn, $this->connect_info['user'], $this->connect_info['password']);

@@ -32,9 +32,9 @@ class YSqlite extends YPdo {
 	}
 	/**
 	 * 连接到MySQL
-	 * @access private
+	 * @access protected
 	 */
-	private function connect() {
+	protected function connect() {
 		//对老版本的支持
 		if ($this->connect_info['version'] === 'sqlite3') {
 			$dsn = 'sqlite:';

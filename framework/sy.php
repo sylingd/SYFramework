@@ -11,7 +11,7 @@
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
-@error_reporting(0);
+@error_reporting(E_ALL &~ E_NOTICE);
 
 require (__DIR__ . '/BaseSY.php');
 

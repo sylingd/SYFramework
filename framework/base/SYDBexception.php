@@ -31,7 +31,8 @@ class SYDBException extends SYException {
 		}
 		$r = '<p><strong>SY Framework</strong></p>';
 		$r .= '<p>Error occur in ' . $this->dbtype . '</p>';
-		$r .= '<p>Execute:' . $this->execute . '</p>';
+		$r .= '<p>Error info: ' . $this->getMessage() . '</p>';
+		$r .= '<p>Execute: ' . $this->execute . '</p>';
 		$r .= '<p>in ' . $this->getFile() . ' on line ' . $this->getLine() . '</p>';
 		return $r;
 	}

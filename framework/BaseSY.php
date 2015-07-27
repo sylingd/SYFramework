@@ -26,7 +26,7 @@ set_exception_handler(function ($e) {
 	exit;
 });
 
-define(SY_ROOT, rtrim(str_replace('\\', '/', __DIR__ ), '/') . '/');
+define('SY_ROOT', rtrim(str_replace('\\', '/', __DIR__ ), '/') . '/');
 
 class BaseSY {
 	//应用相关设置
@@ -174,7 +174,7 @@ class BaseSY {
 		unset($param[0], $param[static::$routeParam], $param['#']);
 		//基本URL
 		$url = ($_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
-		if ($param === '') {
+		if ($param[0] === '') {
 			return $url . static::$siteDir;
 		}
 		//Alias路由表
@@ -255,7 +255,7 @@ class BaseSY {
 	 */
 	public static function view($_tpl, $_param = NULL) {
 		//是否启用CSRF验证
-		if ($config['csrf']) {
+		if (static::$app['csrf']) {
 			$_csrf_token = \sy\lib\YSecurity::csrfGetHash();
 		}
 		if (is_array($_param)) {
