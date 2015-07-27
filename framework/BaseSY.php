@@ -167,13 +167,16 @@ class BaseSY {
 	 * @param string $ext 自定义扩展名
 	 * @return string
 	 */
-	public static function createUrl($param, $ext = NULL) {
+	public static function createUrl($param = '', $ext = NULL) {
 		$param = (array )$param;
 		$router = $param[0];
 		$anchor = isset($param['#']) ? '#' . $param['#'] : '';
 		unset($param[0], $param[static::$routeParam], $param['#']);
 		//基本URL
 		$url = ($_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+		if ($param === '') {
+			return $url . static::$siteDir;
+		}
 		//Alias路由表
 		list($controllerName, $actionName) = explode('/', $router);
 		if (in_array($controllerName, static::$app['alias'], TRUE)) {
@@ -184,7 +187,7 @@ class BaseSY {
 			$url .= str_replace('@root/', static::$siteDir, static::$app['rewriteRule'][$router]);
 			foreach ($param as $k => $v) {
 				$k = '{{' . $k . '}}';
-				if (strpos($search, $k) === FALSE) {
+				if (strpos($url, $k) === FALSE) {
 					continue;
 				}
 				$url = str_replace($k, $v, $url);
