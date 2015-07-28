@@ -69,6 +69,7 @@ class BaseSY {
 		if (isset($config['debug'])) {
 			static::$debug = $config['debug'];
 		}
+		mb_internal_encoding($config['charset']);
 		//是否启用CSRF验证
 		if ($config['csrf']) {
 			\sy\lib\YSecurity::csrfSetCookie();
