@@ -20,4 +20,10 @@
 
 * 10022 需要phpredis扩展 lib/YRedis.php
 
+* 10023 需要FTP扩展 tool/YFtp.php
+
 * 10030 尝试发送一封没有内容的邮件 tool/YMail.php
+
+* 10040 无法连接到FTP服务器 tool/YFtp.php
+
+* 10041 无法登录到FTP服务器 tool/YFtp.php
