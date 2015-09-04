@@ -187,11 +187,11 @@ class BaseSY {
 		if (static::$app['rewrite'] && isset(static::$app['rewriteRule'][$router])) {
 			$url .= str_replace('@root/', static::$siteDir, static::$app['rewriteRule'][$router]);
 			foreach ($param as $k => $v) {
-				$k = '{{' . $k . '}}';
-				if (strpos($url, $k) === FALSE) {
+				$k_tpl = '{{' . $k . '}}';
+				if (strpos($url, $k_tpl) === FALSE) {
 					continue;
 				}
-				$url = str_replace($k, $v, $url);
+				$url = str_replace($k_tpl, $v, $url);
 				//去掉此参数，防止后面http_build_query重复
 				unset($param[$k]);
 			}
