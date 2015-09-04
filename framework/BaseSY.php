@@ -191,7 +191,7 @@ class BaseSY {
 				if (strpos($url, $k_tpl) === FALSE) {
 					continue;
 				}
-				$url = str_replace($k_tpl, $v, $url);
+				$url = str_replace($k_tpl, urlencode($v), $url);
 				//去掉此参数，防止后面http_build_query重复
 				unset($param[$k]);
 			}
