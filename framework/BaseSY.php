@@ -172,12 +172,13 @@ class BaseSY {
 		$param = (array )$param;
 		$router = $param[0];
 		$anchor = isset($param['#']) ? '#' . $param['#'] : '';
-		unset($param[0], $param[static::$routeParam], $param['#']);
+		unset($param[static::$routeParam], $param['#']);
 		//基本URL
 		$url = ($_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
 		if ($param[0] === '') {
 			return $url . static::$siteDir;
 		}
+		unset($param[0]);
 		//Alias路由表
 		list($controllerName, $actionName) = explode('/', $router);
 		if (in_array($controllerName, static::$app['alias'], TRUE)) {

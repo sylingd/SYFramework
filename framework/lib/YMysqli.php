@@ -187,7 +187,7 @@ class YMysqli {
 	 * @access public
 	 */
 	public function __destruct() {
-		if ($this->link !== NULL && $this->link instanceof mysqli) {
+		if ($this->link !== NULL && method_exists($this->link, 'close')) {
 			@$this->link->close();
 		}
 	}
