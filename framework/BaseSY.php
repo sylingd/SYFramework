@@ -33,6 +33,7 @@ class BaseSY {
 	public static $app;
 	public static $appDir;
 	public static $siteDir;
+	public static $frameworkDir;
 	//会从data下的相应文件读取
 	public static $mimeTypes = NULL;
 	public static $httpStatus = NULL;
@@ -57,7 +58,9 @@ class BaseSY {
 		} elseif (!is_array($config)) {
 			throw new SYException('Config can not be recognised', '10003');
 		}
-		//本程序相对网站根目录所在
+		//框架所在的绝对路径
+		static::$frameworkDir = SY_ROOT;
+		//程序相对网站根目录所在
 		$now = $_SERVER['PHP_SELF'];
 		$dir = str_replace('\\', '/', dirname($now));
 		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
@@ -65,6 +68,7 @@ class BaseSY {
 		//基本信息
 		$config['cookie']['path'] = str_replace('@app/', $dir, $config['cookie']['path']);
 		static::$app = $config;
+		//应用的绝对路径
 		static::$appDir = rtrim(str_replace('\\', '/', realpath(SY_ROOT . $config['dir'])), '/') . '/';
 		if (isset($config['debug'])) {
 			static::$debug = $config['debug'];
