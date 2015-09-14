@@ -34,6 +34,7 @@ class BaseSY {
 	public static $appDir;
 	public static $siteDir;
 	public static $frameworkDir;
+	public static $rootDir;
 	//会从data下的相应文件读取
 	public static $mimeTypes = NULL;
 	public static $httpStatus = NULL;
@@ -60,6 +61,7 @@ class BaseSY {
 		}
 		//框架所在的绝对路径
 		static::$frameworkDir = SY_ROOT;
+		static::$rootDir = rtrim(str_replace('\\', '/', realpath(SY_ROOT . '../')), '/') . '/';
 		//程序相对网站根目录所在
 		$now = $_SERVER['PHP_SELF'];
 		$dir = str_replace('\\', '/', dirname($now));
