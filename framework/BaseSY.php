@@ -83,6 +83,10 @@ class BaseSY {
 		if ($config['csrf']) {
 			\sy\lib\YSecurity::csrfSetCookie();
 		}
+		//加载App的基本函数
+		if (is_file(static::$appDir . 'common.php')) {
+			require(static::$appDir . 'common.php');
+		}
 		//开始路由分发
 		static::router();
 	}
