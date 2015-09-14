@@ -35,6 +35,7 @@ class BaseSY {
 	public static $siteDir;
 	public static $frameworkDir;
 	public static $rootDir;
+	public static $webrootDir;
 	//会从data下的相应文件读取
 	public static $mimeTypes = NULL;
 	public static $httpStatus = NULL;
@@ -67,6 +68,8 @@ class BaseSY {
 		$dir = str_replace('\\', '/', dirname($now));
 		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
 		static::$siteDir = $dir;
+		//网站根目录
+		static::$webrootDir = substr(static::$rootDir, 0, strlen(static::$rootDir) - strlen(static::$siteDir)) . '/';
 		//基本信息
 		$config['cookie']['path'] = str_replace('@app/', $dir, $config['cookie']['path']);
 		static::$app = $config;
