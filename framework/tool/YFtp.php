@@ -17,7 +17,7 @@ use \sy\base\SYException;
 
 class YFtp {
 	protected $config;
-	protected $link = null;
+	protected $link = NULL;
 	/**
 	 * 构造函数，自动连接
 	 * @access public
@@ -32,9 +32,9 @@ class YFtp {
 		}
 		//默认为被动模式
 		if (!isset($config['pasv'])) {
-			$config['pasv'] = true;
+			$config['pasv'] = TRUE;
 		}
-		if (false === ($this->link = ftp_connect($config['host'], $config['port']))) {
+		if (FALSE === ($this->link = ftp_connect($config['host'], $config['port']))) {
 			throw new SYException('Can not connect to FTP Server', '10040');
 		}
 		//登录
@@ -44,7 +44,7 @@ class YFtp {
 			}
 		}
 		if ($config['pasv']) {
-			ftp_pasv($this->link, true);
+			ftp_pasv($this->link, TRUE);
 		}
 		$this->config = $config;
 	}
@@ -55,18 +55,18 @@ class YFtp {
 	 * @param boolean $auto_create 是否自动创建
 	 * @return boolean
 	 */
-	public function chdir($dir, $auto_create = false) {
-		if (ftp_chdir($this->link, $dir) === false) {
+	public function chdir($dir, $auto_create = FALSE) {
+		if (ftp_chdir($this->link, $dir) === FALSE) {
 			if ($auto_create) {
 				$this->mkdir($dir);
-				if (ftp_chdir($this->link, $dir) === false) {
-					return false;
+				if (ftp_chdir($this->link, $dir) === FALSE) {
+					return FALSE;
 				}
 			} else {
-				return false;
+				return FALSE;
 			}
 		}
-		return true;
+		return TRUE;
 	}
 	/**
 	 * 创建文件夹
@@ -75,18 +75,18 @@ class YFtp {
 	 * @param string $permissions 权限
 	 * @return	boolean
 	 */
-	public function mkdir($dir, $permissions = null) {
+	public function mkdir($dir, $permissions = NULL) {
 		if (empty($path)) {
-			return false;
+			return FALSE;
 		}
-		if (ftp_mkdir($this->link, $dir) === false) {
-			return false;
+		if (ftp_mkdir($this->link, $dir) === FALSE) {
+			return FALSE;
 		}
 
-		if ($permissions !== null) {
+		if ($permissions !== NULL) {
 			$this->chmod($dir, $permissions);
 		}
-		return true;
+		return TRUE;
 	}
 	/**
 	 * 上传文件
@@ -97,9 +97,9 @@ class YFtp {
 	 * @param string $permissions 权限
 	 * @return boolean
 	 */
-	public function upload($from, $to, $mode = 'auto', $permissions = null) {
+	public function upload($from, $to, $mode = 'auto', $permissions = NULL) {
 		if (!is_file($from)) {
-			return false;
+			return FALSE;
 		}
 		//自动模式
 		if ($mode === 'auto') {
@@ -107,13 +107,13 @@ class YFtp {
 			$mode = $this->getType($ext);
 		}
 		$mode = ($mode === 'ascii') ? FTP_ASCII : FTP_BINARY;
-		if (ftp_put($this->link, $to, $from, $mode) === false) {
-			return false;
+		if (ftp_put($this->link, $to, $from, $mode) === FALSE) {
+			return FALSE;
 		}
-		if ($permissions !== null) {
+		if ($permissions !== NULL) {
 			$this->chmod($to, $permissions);
 		}
-		return true;
+		return TRUE;
 	}
 	/**
 	 * 下载文件
@@ -130,10 +130,10 @@ class YFtp {
 			$mode = $this->getType($ext);
 		}
 		$mode = ($mode === 'ascii') ? FTP_ASCII : FTP_BINARY;
-		if (ftp_get($this->link, $to, $from, $mode) === false) {
-			return false;
+		if (ftp_get($this->link, $to, $from, $mode) === FALSE) {
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 	}
 	/**
 	 * 重命名/移动一个文件
@@ -143,10 +143,10 @@ class YFtp {
 	 * @return boolean
 	 */
 	public function rename($old, $new) {
-		if (ftp_rename($this->link, $old, $new) === false) {
-			return false;
+		if (ftp_rename($this->link, $old, $new) === FALSE) {
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 	}
 	/**
 	 * 删除文件
@@ -155,10 +155,10 @@ class YFtp {
 	 * @return boolean
 	 */
 	public function del($path) {
-		if (ftp_delete($this->link, $path) === false) {
-			return false;
+		if (ftp_delete($this->link, $path) === FALSE) {
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 	}
 	/**
 	 * 删除文件夹
@@ -176,10 +176,10 @@ class YFtp {
 				}
 			}
 		}
-		if (ftp_rmdir($this->link, $filepath) === false) {
-			return false;
+		if (ftp_rmdir($this->link, $filepath) === FALSE) {
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 	}
 	/**
 	 * 设置权限
@@ -189,10 +189,10 @@ class YFtp {
 	 * @return	boolean
 	 */
 	public function chmod($path, $permissions) {
-		if (ftp_chmod($this->link, $perm, $path) === false) {
-			return false;
+		if (ftp_chmod($this->link, $perm, $path) === FALSE) {
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 	}
 	/**
 	 * 列出指定目录的文件
@@ -210,7 +210,7 @@ class YFtp {
 	 * @return	string
 	 */
 	protected function getExt($filename) {
-		return (($dot = strrpos($filename, '.')) === false) ? 'txt' : substr($filename, $dot + 1);
+		return (($dot = strrpos($filename, '.')) === FALSE) ? 'txt' : substr($filename, $dot + 1);
 	}
 	/**
 	 * 获取FTP传输类型
@@ -219,7 +219,7 @@ class YFtp {
 	 * @return	string
 	 */
 	protected function getType($ext) {
-		if (in_array($ext, ['txt', 'text', 'php', 'phps', 'php4', 'js', 'css', 'htm', 'html', 'phtml', 'shtml', 'log', 'xml', 'asp', 'jsp'], true)) {
+		if (in_array($ext, ['txt', 'text', 'php', 'phps', 'php4', 'js', 'css', 'htm', 'html', 'phtml', 'shtml', 'log', 'xml', 'asp', 'jsp'], TRUE)) {
 			return 'ascii';
 		} else {
 			return 'binary';
@@ -232,7 +232,7 @@ class YFtp {
 	public function __destruct() {
 		if (is_resource($this->link)) {
 			@ftp_close($this->link);
-			$this->link = null;
+			$this->link = NULL;
 		}
 	}
 }
