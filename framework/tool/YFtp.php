@@ -73,6 +73,14 @@ class YFtp {
 		return TRUE;
 	}
 	/**
+	 * 获取当前目录
+	 * @access public
+	 * @return string
+	 */
+	public function getdir() {
+		return ftp_pwd($this->link);
+	}
+	/**
 	 * 创建文件夹
 	 * @access public
 	 * @param string $dir
@@ -165,6 +173,18 @@ class YFtp {
 		return TRUE;
 	}
 	/**
+	 * 文件信息
+	 * @access public
+	 * @param string $path
+	 * @return array
+	 */
+	public function fileinfo($path) {
+		return [
+			'size' => ftp_size($this->link, $path),
+			'mondify' => ftp_mdtm($this->link, $path)
+		];
+	}
+	/**
 	 * 删除文件夹
 	 * @access public
 	 * @param string $path
@@ -204,8 +224,17 @@ class YFtp {
 	 * @param string $path
 	 * @return array
 	 */
-	public function listDir($path = '.') {
+	public function ls($path = '.') {
 		return ftp_nlist($this->link, $path);
+	}
+	/**
+	 * 执行命令
+	 * @access public
+	 * @param string $command
+	 * @return array
+	 */
+	public function exec($command) {
+		return ftp_raw($this->link, $command);
 	}
 	/**
 	 * 获取文件扩展名
