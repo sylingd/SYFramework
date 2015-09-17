@@ -42,6 +42,10 @@ class YFtp {
 			if (!ftp_login($this->link, $config['user'], $config['password'])) {
 				throw new SYException('Can not login to FTP Server', '10041');
 			}
+		} else {
+			if (!ftp_login($this->link, 'anonymous', '')) {
+				throw new SYException('Can not login to FTP Server as anonymous', '10041');
+			}
 		}
 		if ($config['pasv']) {
 			ftp_pasv($this->link, TRUE);
@@ -189,7 +193,7 @@ class YFtp {
 	 * @return	boolean
 	 */
 	public function chmod($path, $permissions) {
-		if (ftp_chmod($this->link, $perm, $path) === FALSE) {
+		if (ftp_chmod($this->link, $permissions, $path) === FALSE) {
 			return FALSE;
 		}
 		return TRUE;
@@ -198,7 +202,7 @@ class YFtp {
 	 * 列出指定目录的文件
 	 * @access public
 	 * @param string $path
-	 * @return	array
+	 * @return array
 	 */
 	public function listDir($path = '.') {
 		return ftp_nlist($this->link, $path);
@@ -210,7 +214,8 @@ class YFtp {
 	 * @return	string
 	 */
 	protected function getExt($filename) {
-		return (($dot = strrpos($filename, '.')) === FALSE) ? 'txt' : substr($filename, $dot + 1);
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		return (empty($ext) ? 'txt' : $ext);
 	}
 	/**
 	 * 获取FTP传输类型
