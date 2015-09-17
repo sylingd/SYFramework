@@ -60,10 +60,10 @@ class YFtp {
 	 * @return boolean
 	 */
 	public function chdir($dir, $auto_create = FALSE) {
-		if (ftp_chdir($this->link, $dir) === FALSE) {
+		if (@ftp_chdir($this->link, $dir) === FALSE) {
 			if ($auto_create) {
 				$this->mkdir($dir);
-				if (ftp_chdir($this->link, $dir) === FALSE) {
+				if (@ftp_chdir($this->link, $dir) === FALSE) {
 					return FALSE;
 				}
 			} else {
@@ -87,11 +87,11 @@ class YFtp {
 	 * @param string $permissions 权限
 	 * @return	boolean
 	 */
-	public function mkdir($dir, $permissions = NULL) {
-		if (empty($path)) {
+	public function mkdir($dir, $permissions = '0755') {
+		if (empty($dir)) {
 			return FALSE;
 		}
-		if (ftp_mkdir($this->link, $dir) === FALSE) {
+		if (@ftp_mkdir($this->link, $dir) === FALSE) {
 			return FALSE;
 		}
 
@@ -119,7 +119,7 @@ class YFtp {
 			$mode = $this->getType($ext);
 		}
 		$mode = ($mode === 'ascii') ? FTP_ASCII : FTP_BINARY;
-		if (ftp_put($this->link, $to, $from, $mode) === FALSE) {
+		if (@ftp_put($this->link, $to, $from, $mode) === FALSE) {
 			return FALSE;
 		}
 		if ($permissions !== NULL) {
@@ -142,7 +142,7 @@ class YFtp {
 			$mode = $this->getType($ext);
 		}
 		$mode = ($mode === 'ascii') ? FTP_ASCII : FTP_BINARY;
-		if (ftp_get($this->link, $to, $from, $mode) === FALSE) {
+		if (@ftp_get($this->link, $to, $from, $mode) === FALSE) {
 			return FALSE;
 		}
 		return TRUE;
@@ -155,7 +155,7 @@ class YFtp {
 	 * @return boolean
 	 */
 	public function rename($old, $new) {
-		if (ftp_rename($this->link, $old, $new) === FALSE) {
+		if (@ftp_rename($this->link, $old, $new) === FALSE) {
 			return FALSE;
 		}
 		return TRUE;
@@ -167,7 +167,7 @@ class YFtp {
 	 * @return boolean
 	 */
 	public function del($path) {
-		if (ftp_delete($this->link, $path) === FALSE) {
+		if (@ftp_delete($this->link, $path) === FALSE) {
 			return FALSE;
 		}
 		return TRUE;
@@ -180,8 +180,8 @@ class YFtp {
 	 */
 	public function fileinfo($path) {
 		return [
-			'size' => ftp_size($this->link, $path),
-			'mondify' => ftp_mdtm($this->link, $path)
+			'size' => @ftp_size($this->link, $path),
+			'mondify' => @ftp_mdtm($this->link, $path)
 		];
 	}
 	/**
@@ -192,7 +192,7 @@ class YFtp {
 	 */
 	public function rmdir($path) {
 		$path = rtrim($path, '/') . '/';
-		$list = $this->listDir($path);
+		$list = $this->ls($path);
 		if (!empty($list)) {
 			for ($i = 0, $c = count($list); $i < $c; $i++) {
 				if (!preg_match('#/\.\.?$#', $list[$i]) && !ftp_delete($this->link, $list[$i])) {
@@ -200,7 +200,7 @@ class YFtp {
 				}
 			}
 		}
-		if (ftp_rmdir($this->link, $filepath) === FALSE) {
+		if (@ftp_rmdir($this->link, $filepath) === FALSE) {
 			return FALSE;
 		}
 		return TRUE;
@@ -213,7 +213,7 @@ class YFtp {
 	 * @return	boolean
 	 */
 	public function chmod($path, $permissions) {
-		if (ftp_chmod($this->link, $permissions, $path) === FALSE) {
+		if (@ftp_chmod($this->link, $permissions, $path) === FALSE) {
 			return FALSE;
 		}
 		return TRUE;
@@ -225,7 +225,7 @@ class YFtp {
 	 * @return array
 	 */
 	public function ls($path = '.') {
-		return ftp_nlist($this->link, $path);
+		return @ftp_nlist($this->link, $path);
 	}
 	/**
 	 * 执行命令
@@ -234,7 +234,7 @@ class YFtp {
 	 * @return array
 	 */
 	public function exec($command) {
-		return ftp_raw($this->link, $command);
+		return @ftp_raw($this->link, $command);
 	}
 	/**
 	 * 获取文件扩展名
