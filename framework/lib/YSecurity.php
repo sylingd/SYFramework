@@ -129,6 +129,6 @@ class YSecurity {
 		if (empty($key)) {
 			$key = Sy::$app['securityKey'];
 		}
-		return hash_hmac('md5', $password);
+		return hash_hmac('md5', $password, $key);
 	}
 }
