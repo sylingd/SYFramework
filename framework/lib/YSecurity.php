@@ -122,9 +122,13 @@ class YSecurity {
 	 * 采用hash_hmac，防止对框架的针对性破解
 	 * @access public
 	 * @param string $password 密码
+	 * @param string $key 密钥
 	 * @return string
 	 */
-	public static function password($password) {
-		return hash_hmac('tiger128,3', $password, Sy::$app['securityKey']);
+	public static function password($password, $key = '') {
+		if (empty($key)) {
+			$key = Sy::$app['securityKey'];
+		}
+		return hash_hmac('md5', $password);
 	}
 }
