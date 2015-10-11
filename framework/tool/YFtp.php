@@ -181,7 +181,7 @@ class YFtp {
 	public function fileinfo($path) {
 		return [
 			'size' => @ftp_size($this->link, $path),
-			'mondify' => @ftp_mdtm($this->link, $path)
+			'modify' => @ftp_mdtm($this->link, $path)
 		];
 	}
 	/**

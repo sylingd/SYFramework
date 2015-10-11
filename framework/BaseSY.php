@@ -26,8 +26,6 @@ set_exception_handler(function ($e) {
 	exit;
 });
 
-define('SY_ROOT', rtrim(str_replace('\\', '/', __DIR__ ), '/') . '/');
-
 class BaseSY {
 	//应用相关设置
 	public static $app;
@@ -46,14 +44,14 @@ class BaseSY {
 	/**
 	 * 初始化：创建Application
 	 * @access public
-	 * @param array $config设置
+	 * @param mixed $config设置
 	 */
 	public static function createApplication($config = NULL) {
 		if ($config === NULL) {
 			throw new SYException('Configuration is required', '10001');
 		} elseif (is_string($config)) {
 			if (is_file($config)) {
-				$config = require ($config);
+				$config = require($config);
 			} else {
 				throw new SYException('Config file ' . $config . ' not exists', '10002');
 			}
@@ -61,8 +59,8 @@ class BaseSY {
 			throw new SYException('Config can not be recognised', '10003');
 		}
 		//框架所在的绝对路径
-		static::$frameworkDir = SY_ROOT;
-		static::$rootDir = rtrim(str_replace('\\', '/', realpath(SY_ROOT . '../')), '/') . '/';
+		static::$frameworkDir =  rtrim(str_replace('\\', '/', __DIR__ ), '/') . '/';
+		static::$rootDir = str_replace('\\', '/', realpath(static::$frameworkDir . '../')) . '/';
 		//程序相对网站根目录所在
 		$now = $_SERVER['PHP_SELF'];
 		$dir = str_replace('\\', '/', dirname($now));
@@ -74,7 +72,7 @@ class BaseSY {
 		$config['cookie']['path'] = str_replace('@app/', $dir, $config['cookie']['path']);
 		static::$app = $config;
 		//应用的绝对路径
-		static::$appDir = rtrim(str_replace('\\', '/', realpath(SY_ROOT . $config['dir'])), '/') . '/';
+		static::$appDir = str_replace('\\', '/', realpath(static::$frameworkDir . $config['dir'])) . '/';
 		if (isset($config['debug'])) {
 			static::$debug = $config['debug'];
 		}
@@ -98,7 +96,7 @@ class BaseSY {
 	 */
 	public static function httpStatus($status, $end = FALSE) {
 		if (static::$httpStatus === NULL) {
-			static::$httpStatus = require (SY_ROOT . 'data/httpStatus.php');
+			static::$httpStatus = require(static::$frameworkDir . 'data/httpStatus.php');
 		}
 		$version = ((isset($_SERVER['SERVER_PROTOCOL']) && $_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.0') ? '1.0' : '1.1');
 		if (isset(static::$httpStatus[$status])) {
@@ -166,7 +164,7 @@ class BaseSY {
 			}
 		} elseif (strpos($className, 'sy\\') === 0) {
 			$fileName = substr($className, 3) . '.php';
-			$fileName = SY_ROOT . str_replace('\\', '/', $fileName);
+			$fileName = static::$frameworkDir . str_replace('\\', '/', $fileName);
 		} else {
 			return;
 		}
@@ -249,7 +247,7 @@ class BaseSY {
 	 */
 	public static function getMimeType($ext) {
 		if (static::$mimeTypes === NULL) {
-			static::$mimeTypes = require (SY_ROOT . 'data/mimeTypes.php');
+			static::$mimeTypes = require(static::$frameworkDir . 'data/mimeTypes.php');
 		}
 		$ext = strtolower($ext);
 		return isset(static::$mimeTypes[$ext]) ? (static::$mimeTypes[$ext]) : null;
