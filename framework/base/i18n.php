@@ -25,7 +25,7 @@ class i18n {
 	 * @access public
 	 * @param string $l 语言
 	 */
-	public function setLanguage($i) {
+	public static function setLanguage($i) {
 		if (static::$now_language === $i) {
 			return;
 		}
