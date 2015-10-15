@@ -21,16 +21,28 @@ class i18n {
 	//当前语言
 	protected static $now_language = NULL;
 	/**
+	 * 判断是否支持某一语言
+	 * @access public
+	 * @param $i
+	 * @return mixed
+	 */
+	public static function getSupport($i) {
+		$path = Sy::$appDir . 'i18n/' . $i . '.php';
+		if (!is_file($path)) {
+			return FALSE;
+		}
+		return $path;
+	}
+	/**
 	 * 设置当前语言
 	 * @access public
-	 * @param string $l 语言
+	 * @param string $i 语言
 	 */
 	public static function setLanguage($i) {
 		if (static::$now_language === $i) {
 			return;
 		}
-		$path = Sy::$appDir . 'i18n/' . $i . '.php';
-		if (!is_file($path)) {
+		if (FALSE === ($path = static::getSupport($i))) {
 			throw new SYException('The language file not exists', '10011');
 		}
 		static::$language = require ($path);
@@ -87,6 +99,39 @@ class i18n {
 		return $language;
 	}
 	/**
+	 * 设置语言为默认语言
+	 * @access
+	 */
+	public static function setDefaultLanguage() {
+		$browser = static::getBrowserLanguage();
+		//对IE特殊照顾
+		$ie = ['zh-Hans-CN' => 'zh-CN', 'zh-Hans' => 'zh'];
+		if (count($browser) !== 0) {
+			foreach ($browser as $v) {
+				foreach ($v as $vv) {
+					if (isset($ie[$vv])) {
+						$vv = $ie[$vv];
+					}
+					if (static::getSupport($vv) !== FALSE) {
+						static::setLanguage($vv);
+						return;
+					}
+				}
+			}
+		}
+		if (isset(Sy::$app['language'])) {
+			$language = Sy::$app['language'];
+			if (isset($ie[$language])) {
+				$language = $ie[$language];
+			}
+			if (static::getSupport($language)) {
+				static::setLanguage($language);
+				return;
+			}
+		}
+		throw new SYException('The language file not exists', '10011');
+	}
+	/**
 	 * 获得文字
 	 * @access public
 	 * @param string $key
@@ -95,7 +140,7 @@ class i18n {
 	 */
 	public static function get($key, $params = NULL) {
 		if (static::$language === NULL) {
-			static::setLanguage(static::getDefaultLanguage());
+			static::setDefaultLanguage();
 		}
 		if (!isset(static::$language[$key])) {
 			return '';

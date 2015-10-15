@@ -12,7 +12,7 @@
  */
 
 namespace sy\base;
-use Sy;
+use \Sy;
 use \sy\base\SYException;
 
 //数据库相关异常
@@ -25,9 +25,29 @@ class SYDBException extends SYException {
 		$this->dbtype = $dbtype;
 		$this->execute = $execute;
 	}
-	public function __toString() {
-		if (!Sy::$debug) {
-			return $this->toString_notDebug();
+	/**
+	 * 获取文本错误信息
+	 * @access public
+	 * @return string
+	 */
+	public function getText() {
+		if (!isset(Sy::$debug) || !Sy::$debug) {
+			return $this->getTextNotDebug();
+		}
+		$r = 'SY Framework:';
+		$r .= '[' . $this->dbtype . ']';
+		$r .= 'Message:' . $this->getMessage() . ' | ';
+		$r .= 'Execute:' . $this->execute;
+		return $r;
+	}
+	/**
+	 * 获取HTML错误信息
+	 * @access public
+	 * @return string
+	 */
+	public function getHtml() {
+		if (!isset(Sy::$debug) || !Sy::$debug) {
+			return $this->getHtmlNotDebug();
 		}
 		$r = '<p><strong>SY Framework</strong></p>';
 		$r .= '<p>Error occur in ' . $this->dbtype . '</p>';
