@@ -141,7 +141,7 @@ class YCaptcha {
 		$real_text_height = ($this->height - ($padding * 2));
 		$x = $padding;
 		$y = $this->height - $padding;
-		$font = SY_ROOT . 'data/' . $this->fonts[$this->font] . '.ttf';
+		$font = Sy::$frameworkDir . 'data/' . $this->fonts[$this->font] . '.ttf';
 		for ($i = 0; $i <= $length; $i++) {
 			$qx = mt_rand(-$qinx, $qinx);
 			//保证颜色和背景不同
