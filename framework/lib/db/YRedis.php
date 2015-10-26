@@ -18,15 +18,19 @@ use \sy\base\SYException;
 use \sy\base\SYDBException;
 
 class YRedis {
-	private $link = NULL;
-	private $dbInfo = NULL;
-	private $transaction = NULL;
-	static $_instance = NULL;
-	static public function _i() {
-		if (self::$_instance === NULL) {
-			self::$_instance = new self;
+	protected $dbtype = 'Redis';
+	protected $link = [];
+	protected $dbInfo = [];
+	protected $transaction = [];
+	protected $result = [];
+	static protected $_instance = NULL;
+	static protected $current = 'default';
+	static public function i($id = 'default') {
+		if (static::$_instance === NULL) {
+			static::$_instance = new static;
 		}
-		return self::$_instance;
+		static::$current = $id;
+		return static::$_instance;
 	}
 	/**
 	 * 构造函数，自动连接
@@ -36,19 +40,20 @@ class YRedis {
 		if (!class_exists('Redis', FALSE)) {
 			throw new SYException('Class "Redis" is required', '10022');
 		}
-		if (isset(Sy::$app['redis'])) {
+		if (isset(Sy::$app['redis']) && static::$current === 'default') {
 			$this->setParam(Sy::$app['redis']);
 		}
 	}
 	/**
 	 * 连接到Redis
-	 * @access private
+	 * @access protected
 	 */
-	private function connect() {
-		$this->link = new Redis;
-		$this->link->connect($this->dbInfo['host'], $this->dbInfo['port']);
-		if (!empty($this->dbInfo['password'])) {
-			$this->link->auth($this->dbInfo['password']);
+	protected function connect() {
+		$id = static::$current;
+		$this->link[$id] = new Redis;
+		$this->link[$id]->connect($this->dbInfo[$id]['host'], $this->dbInfo['port']);
+		if (!empty($this->dbInfo[$id]['password'])) {
+			$this->link[$id]->auth($this->dbInfo['password']);
 		}
 	}
 	/**
@@ -57,29 +62,28 @@ class YRedis {
 	 * @param array $param Redis服务器参数
 	 */
 	public function setParam($param) {
-		$this->dbInfo = $param;
-		$this->link = NULL;
+		$id = static::$current;
+		$this->dbInfo[$id] = $param;
+		$this->link[$id] = NULL;
 		$this->connect();
 	}
 	/**
 	 * 处理Key
-	 * @access private
-	 * @param string $sql
+	 * @access protected
+	 * @param string $k
 	 * @return string
 	 */
-	private function setQuery($key) {
-		if (substr($key, 0, 5) === '@root/') {
-			return substr($key, 5);
-		} else {
-			return $this->dbInfo['prefix'] . $key;
-		}
+	protected function setQuery($k) {
+		$id = static::$current;
+		return str_replace('#@__', $this->dbInfo[$id]['prefix'], $k);
 	}
 	/**
 	 * 使用魔术方法，调用phpredis的方法
 	 */
 	public function __call($name, $args) {
-		if (!method_exists($this->link, $name)) {
-			throw new Exception("Method '$name' not exists");
+		$id = static::$current;
+		if (!method_exists($this->link[$id], $name)) {
+			throw new SYException("Method '$name' not exists");
 		}
 		$name_lower = strtolower($name);
 		if (in_array($name_lower, ['mget', 'getmultiple', 'sdiff', 'sinter', 'sunion'], TRUE)) {
@@ -125,11 +129,11 @@ class YRedis {
 			}
 		}
 		//对事务的支持
-		if ($this->transaction === NULL) {
-			$r = call_user_func_array([$this->link, $name], $args);
+		if ($this->transaction[$id] === NULL) {
+			$r = call_user_func_array([$this->link[$id], $name], $args);
 			return $r;
 		} else {
-			$this->transaction = call_user_func_array([$this->transaction, $name], $args);
+			$this->transaction[$id] = call_user_func_array([$this->transaction[$id], $name], $args);
 		}
 	}
 	/**
@@ -137,15 +141,17 @@ class YRedis {
 	 * @access public
 	 */
 	public function beginTransaction() {
-		$this->transaction = $this->link->mulit();
+		$id = static::$current;
+		$this->transaction[$id] = $this->link[$id]->mulit();
 	}
 	/**
 	 * 事务：提交
 	 * @access public
 	 */
 	public function commit() {
-		$r = $this->transaction->exec();
-		$this->transaction = NULL;
+		$id = static::$current;
+		$r = $this->transaction[$id]->exec();
+		$this->transaction[$id] = NULL;
 		return $r;
 	}
 	/**
@@ -153,8 +159,10 @@ class YRedis {
 	 * @access public
 	 */
 	public function __destruct() {
-		if ($this->link !== NULL) {
-			@$this->link->close();
+		foreach ($this->link as $link) {
+			if (method_exists($link, 'close')) {
+				@$link->close();
+			}
 		}
 	}
 }

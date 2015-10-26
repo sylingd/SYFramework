@@ -35,17 +35,18 @@ class YSqlite extends YPdo {
 	 * @access protected
 	 */
 	protected function connect() {
+		$id = static::$current;
 		//对老版本的支持
-		if ($this->dbInfo['version'] === 'sqlite3') {
+		if ($this->dbInfo[$id]['version'] === 'sqlite3') {
 			$dsn = 'sqlite:';
 		} else {
 			$dsn = 'sqlite2:';
 		}
-		$path = str_replace('@app/', Sy::$appDir, $this->dbInfo['path']);
+		$path = str_replace('@app/', Sy::$appDir, $this->dbInfo[$id]['path']);
 		$dsn .= $path;
 		try {
-			$this->link = new PDO($dsn);
-			$this->result = array();
+			$this->link[$id] = new PDO($dsn);
+			$this->result[$id] = [];
 		} catch (PDOException $e) {
 			throw new SYDBException(YHtml::encode($e->getMessage), $this->dbtype, $dsn);
 		}
@@ -57,13 +58,13 @@ class YSqlite extends YPdo {
 	 * @param array $data 参数
 	 * @return array
 	 */
-	public function getOne($sql, $data = NULL, $id = 'default') {
+	public function getOne($sql, $data = NULL) {
 		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
 			$sql .= ' LIMIT 0,1';
 		}
-		$this->query('one', $sql, $data, $id = 'default');
-		$r = $this->getArray('one', $id);
-		$this->free('one', $id);
+		$this->query('one', $sql, $data);
+		$r = $this->getArray('one');
+		$this->free('one');
 		return $r;
 	}
 }

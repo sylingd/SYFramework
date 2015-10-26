@@ -34,7 +34,8 @@ class YMysql extends YPdo {
 	 * 连接到MySQL
 	 * @access protected
 	 */
-	protected function connect($id = 'default') {
+	protected function connect() {
+		$id = static::$current;
 		$config = $this->dbInfo[$id];
 		$dsn = 'mysql:host=' . $config['host'] . ';port=' . $config['port'] . ';';
 		if (isset($config['name'])) {
@@ -57,20 +58,21 @@ class YMysql extends YPdo {
 	 * @param array $data 参数
 	 * @return array
 	 */
-	public function getOne($sql, $data = NULL, $id = 'default') {
+	public function getOne($sql, $data = NULL) {
 		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
 			$sql .= ' LIMIT 0,1';
 		}
-		$this->query('one', $sql, $data, $id);
-		$r = $this->getArray('one', $id);
-		$this->free('one', $id);
+		$this->query('one', $sql, $data);
+		$r = $this->getArray('one');
+		$this->free('one');
 		return $r;
 	}
 	/**
 	 * 事务：开始
 	 * @access public
 	 */
-	public function beginTransaction($id = 'default') {
+	public function beginTransaction() {
+		$id = static::$current;
 		$this->link[$id]->beginTransaction();
 	}
 	/**
@@ -78,21 +80,24 @@ class YMysql extends YPdo {
 	 * @access public
 	 * @param string $sql
 	 */
-	public function addOne($sql, $id = 'default') {
+	public function addOne($sql) {
+		$id = static::$current;
 		$this->link[$id]->exec($this->setQuery($sql));
 	}
 	/**
 	 * 事务：提交
 	 * @access public
 	 */
-	public function commit($id = 'default') {
+	public function commit() {
+		$id = static::$current;
 		$this->link[$id]->commit();
 	}
 	/**
 	 * 事务：回滚
 	 * @access public
 	 */
-	public function rollback($id = 'default') {
+	public function rollback() {
+		$id = static::$current;
 		$this->link[$id]->rollBack();
 	}
 }
