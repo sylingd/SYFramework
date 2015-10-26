@@ -11,8 +11,8 @@
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
-namespace sy\lib;
-use Sy;
+namespace sy\lib\db;
+use \Sy;
 use \PDO;
 use \sy\base\YPdo;
 use \sy\lib\YHtml;
@@ -36,18 +36,17 @@ class YSqlite extends YPdo {
 	 */
 	protected function connect() {
 		//对老版本的支持
-		if ($this->connect_info['version'] === 'sqlite3') {
+		if ($this->dbInfo['version'] === 'sqlite3') {
 			$dsn = 'sqlite:';
 		} else {
 			$dsn = 'sqlite2:';
 		}
-		$path = str_replace('@app/', Sy::$appDir, $this->connect_info['path']);
+		$path = str_replace('@app/', Sy::$appDir, $this->dbInfo['path']);
 		$dsn .= $path;
 		try {
 			$this->link = new PDO($dsn);
 			$this->result = array();
-		}
-		catch (PDOException $e) {
+		} catch (PDOException $e) {
 			throw new SYDBException(YHtml::encode($e->getMessage), $this->dbtype, $dsn);
 		}
 	}
@@ -58,13 +57,13 @@ class YSqlite extends YPdo {
 	 * @param array $data 参数
 	 * @return array
 	 */
-	public function getOne($sql, $data = NULL) {
+	public function getOne($sql, $data = NULL, $id = 'default') {
 		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
 			$sql .= ' LIMIT 0,1';
 		}
-		$this->query('one', $sql, $data);
-		$r = $this->getArray('one');
-		$this->free('one');
+		$this->query('one', $sql, $data, $id = 'default');
+		$r = $this->getArray('one', $id);
+		$this->free('one', $id);
 		return $r;
 	}
 }

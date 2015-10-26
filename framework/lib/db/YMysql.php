@@ -11,8 +11,8 @@
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
-namespace sy\lib;
-use Sy;
+namespace sy\lib\db;
+use \Sy;
 use \PDO;
 use \sy\base\YPdo;
 use \sy\lib\YHtml;
@@ -34,61 +34,65 @@ class YMysql extends YPdo {
 	 * 连接到MySQL
 	 * @access protected
 	 */
-	protected function connect() {
-		$dsn = 'mysql:host=' . $this->connect_info['host'] . ';port=' . $this->connect_info['port'] . ';dbname=' . $this->connect_info['name'] . ';charset=' . strtolower(str_replace('-', '', Sy::$app['charset']));
-		try {
-			$this->link = new PDO($dsn, $this->connect_info['user'], $this->connect_info['password']);
-			$this->link->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
-			$this->result = array();
+	protected function connect($id = 'default') {
+		$config = $this->dbInfo[$id];
+		$dsn = 'mysql:host=' . $config['host'] . ';port=' . $config['port'] . ';';
+		if (isset($config['name'])) {
+			$dsn .= 'dbname=' . $config['name'] . ';';
 		}
-		catch (PDOException $e) {
+		$dsn .= 'charset=' . strtolower(str_replace('-', '', Sy::$app['charset']));
+		try {
+			$this->link[$id] = new PDO($dsn, $config['user'], $config['password']);
+			$this->link[$id]->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
+			$this->result[$id] = [];
+		} catch (PDOException $e) {
 			throw new SYDBException(YHtml::encode($e->getMessage), 2, $dsn);
 		}
 	}
 	/**
 	 * 查询并返回一条结果
-	 * @see YPod::getOne
+	 * @see YPdo::getOne
 	 * @access public
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
 	 * @return array
 	 */
-	public function getOne($sql, $data = NULL) {
+	public function getOne($sql, $data = NULL, $id = 'default') {
 		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
 			$sql .= ' LIMIT 0,1';
 		}
-		$this->query('one', $sql, $data);
-		$r = $this->getArray('one');
-		$this->free('one');
+		$this->query('one', $sql, $data, $id);
+		$r = $this->getArray('one', $id);
+		$this->free('one', $id);
 		return $r;
 	}
 	/**
 	 * 事务：开始
 	 * @access public
 	 */
-	public function beginTransaction() {
-		$this->link->beginTransaction();
+	public function beginTransaction($id = 'default') {
+		$this->link[$id]->beginTransaction();
 	}
 	/**
 	 * 事务：添加一句
 	 * @access public
 	 * @param string $sql
 	 */
-	public function addOne($sql) {
-		$this->link->exec($this->setQuery($aql));
+	public function addOne($sql, $id = 'default') {
+		$this->link[$id]->exec($this->setQuery($sql));
 	}
 	/**
 	 * 事务：提交
 	 * @access public
 	 */
-	public function commit() {
-		$this->link->commit();
+	public function commit($id = 'default') {
+		$this->link[$id]->commit();
 	}
 	/**
 	 * 事务：回滚
 	 * @access public
 	 */
-	public function rollback() {
-		$this->link->rollBack();
+	public function rollback($id = 'default') {
+		$this->link[$id]->rollBack();
 	}
 }

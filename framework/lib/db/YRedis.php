@@ -11,15 +11,15 @@
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
-namespace sy\lib;
-use Sy;
+namespace sy\lib\db;
+use \Sy;
 use \Redis;
 use \sy\base\SYException;
 use \sy\base\SYDBException;
 
 class YRedis {
 	private $link = NULL;
-	private $connect_info = NULL;
+	private $dbInfo = NULL;
 	private $transaction = NULL;
 	static $_instance = NULL;
 	static public function _i() {
@@ -46,9 +46,9 @@ class YRedis {
 	 */
 	private function connect() {
 		$this->link = new Redis;
-		$this->link->connect($this->connect_info['host'], $this->connect_info['port']);
-		if (!empty($this->connect_info['password'])) {
-			$this->link->auth($this->connect_info['password']);
+		$this->link->connect($this->dbInfo['host'], $this->dbInfo['port']);
+		if (!empty($this->dbInfo['password'])) {
+			$this->link->auth($this->dbInfo['password']);
 		}
 	}
 	/**
@@ -57,7 +57,7 @@ class YRedis {
 	 * @param array $param Redis服务器参数
 	 */
 	public function setParam($param) {
-		$this->connect_info = $param;
+		$this->dbInfo = $param;
 		$this->link = NULL;
 		$this->connect();
 	}
@@ -71,7 +71,7 @@ class YRedis {
 		if (substr($key, 0, 5) === '@root/') {
 			return substr($key, 5);
 		} else {
-			return $this->connect_info['prefix'] . $key;
+			return $this->dbInfo['prefix'] . $key;
 		}
 	}
 	/**
@@ -81,17 +81,18 @@ class YRedis {
 		if (!method_exists($this->link, $name)) {
 			throw new Exception("Method '$name' not exists");
 		}
-		if (in_array($name, ['mGet', 'getMultiple', 'sDiff', 'sInter', 'sUnion'], TRUE)) {
+		$name_lower = strtolower($name);
+		if (in_array($name_lower, ['mget', 'getmultiple', 'sdiff', 'sinter', 'sunion'], TRUE)) {
 			//均为Key的，如mGet
 			foreach ($args as $k => $v) {
 				$args[$k] = $this->setQuery($v);
 			}
-		} elseif (!in_array($name, ['mSet', 'mSetNX', 'migrate', 'sDiffStore', 'sInterStore', 'sMove', 'rename', 'renameKey', 'renameNx'], TRUE)) { //不属于特殊处理的
+		} elseif (!in_array($name_lower, ['mset', 'msetnx', 'migrate', 'sdiffstore', 'sinterstore', 'smove', 'rename', 'renamekey', 'renamenx'], TRUE)) { //不属于特殊处理的
 			$args[0] = $this->setQuery($args[0]);
 		} else { //特殊处理
-			switch ($name) {
-				case 'mSet':
-				case 'mSetNX':
+			switch ($name_lower) {
+				case 'mset':
+				case 'msetnx':
 					$keys = $args[0];
 					$new_keys = [];
 					foreach ($keys as $k => $v) {
@@ -104,9 +105,9 @@ class YRedis {
 				case 'migrate':
 					$args[2] = $this->setQuery($args[2]);
 					break;
-				case 'sDiffStore':
-				case 'sInterStore':
-				case 'sUnionStore':
+				case 'sdiffstore':
+				case 'sinterstore':
+				case 'sunionstore':
 					foreach ($args as $k => $v) {
 						if ($k === 0) {
 							continue;
@@ -115,9 +116,9 @@ class YRedis {
 					}
 					break;
 				case 'rename':
-				case 'renameKey':
-				case 'renameNx':
-				case 'sMove':
+				case 'renamekey':
+				case 'renamenx':
+				case 'smove':
 					$args[0] = $this->setQuery($args[0]);
 					$args[1] = $this->setQuery($args[1]);
 					break;

@@ -13,21 +13,21 @@
  */
 
 namespace sy\base;
-use Sy;
+use \Sy;
 use \PDO;
 use \sy\base\SYException;
 use \sy\lib\YHtml;
 
 abstract class YPdo {
-	protected $link = NULL;
-	protected $connect_info = NULL;
-	protected $result;
-	static $_instance = NULL;
-	static public function _i() {
-		if (static::$_instance === NULL) {
-			static::$_instance = new static;
+	protected $link = [];
+	protected $dbInfo = [];
+	protected $result = [];
+	static $_instance = [];
+	static public function _i($id = 'default') {
+		if (!isset(static::$_instance[$id])) {
+			static::$_instance[$id] = new static;
 		}
-		return static::$_instance;
+		return static::$_instance[$id];
 	}
 	/**
 	 * 抽象函数：自动连接
@@ -44,9 +44,10 @@ abstract class YPdo {
 	 * @access public
 	 * @param string $sql
 	 * @param array $data
+	 * @param string $id 连接ID
 	 * @return array
 	 */
-	abstract public function getOne($sql, $data);
+	abstract public function getOne($sql, $data, $id = 'default');
 	/**
 	 * 构造函数，自动连接
 	 * @access public
@@ -61,11 +62,12 @@ abstract class YPdo {
 	 * 设置Server
 	 * @access public
 	 * @param array $param MySQL服务器参数
+	 * @param string $id
 	 */
-	public function setParam($param) {
-		$this->connect_info = $param;
-		$this->link = NULL;
-		$this->connect();
+	public function setParam($param, $id = 'default') {
+		$this->dbInfo[$id] = $param;
+		$this->link[$id] = NULL;
+		$this->connect($id);
 	}
 	/**
 	 * 处理Key
@@ -73,17 +75,18 @@ abstract class YPdo {
 	 * @param string $sql
 	 * @return string
 	 */
-	protected function setQuery($sql) {
-		return str_replace('#@__', $this->connect_info['prefix'], $sql);
+	protected function setQuery($sql, $id = 'default') {
+		return str_replace('#@__', $this->dbInfo[$id]['prefix'], $sql);
 	}
 	/**
 	 * 获取所有结果
 	 * @access public
 	 * @param string $key
+	 * @param string $id
 	 * @return array
 	 */
-	public function getAll($key) {
-		$rs = $this->result[$key];
+	public function getAll($key, $id = 'default') {
+		$rs = $this->result[$id][$key];
 		$rs->setFetchMode(PDO::FETCH_ASSOC);
 		$rs = $rs->fetchAll();
 		return $rs;
@@ -92,29 +95,32 @@ abstract class YPdo {
 	 * 释放结果
 	 * @access public
 	 * @param string $key
+	 * @param string $id
 	 */
-	public function free($key) {
-		$this->result[$key] = NULL;
+	public function free($key, $id = 'default') {
+		$this->result[$id][$key] = NULL;
 	}
 	/**
 	 * 获取最后产生的ID
 	 * @access public
+	 * @param string $id
 	 * @return int
 	 */
-	public function getLastId() {
-		return intval($this->link->lastInsertId());
+	public function getLastId($id = 'default') {
+		return intval($this->link[$id]->lastInsertId());
 	}
 	/**
 	 * 获取一个结果
 	 * @access public
 	 * @param string $key
+	 * @param string $id
 	 * @return mixed
 	 */
-	public function getArray($key) {
-		if (!isset($this->result[$key]) || empty($this->result[$key])) {
+	public function getArray($key, $id = 'default') {
+		if (!isset($this->result[$id][$key]) || empty($this->result[$id][$key])) {
 			return NULL;
 		}
-		$rs = $this->result[$key];
+		$rs = $this->result[$id][$key];
 		$rs->setFetchMode(PDO::FETCH_ASSOC);
 		$rs = $rs->fetch();
 		return $rs;
@@ -125,9 +131,10 @@ abstract class YPdo {
 	 * @param string $key
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
+	 * @param string $id
 	 */
-	public function query($key, $sql, $data = NULL) {
-		$prepare_sql = $this->setQuery($sql);
+	public function query($key, $sql, $data = NULL, $id = 'default') {
+		$prepare_sql = $this->setQuery($sql, $id);
 		$st = $this->link->prepare($prepare_sql);
 		if ($st === FALSE) {
 			throw new SYDBException('Failed to prepare SQL', $this->dbtype, $sql);
@@ -142,10 +149,11 @@ abstract class YPdo {
 			if ($r === FALSE) {
 				throw new SYDBException(YHtml::encode($st->errorInfo()), $this->dbtype, $sql);
 			}
-		}
-		catch (PDOException $e) {
+		} catch (PDOException $e) {
 			throw new SYDBException(YHtml::encode($e->getMessage()), $this->dbtype, $sql);
 		}
-		$this->result[$key] = $st;
+		if (!empty($key)) {
+			$this->result[$id][$key] = $st;
+		}
 	}
 }
