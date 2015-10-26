@@ -37,8 +37,9 @@ abstract class YPdo {
 	/**
 	 * 抽象函数：连接
 	 * @access protected
+	 * @param string $id
 	 */
-	abstract protected function connect();
+	abstract protected function connect($id = 'default');
 	/**
 	 * 抽象函数：获取一个结果
 	 * @access public
