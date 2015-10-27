@@ -6,7 +6,7 @@
 
 # 环境需求
 
-* php 5.4及以上 非安全模式
+* php 5.4及以上 非安全模式（PS.部分组件在安全模式下仍可运行，但并不意味着框架兼容安全模式）
 
 * 部分组件需要curl库，数量可能较多，不一一列举
 
@@ -14,13 +14,15 @@
 
 **以下列表中，只有你需要使用相关功能时，才必须安装**
 
-* lib\YMysqli MySQLi扩展
+* lib\db\YMysqli MySQLi扩展
 
-* lib\YMysql PDO扩展和PDO_MySQL驱动
+* lib\db\YMysql PDO扩展和PDO_MySQL驱动
 
-* lib\YSqlite PDO扩展和PDO_SQLite驱动
+* lib\db\YSqlite PDO扩展和PDO_SQLite驱动
 
-* lib\YRedis [phpredis](https://github.com/phpredis/phpredis)
+* lib\db\YRedis [phpredis](https://github.com/phpredis/phpredis)
+
+* lib\db\YMongo MongoDB驱动
 
 * tool\YCaptcha GD库
 
@@ -30,7 +32,7 @@
 
 * Bug反馈/建议/问题咨询请提交issue
 
-* 本框架自带一示例应用，内容其实就是文档
+* 本框架自带一示例应用，内容其实是文档
 
 # 鸣谢
 
