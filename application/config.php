@@ -66,6 +66,14 @@ return [
 		'password' => '',
 		'prefix' => 'pre_'
 	],
+	//MongoDB支持
+	'mongo' => [
+		'host' => '127.0.0.1',
+		'port' => '6379',
+		'user' => '',
+		'password' => '',
+		'prefix' => 'pre_'
+	],
 	//MySQL支持
 	'mysql' => [
 		'host' => '127.0.0.1',
