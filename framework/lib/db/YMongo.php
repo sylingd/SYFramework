@@ -141,6 +141,7 @@ class YMongo {
 		} catch (Exception $e) {
 			throw new SYDBException($e->getMessage(), $this->dbtype, 'SELECT Collection ' . $collection);
 		}
+		return $this;
 	}
 	/**
 	 * 执行查询
@@ -177,7 +178,7 @@ class YMongo {
 	 */
 	public function __call($method, $args) {
 		$id = static::$current;
-		if (isset($this->collectionObject[$id]) && is_object($this->collectionObject[$id]) && method_exists($this->collectionObject[$id], $method) {
+		if (isset($this->collectionObject[$id]) && is_object($this->collectionObject[$id]) && method_exists($this->collectionObject[$id], $method)) {
 			//collection
 			return $this->executeCommand($method, $args);
 		} elseif ((isset($this->dbObject[$id]) && is_object($this->dbObject[$id]) && method_exists($this->dbObject[$id]))) {

@@ -17,12 +17,10 @@ use \sy\base\SYException;
 //将系统异常封装为自有异常
 set_exception_handler(function ($e) {
 	@header('Content-Type:text/html; charset=utf-8');
-	if ($e instanceof SYException) {
-		echo $e;
-	} else {
+	if (!($e instanceof SYException)) {
 		$e = new SYException($e->getMessage(), '10000');
-		echo $e;
 	}
+	echo $e->getHtml();
 	exit;
 });
 
