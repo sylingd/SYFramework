@@ -153,7 +153,7 @@ class YMongo {
 	protected function executeCommand($method, $param = []) {
 		$id = static::$current;
 		try {
-			$r = call_user_func([$this->collectionObject[$id], $method], $param);
+			$r = call_user_func_array([$this->collectionObject[$id], $method], $param);
 		} catch (Exception $e) {
 			$this->lastError[$id] = [
 				'message' => $e->getMessage(),
@@ -186,17 +186,17 @@ class YMongo {
 			if ($method === 'dropCollection') {
 				return $this->select($args[0])->drop();
 			} else {
-				return call_user_func([$this->dbObject[$id], $method], $args);
+				return call_user_func_array([$this->dbObject[$id], $method], $args);
 			}
 		} elseif (isset($this->linkDB[$id]) && method_exists($this->linkDB[$id])) {
 			//默认db
 			if ($method === 'dropCollection') {
 				return $this->select($args[0])->drop();
 			} else {
-				return call_user_func([$this->linkDB[$id], $method], $args);
+				return call_user_func_array([$this->linkDB[$id], $method], $args);
 			}
 		} elseif (method_exists($this->link[$id], $method)) {
-			return call_user_func([$this->link[$id], $method], $args);
+			return call_user_func_array([$this->link[$id], $method], $args);
 		} else {
 			throw new SYDBException("Method '$method' not extsts", $this->dbtype, '');
 		}
