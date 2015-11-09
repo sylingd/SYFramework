@@ -13,7 +13,21 @@
 
 namespace sy\lib\db;
 use \Sy;
+//MongoDB主类
 use \MongoClient;
+//MongoDB异常
+use \MongoException;
+use \MongoResultException;
+use \MongoCursorException;
+use \MongoCursorTimeoutException;
+use \MongoConnectionException;
+use \MongoGridFSException;
+use \MongoDuplicateKeyException;
+use \MongoProtocolException;
+use \MongoExecutionTimeoutException;
+use \MongoWriteConcernException;
+//其他异常
+use \Exception;
 use \sy\base\SYException;
 use \sy\base\SYDBException;
 
