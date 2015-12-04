@@ -4,6 +4,8 @@
 
 此项目基于[Apache License 2.0](http://opensource.org/licenses/Apache-2.0)开源
 
+**extensions为特别定制功能（例如微信），根据需求拷贝相应目录到framework/tool下即可使用（部分开源协议可能有所不同，使用时请注意）**
+
 # 环境需求
 
 * php 5.4及以上 非安全模式（PS.部分组件在安全模式下仍可运行，但并不意味着框架兼容安全模式）
