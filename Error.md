@@ -27,3 +27,7 @@
 * 10040 无法连接到FTP服务器 tool/YFtp.php
 
 * 10041 无法登录到FTP服务器 tool/YFtp.php
+
+* 10050 需要CURL扩展 lib/YFetchURL.php
+
+* 10051 CURL返回错误 lib/YFetchURL.php

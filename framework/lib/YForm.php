@@ -12,7 +12,7 @@
  */
 
 namespace sy\lib;
-use Sy;
+use \Sy;
 
 class YForm {
 	public static $validString = NULL;
