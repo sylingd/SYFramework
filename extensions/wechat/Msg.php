@@ -9,7 +9,7 @@
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
-namespace Sy\tool\wechat;
+namespace sy\tool\wechat;
 
 class Msg {
 	/**
@@ -23,8 +23,8 @@ class Msg {
 		if (!empty($errorMsg)) {
 			$returnMsg['custom_msg'] = $errorMsg;
 		}
-        $returnMsg['custom_msg'] = '出错啦！'.$returnMsg['custom_msg'];
-        exit($returnMsg['custom_msg']);
+		$returnMsg['custom_msg'] = '出错啦！'.$returnMsg['custom_msg'];
+		exit($returnMsg['custom_msg']);
 	}
 }
 ?>

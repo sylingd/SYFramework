@@ -11,7 +11,7 @@
  * 2.第三方收到公众平台发送的消息，验证消息的安全性，并对消息进行解密。
  */
 
-namespace Sy\tool\wechat\aes;
+namespace sy\tool\wechat\aes;
 
 class WXBizMsgCrypt
 {
@@ -35,16 +35,16 @@ class WXBizMsgCrypt
 	/**
 	 * 将公众平台回复用户的消息加密打包.
 	 * <ol>
-	 *    <li>对要发送的消息进行AES-CBC加密</li>
-	 *    <li>生成安全签名</li>
-	 *    <li>将消息密文和安全签名打包成xml格式</li>
+	 *	<li>对要发送的消息进行AES-CBC加密</li>
+	 *	<li>生成安全签名</li>
+	 *	<li>将消息密文和安全签名打包成xml格式</li>
 	 * </ol>
 	 *
 	 * @param $replyMsg string 公众平台待回复用户的消息，xml格式的字符串
 	 * @param $timeStamp string 时间戳，可以自己生成，也可以用URL参数的timestamp
 	 * @param $nonce string 随机串，可以自己生成，也可以用URL参数的nonce
 	 * @param &$encryptMsg string 加密后的可以直接回复用户的密文，包括msg_signature, timestamp, nonce, encrypt的xml格式的字符串,
-	 *                      当return返回0时有效
+	 *					  当return返回0时有效
 	 *
 	 * @return int 成功0，失败返回对应的错误码
 	 */
@@ -83,9 +83,9 @@ class WXBizMsgCrypt
 	/**
 	 * 检验消息的真实性，并且获取解密后的明文.
 	 * <ol>
-	 *    <li>利用收到的密文生成安全签名，进行签名验证</li>
-	 *    <li>若验证通过，则提取xml中的加密消息</li>
-	 *    <li>对消息进行解密</li>
+	 *	<li>利用收到的密文生成安全签名，进行签名验证</li>
+	 *	<li>若验证通过，则提取xml中的加密消息</li>
+	 *	<li>对消息进行解密</li>
 	 * </ol>
 	 *
 	 * @param $msgSignature string 签名串，对应URL参数的msg_signature
@@ -106,7 +106,7 @@ class WXBizMsgCrypt
 
 		//提取密文
 		$xmlparse = new XMLParse;
-        $array = $xmlparse->extract($postData);
+		$array = $xmlparse->extract($postData);
 		$ret = $array[0];
 		if ($ret != 0) {
 			return $ret;

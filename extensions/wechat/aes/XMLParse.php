@@ -5,7 +5,7 @@
  * 提供提取消息格式中的密文及生成回复消息格式的接口.
  */
 
-namespace Sy\tool\wechat\Aes;
+namespace sy\tool\wechat\Aes;
 
 class XMLParse
 {

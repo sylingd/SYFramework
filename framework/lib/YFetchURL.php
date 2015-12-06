@@ -35,7 +35,7 @@ class YFetchURL {
 			throw new SYException('Extension "curl" is required', '10050');
 		}
 		$this->init();
-		$this->opt = array_merge($this->defaultOpt, $opt);
+		$this->opt = array_merge($this->defaultOpt, array_change_key_case($opt, CASE_LOWER));
 	}
 	protected function init() {
 		if ($this->connectMethod === 'curl') {

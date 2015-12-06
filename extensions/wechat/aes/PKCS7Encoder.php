@@ -6,7 +6,7 @@
  * 提供基于PKCS7算法的加解密接口.
  */
 
-namespace Sy\tool\wechat\aes;
+namespace sy\tool\wechat\aes;
 
 class PKCS7Encoder
 {

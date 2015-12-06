@@ -5,7 +5,7 @@
  * 计算公众平台的消息签名接口.
  */
 
-namespace Sy\tool\wechat\Aes;
+namespace sy\tool\wechat\Aes;
 
 class SHA1
 {

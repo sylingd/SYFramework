@@ -12,15 +12,15 @@
 	$tousername = "用户和公众号兑换的OpenId";
 	$mediaId = "通过上传多媒体文件，得到的id。";
 	//发送文本内容
-	\Sy\tool\wechat\ResponseInitiative::text($tousername, '文本消息内容');
+	\sy\tool\wechat\ResponseInitiative::text($tousername, '文本消息内容');
 	//发送图片
-	\Sy\tool\wechat\ResponseInitiative::image($tousername, $mediaId);
+	\sy\tool\wechat\ResponseInitiative::image($tousername, $mediaId);
 	//发送语音
-	\Sy\tool\wechat\ResponseInitiative::voice($tousername, $mediaId);
+	\sy\tool\wechat\ResponseInitiative::voice($tousername, $mediaId);
 	//发送视频
-	\Sy\tool\wechat\ResponseInitiative::video($tousername, $mediaId, '视频描述', '视频标题');
+	\sy\tool\wechat\ResponseInitiative::video($tousername, $mediaId, '视频描述', '视频标题');
 	//发送地理位置
-	\Sy\tool\wechat\ResponseInitiative::music($tousername, '音乐标题', '音乐描述', '音乐链接', '高质量音乐链接，WIFI环境优先使用该链接播放音乐', '缩略图的媒体id，通过上传多媒体文件，得到的id');
+	\sy\tool\wechat\ResponseInitiative::music($tousername, '音乐标题', '音乐描述', '音乐链接', '高质量音乐链接，WIFI环境优先使用该链接播放音乐', '缩略图的媒体id，通过上传多媒体文件，得到的id');
 	//发送图文消息
 	//创建图文消息内容
 	$tuwenList[] = array('title'=>'标题1', 'description'=>'描述1', 'pic_url'=>'图片URL1', 'url'=>'点击跳转URL1');
@@ -28,9 +28,9 @@
 	//构建图文消息格式
 	$itemList = array();
 	foreach ($tuwenList as $tuwen) {
-		$itemList[] = \Sy\tool\wechat\ResponseInitiative::newsItem($tuwen['title'], $tuwen['description'], $tuwen['pic_url'], $tuwen['url']);
+		$itemList[] = \sy\tool\wechat\ResponseInitiative::newsItem($tuwen['title'], $tuwen['description'], $tuwen['pic_url'], $tuwen['url']);
 	}
-	\Sy\tool\wechat\ResponseInitiative::news($tousername, $itemList);
+	\sy\tool\wechat\ResponseInitiative::news($tousername, $itemList);
 
 ### 被动发送消息（回复消息）
 
@@ -39,15 +39,15 @@
 	$tousername = "你的公众号Id";
 	$mediaId = "通过上传多媒体文件，得到的id。";
 	//发送文本
-	\Sy\tool\wechat\ResponsePassive::text($fromusername, $tousername, '文本消息内容');
+	\sy\tool\wechat\ResponsePassive::text($fromusername, $tousername, '文本消息内容');
 	//发送图片
-	\Sy\tool\wechat\ResponsePassive::image($fromusername, $tousername, $mediaId);
+	\sy\tool\wechat\ResponsePassive::image($fromusername, $tousername, $mediaId);
 	//发送语音
-	\Sy\tool\wechat\ResponsePassive::voice($fromusername, $tousername, $mediaId);
+	\sy\tool\wechat\ResponsePassive::voice($fromusername, $tousername, $mediaId);
 	//发送视频
-	\Sy\tool\wechat\ResponsePassive::video($fromusername, $tousername, $mediaId, '视频标题', '视频描述');
+	\sy\tool\wechat\ResponsePassive::video($fromusername, $tousername, $mediaId, '视频标题', '视频描述');
 	//发送音乐
-	\Sy\tool\wechat\ResponsePassive::music($fromusername, $tousername, '音乐标题', '音乐描述', '音乐链接', '高质量音乐链接，WIFI环境优先使用该链接播放音乐', '缩略图的媒体id，通过上传多媒体文件，得到的id');
+	\sy\tool\wechat\ResponsePassive::music($fromusername, $tousername, '音乐标题', '音乐描述', '音乐链接', '高质量音乐链接，WIFI环境优先使用该链接播放音乐', '缩略图的媒体id，通过上传多媒体文件，得到的id');
 	//发送图文
 	//创建图文消息内容
 	$tuwenList[] = array('title'=>'标题1', 'description'=>'描述1', 'pic_url'=>'图片URL1', 'url'=>'点击跳转URL1');
@@ -55,35 +55,35 @@
 	//构建图文消息格式
 	$itemList = array();
 	foreach($tuwenList as $tuwen){
-		$itemList[] = \Sy\tool\wechat\ResponsePassive::newsItem($tuwen['title'], $tuwen['description'], $tuwen['pic_url'], $tuwen['url']);
+		$itemList[] = \sy\tool\wechat\ResponsePassive::newsItem($tuwen['title'], $tuwen['description'], $tuwen['pic_url'], $tuwen['url']);
 	}
-	\Sy\tool\wechat\ResponsePassive::news($fromusername, $tousername, $itemList);
+	\sy\tool\wechat\ResponsePassive::news($fromusername, $tousername, $itemList);
 	//将消息转发到多客服
-	\Sy\tool\wechat\ResponsePassive::forwardToCustomService($fromusername, $tousername);
+	\sy\tool\wechat\ResponsePassive::forwardToCustomService($fromusername, $tousername);
 
 ### 用户管理
 
 	$openId = '用户和微信公众号的唯一ID';
 	//----分组管理----
 	//创建分组
-	\Sy\tool\wechat\UserManage::createGroup('分组名');
+	\sy\tool\wechat\UserManage::createGroup('分组名');
 	//获取分组列表
-	\Sy\tool\wechat\UserManage::getGroupList();
+	\sy\tool\wechat\UserManage::getGroupList();
 	//查询用户所在分组
-	\Sy\tool\wechat\UserManage::getGroupByOpenId($openId);
+	\sy\tool\wechat\UserManage::getGroupByOpenId($openId);
 	//修改分组名
-	\Sy\tool\wechat\UserManage::editGroupName('分组Id', '新的组名');
+	\sy\tool\wechat\UserManage::editGroupName('分组Id', '新的组名');
 	//移动用户分组
-	\Sy\tool\wechat\UserManage::editUserGroup($openId, '新的分组ID');
+	\sy\tool\wechat\UserManage::editUserGroup($openId, '新的分组ID');
 	//---用户管理----
 	//获取用户基本信息
-	\Sy\tool\wechat\UserManage::getUserInfo($openId);
+	\sy\tool\wechat\UserManage::getUserInfo($openId);
 	//获取关注者列表
-	\Sy\tool\wechat\UserManage::getFansList($next_openId='');
+	\sy\tool\wechat\UserManage::getFansList($next_openId='');
 	//修改粉丝的备注
-	\Sy\tool\wechat\UserManage::setRemark($openId, '新昵称');
+	\sy\tool\wechat\UserManage::setRemark($openId, '新昵称');
 	//获取网络状态
-	\Sy\tool\wechat\UserManage::getNetworkState();
+	\sy\tool\wechat\UserManage::getNetworkState();
 
 ### 网页授权
 
@@ -93,7 +93,7 @@
 	 * 将会跳转到redirect_uri/?code=CODE&state=STATE 通过GET方式获取code和state
 	 */
 	$redirect_uri = '获取CODE时，发送请求和参数给微信服务器，微信服务器会处理后将跳转到本参数指定的URL页面';
-	\Sy\tool\wechat\OAuth::getCode($redirect_uri, $state=1, $scope='snsapi_base');
+	\sy\tool\wechat\OAuth::getCode($redirect_uri, $state=1, $scope='snsapi_base');
 	/**
 	 * Description: 通过code换取网页授权access_token
 	 * 首先请注意，这里通过code换取的网页授权access_token,与基础支持中的access_token不同。
@@ -102,12 +102,12 @@
 	 * @param $code getCode()获取的code参数
 	 */
 	$code = $_GET['code'];
-	\Sy\tool\wechat\OAuth::getAccessTokenAndOpenId($code);
+	\sy\tool\wechat\OAuth::getAccessTokenAndOpenId($code);
 
 	//上传多媒体
-	\Sy\tool\wechat\Media::upload($filename, $type);
+	\sy\tool\wechat\Media::upload($filename, $type);
 	//下载多媒体
-	\Sy\tool\wechat\Media::download($mediaId);
+	\sy\tool\wechat\Media::download($mediaId);
 
 
 ### 自定义菜单
@@ -126,20 +126,20 @@
 		array('id'=>'10', 'pid'=>'7', 'name'=>'微信相册发图', 'type'=>'pic_weixin', 'code'=>'key_10'),
 		array('id'=>'11', 'pid'=>'1', 'name'=>'发送位置', 'type'=>'location_select', 'code'=>'key_11'),
 	);
-	\Sy\tool\wechat\Menu::setMenu($menuList);
+	\sy\tool\wechat\Menu::setMenu($menuList);
 	//获取菜单
-	\Sy\tool\wechat\Menu::getMenu();
+	\sy\tool\wechat\Menu::getMenu();
 	//删除菜单
-	\Sy\tool\wechat\Menu::delMenu();
+	\sy\tool\wechat\Menu::delMenu();
 
 
 ### 应用：给粉丝群发消息
 
 	//群发消息
 	//获取粉丝列表
-	$fansList = \Sy\tool\wechat\UserManage::getFansList();
+	$fansList = \sy\tool\wechat\UserManage::getFansList();
 	//上传图片
-	$menuId = \Sy\tool\wechat\Media::upload('/var/www/baidu_jgylogo3.jpg', 'image');
+	$menuId = \sy\tool\wechat\Media::upload('/var/www/baidu_jgylogo3.jpg', 'image');
 	if (empty($menuId['media_id'])) {
 		die('error');
 	}
@@ -148,9 +148,9 @@
 	$list[] = array('thumb_media_id'=>$menuId['media_id'] , 'author'=>'作者', 'title'=>'标题', 'content_source_url'=>'www.lanecn.com', 'digest'=>'摘要', 'show_cover_pic'=>'1');
 	$list[] = array('thumb_media_id'=>$menuId['media_id'] , 'author'=>'作者', 'title'=>'标题', 'content_source_url'=>'www.lanecn.com', 'digest'=>'摘要', 'show_cover_pic'=>'0');
 	$list[] = array('thumb_media_id'=>$menuId['media_id'] , 'author'=>'作者', 'title'=>'标题', 'content_source_url'=>'www.lanecn.com', 'digest'=>'摘要', 'show_cover_pic'=>'0');
-	$mediaId = \Sy\tool\wechat\AdvancedBroadcast::uploadNews($list);
+	$mediaId = \sy\tool\wechat\AdvancedBroadcast::uploadNews($list);
 	//给粉丝列表的用户群发图文消息
-	$result = \Sy\tool\wechat\AdvancedBroadcast::sentNewsByOpenId($fansList['data']['openid'], $mediaId);
+	$result = \sy\tool\wechat\AdvancedBroadcast::sentNewsByOpenId($fansList['data']['openid'], $mediaId);
 
 ### 加密解密示例
 
