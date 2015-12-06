@@ -10,6 +10,10 @@ namespace sy\tool\wechat;
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 class Config {
+	
+	//-------微信相关----------------------
+	const APPID = '';
+	const APPSECRET = '';
 
 	//-------系统错误相关--101 到200 ------
 	const ERROR_SYSTEM = 101; //系统错误

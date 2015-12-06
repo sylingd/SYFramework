@@ -18,19 +18,16 @@ class OAuth {
 	 * 将会跳转到redirect_uri/?code=CODE&state=STATE 通过GET方式获取code和state
 	 */
 	public static function getCode($redirect_uri, $state=1, $scope='snsapi_base'){
-		if($redirect_uri[0] == '/'){
-			$redirect_uri = substr($redirect_uri, 1);
-		}
 		//公众号的唯一标识
-		$appid = WECHAT_APPID;
+		$appid = Config::APPID;
 		//授权后重定向的回调链接地址，请使用urlencode对链接进行处理
-		$redirect_uri = WECHAT_URL . $redirect_uri;
 		$redirect_uri = urlencode($redirect_uri);
 		//返回类型，请填写code
 		$response_type = 'code';
 		//构造请求微信接口的URL
 		$url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='.$appid.'&redirect_uri='.$redirect_uri.'&response_type='.$response_type.'&scope='.$scope.'&state='.$state.'#wechat_redirect';
-		header('Location: '.$url, true, 301);
+		header('Location: ' . $url);
+		exit;
 	}
 
 
@@ -47,7 +44,7 @@ class OAuth {
 		//填写为authorization_code
 		$grant_type = 'authorization_code';
 		//构造请求微信接口的URL
-		$url = Config::URL . 'sns/oauth2/access_token?appid='.WECHAT_APPID.'&secret='.WECHAT_APPSECRET.'&code='.$code.'&grant_type='.$grant_type.'';
+		$url = Config::URL . 'sns/oauth2/access_token?' . http_build_query(['appid' => Config::APPID, 'secret' => Config::APPSECRET, 'code' => $code, 'grant_type' => $grant_type]);;
 		//请求微信接口, Array(access_token, expires_in, refresh_token, openid, scope)
 		return Curl::callWebServer($url);
 	}
@@ -65,7 +62,7 @@ class OAuth {
 		"scope"=>"用户授权的作用域，使用逗号（,）分隔")
 	 */
 	public static function refreshToken($refreshToken){
-		$queryUrl = Config::URL . 'sns/oauth2/refresh_token?appid='.WECHAT_APPID.'&grant_type=refresh_token&refresh_token='.$refreshToken;
+		$queryUrl = Config::URL . 'sns/oauth2/refresh_token?appid='.Config::APPID.'&grant_type=refresh_token&refresh_token='.$refreshToken;
 		$queryAction = 'GET';
 		return Curl::callWebServer($queryUrl, '', $queryAction);
 	}

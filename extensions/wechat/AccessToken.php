@@ -10,6 +10,7 @@
  */
 
 namespace sy\tool\wechat;
+use \sy\lib\YFetchURL;
 
 class AccessToken {
 
@@ -30,8 +31,8 @@ class AccessToken {
 	 * @return Ambigous|bool
 	 */
 	private static function _getAccessToken(){
-		$url = Config::URL . 'cgi-bin/token?grant_type=client_credential&appid='.WECHAT_APPID.'&secret='.WECHAT_APPSECRET;
-		$accessToken = Curl::callWebServer($url, '', 'GET');
+		$url = Config::URL . 'cgi-bin/token?' . http_build_query(['grant_type' => 'client_credential', 'appid' => Config::APPID, 'secret' => Config::APPSECRET]);
+		$accessToken = json_decode(YFetchURL::i(['url' => $url])->exec(), 1);
 		if(!isset($accessToken['access_token'])){
 			return Msg::returnErrMsg(Config::ERROR_GET_ACCESS_TOKEN, '获取ACCESS_TOKEN失败');
 		}
@@ -43,9 +44,9 @@ class AccessToken {
 		 *
 		 * 请将变量$accessTokenJson给存起来，这个变量是一个字符串
 		 */
-		$f = fopen('access_token', 'w+');
-		fwrite($f, $accessTokenJson);
-		fclose($f);
+		// $f = fopen('access_token', 'w+');
+		// fwrite($f, $accessTokenJson);
+		// fclose($f);
 		return $accessToken;
 	}
 
@@ -56,7 +57,7 @@ class AccessToken {
 	 */
 	private static function _checkAccessToken(){
 		//获取access_token。是上面的获取方法获取到后存起来的。
-//		$accessToken = YourDatabase::get('access_token');
+		// $accessToken = YourDatabase::get('access_token');
 		$data = file_get_contents('access_token');
 		$accessToken['value'] = $data;
 		if(!empty($accessToken['value'])){

@@ -29,7 +29,7 @@ class IntelligentInterface {
 		$template = array();
 		$template['query'] = $query;
 		$template['category'] = $category;
-		$template['appid'] = WECHAT_APPID;
+		$template['appid'] = Config::APPID;
 		$template['uid'] = $openId;
 		if(!empty($latitude)) $template['latitude'] = $latitude;
 		if(!empty($longitude)) $template['longitude'] = $longitude;
