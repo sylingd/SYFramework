@@ -17,8 +17,8 @@ class Request {
 	 * @param $request
 	 * @return array|string
 	 */
-	public static function switchType(&$request){
-		$data = array();
+	public static function switchType(&$request) {
+		$data = [];
 		switch ($request['msgtype']) {
 			//事件
 			case 'event':
@@ -27,10 +27,10 @@ class Request {
 					//关注
 					case 'subscribe':
 						//二维码关注
-						if(isset($request['eventkey']) && isset($request['ticket'])){
+						if (isset($request['eventkey']) && isset($request['ticket'])) {
 							$data = self::eventQrsceneSubscribe($request);
 						//普通关注
-						}else{
+						} else {
 							$data = self::eventSubscribe($request);
 						}
 						break;
@@ -87,7 +87,7 @@ class Request {
 						$data = self::eventTemplateSendJobFinish($request);
 						break;
 					default:
-						return Msg::returnErrMsg(Config::ERROR_UNKNOW_TYPE, '收到了未知类型的消息', $request);
+						return Msg::returnErrMsg(Common::ERROR_UNKNOW_TYPE, '收到了未知类型的消息', $request);
 						break;
 				}
 				break;
@@ -132,7 +132,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function text(&$request){
+	public static function text(&$request) {
 		return ['type' => 'text', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -141,7 +141,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function image(&$request){
+	public static function image(&$request) {
 		return ['type' => 'image', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -150,10 +150,10 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function voice(&$request){
-		if(!isset($request['recognition'])){
+	public static function voice(&$request) {
+		if (!isset($request['recognition'])) {
 			return ['type' => 'voice', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
-		}else{
+		} else {
 			return ['type' => 'text', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername'], 'recognition' => $request['recognition']];
 		}
 	}
@@ -163,7 +163,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function video(&$request){
+	public static function video(&$request) {
 		return ['type' => 'video', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -172,7 +172,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function shortvideo(&$request){
+	public static function shortvideo(&$request) {
 		return ['type' => 'shortvideo', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -181,7 +181,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function location(&$request){
+	public static function location(&$request) {
 		return ['type' => 'location', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -190,7 +190,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function link(&$request){
+	public static function link(&$request) {
 		return ['type' => 'link', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -199,7 +199,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function unknow(&$request){
+	public static function unknow(&$request) {
 		return ['type' => 'unknow', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -208,7 +208,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventSubscribe(&$request){
+	public static function eventSubscribe(&$request) {
 		return ['type' => 'eventSubscribe', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -217,7 +217,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventUnsubscribe(&$request){
+	public static function eventUnsubscribe(&$request) {
 		return ['type' => 'eventUnsubscribe', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -226,7 +226,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventQrsceneSubscribe(&$request){
+	public static function eventQrsceneSubscribe(&$request) {
 		return ['type' => 'eventQrsceneSubscribe', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -235,7 +235,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventScan(&$request){
+	public static function eventScan(&$request) {
 		return ['type' => 'eventScan', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -244,7 +244,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventLocation(&$request){
+	public static function eventLocation(&$request) {
 		return ['type' => 'eventLocation', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername']];
 	}
 
@@ -253,7 +253,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventClick(&$request){
+	public static function eventClick(&$request) {
 		//获取该分类的信息
 		return ['type' => 'eventClick', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername'], 'eventkey' => $request['eventkey']];
 	}
@@ -263,7 +263,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventView(&$request){
+	public static function eventView(&$request) {
 		//获取该分类的信息
 		return ['type' => 'eventView', 'fromusername' => $request['fromusername'], 'tousername' => $request['tousername'], 'eventkey' => $request['eventkey']];
 	}
@@ -273,7 +273,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventScancodePush(&$request){
+	public static function eventScancodePush(&$request) {
 		//获取该分类的信息
 		return [
 			'type' => 'eventScancodePush',
@@ -291,7 +291,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventScancodeWaitMsg(&$request){
+	public static function eventScancodeWaitMsg(&$request) {
 		//获取该分类的信息
 		return [
 			'type' => 'eventScancodeWaitMsg',
@@ -309,7 +309,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventPicSysPhoto(&$request){
+	public static function eventPicSysPhoto(&$request) {
 		//获取该分类的信息
 		return [
 			'type' => 'eventPicSysPhoto',
@@ -328,7 +328,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventPicPhotoOrAlbum(&$request){
+	public static function eventPicPhotoOrAlbum(&$request) {
 		//获取该分类的信息
 		return [
 			'type' => 'eventPicPhotoOrAlbum',
@@ -347,7 +347,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventPicWeixin(&$request){
+	public static function eventPicWeixin(&$request) {
 		//获取该分类的信息
 		return [
 			'type' => 'eventClick',
@@ -366,7 +366,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventLocationSelect(&$request){
+	public static function eventLocationSelect(&$request) {
 		//获取该分类的信息
 		return [
 			'type' => 'eventLocationSelect',
@@ -390,7 +390,7 @@ class Request {
 	 * 本消息有公众号群发助手的微信号“mphelper”推送的消息
 	 * @param $request
 	 */
-	public static function eventMassSendJobFinish(&$request){
+	public static function eventMassSendJobFinish(&$request) {
 		//发送状态，为“send success”或“send fail”或“err(num)”。但send success时，也有可能因用户拒收公众号的消息、系统错误等原因造成少量用户接收失败。err(num)是审核失败的具体原因，可能的情况如下：err(10001), //涉嫌广告 err(20001), //涉嫌政治 err(20004), //涉嫌社会 err(20002), //涉嫌色情 err(20006), //涉嫌违法犯罪 err(20008), //涉嫌欺诈 err(20013), //涉嫌版权 err(22000), //涉嫌互推(互相宣传) err(21000), //涉嫌其他
 		$status = $request['status'];
 		//计划发送的总粉丝数。group_id下粉丝数；或者openid_list中的粉丝数
@@ -418,7 +418,7 @@ class Request {
 	 * @param $request
 	 * @return array
 	 */
-	public static function eventTemplateSendJobFinish(&$request){
+	public static function eventTemplateSendJobFinish(&$request) {
 		//发送状态，成功success，用户拒收failed:user block，其他原因发送失败failed: system failed
 		$status = $request['status'];
 		return [

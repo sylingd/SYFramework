@@ -23,21 +23,20 @@ class AdvancedBroadcast {
 	 *
 	 * return mediaId 上传的图文消息的ID
 	 */
-	public static function uploadNews($articles){
-		$queryUrl = Config::URL . 'cgi-bin/media/uploadnews?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		foreach($articles as &$article){
+	public static function uploadNews($articles) {
+		$queryUrl = Common::URL . 'cgi-bin/media/uploadnews?access_token=' . AccessToken::getAccessToken();
+		foreach($articles as &$article) {
 			$article['author'] = urlencode($article['author']);
 			$article['title'] = urlencode($article['title']);
 			$article['content'] = urlencode($article['content']);
 			$article['digest'] = urlencode($article['digest']);
 		}
-		$template = array();
+		$template = [];
 		$template['articles'] = $articles;
 		$template = json_encode($template);
 		$template = urldecode($template);
-		$result = Curl::callWebServer($queryUrl, $template, $queryAction);
-		return empty($result['media_id']) ? false : $result['media_id'];
+		$result = Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
+		return empty($result['media_id']) ? FALSE : $result['media_id'];
 	}
 
 	/**
@@ -48,16 +47,15 @@ class AdvancedBroadcast {
 	 * @param $isToAll Bool 使用is_to_all为true且成功群发，会使得此次群发进入历史消息列表。
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function sentNewsByGroup($groupId, $mediaId, $isToAll=false){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/sendall?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function sentNewsByGroup($groupId, $mediaId, $isToAll=false) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/sendall?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['filter']['group_id'] = $groupId;
 		$template['filter']['is_to_all'] = $isToAll;
 		$template['mpnews']['media_id'] = $mediaId;
 		$template['msgtype'] = 'mpnews';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -68,16 +66,15 @@ class AdvancedBroadcast {
 	 * @param $isToAll Bool 使用is_to_all为true且成功群发，会使得此次群发进入历史消息列表。
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function sentTextByGroup($groupId, $content, $isToAll=false){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/sendall?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function sentTextByGroup($groupId, $content, $isToAll=false) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/sendall?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['filter']['group_id'] = $groupId;
 		$template['filter']['is_to_all'] = $isToAll;
 		$template['text']['content'] = $content;
 		$template['msgtype'] = 'text';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -88,16 +85,15 @@ class AdvancedBroadcast {
 	 * @param $isToAll Bool 使用is_to_all为true且成功群发，会使得此次群发进入历史消息列表。
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function sentVoiceByGroup($groupId, $mediaId, $isToAll=false){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/sendall?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function sentVoiceByGroup($groupId, $mediaId, $isToAll=false) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/sendall?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['filter']['group_id'] = $groupId;
 		$template['filter']['is_to_all'] = $isToAll;
 		$template['voice']['media_id'] = $mediaId;
 		$template['msgtype'] = 'voice';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -108,16 +104,15 @@ class AdvancedBroadcast {
 	 * @param $isToAll Bool 使用is_to_all为true且成功群发，会使得此次群发进入历史消息列表。
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function sentImageByGroup($groupId, $mediaId, $isToAll=false){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/sendall?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function sentImageByGroup($groupId, $mediaId, $isToAll=false) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/sendall?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['filter']['group_id'] = $groupId;
 		$template['filter']['is_to_all'] = $isToAll;
 		$template['image']['media_id'] = $mediaId;
 		$template['msgtype'] = 'image';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -128,30 +123,28 @@ class AdvancedBroadcast {
 	 * @param $isToAll Bool 使用is_to_all为true且成功群发，会使得此次群发进入历史消息列表。
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function sentVideoByGroup($mediaId, $title, $description, $groupId, $isToAll=false){
+	public static function sentVideoByGroup($mediaId, $title, $description, $groupId, $isToAll=false) {
 		//将根据基础支持中上传多媒体得到的mediaId转化为群发视频消息所需要的mediaId。
-		$queryUrl = 'https://file.api.weixin.qq.com/cgi-bin/media/uploadvideo?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+		$queryUrl = 'https://file.api.weixin.qq.com/cgi-bin/media/uploadvideo?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['media_id'] = $mediaId;
 		$template['title'] = $title;
 		$template['description'] = $description;
 		$template = json_encode($template);
-		$result = Curl::callWebServer($queryUrl, $template, $queryAction);
-		if(empty($result['type']) || $result['type'] != 'video' || empty($result['media_id'])){
+		$result = Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
+		if (empty($result['type']) || $result['type'] != 'video' || empty($result['media_id'])) {
 			return $result;
 		}
 		$mediaId = $result['media_id'];
 		//群发视频
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/sendall?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/sendall?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['filter']['group_id'] = $groupId;
 		$template['filter']['is_to_all'] = $isToAll;
 		$template['mpvideo']['media_id'] = $mediaId;
 		$template['msgtype'] = 'mpvideo';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -161,15 +154,14 @@ class AdvancedBroadcast {
 	 * @param $mediaId String 必须通过self::uploadNews获得的多媒体资源ID
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function sentNewsByOpenId($toUserList, $mediaId){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/send?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function sentNewsByOpenId($toUserList, $mediaId) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/send?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $toUserList;
 		$template['mpnews']['media_id'] = $mediaId;
 		$template['msgtype'] = 'mpnews';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -179,15 +171,14 @@ class AdvancedBroadcast {
 	 * @param $content 文本消息的内容
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function sentTextByOpenId($toUserList, $content){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/send?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function sentTextByOpenId($toUserList, $content) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/send?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $toUserList;
 		$template['text']['content'] = $content;
 		$template['msgtype'] = 'text';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -197,15 +188,14 @@ class AdvancedBroadcast {
 	 * @param $mediaId 需通过基础支持中的上传下载多媒体文件来得到。Media::upload()中返回的media_id字段的值
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function sentVoiceByOpenId($toUserList, $mediaId){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/send?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function sentVoiceByOpenId($toUserList, $mediaId) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/send?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $toUserList;
 		$template['voice']['media_id'] = $mediaId;
 		$template['msgtype'] = 'voice';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -215,15 +205,14 @@ class AdvancedBroadcast {
 	 * @param $mediaId 需通过基础支持中的上传下载多媒体文件来得到。Media::upload()中返回的media_id字段的值
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function sentImageByOpenId($toUserList, $mediaId){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/send?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function sentImageByOpenId($toUserList, $mediaId) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/send?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $toUserList;
 		$template['image']['media_id'] = $mediaId;
 		$template['msgtype'] = 'image';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -233,33 +222,30 @@ class AdvancedBroadcast {
 	 * @param $mediaId 需通过基础支持中的上传下载多媒体文件来得到。Media::upload()中返回的media_id字段的值
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function sentVideoByOpenId($toUserList, $mediaId, $title, $description){
+	public static function sentVideoByOpenId($toUserList, $mediaId, $title, $description) {
 		//将根据基础支持中上传多媒体得到的mediaId转化为群发视频消息所需要的mediaId。
-		$queryUrl = 'https://file.api.weixin.qq.com/cgi-bin/media/uploadvideo?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+		$queryUrl = 'https://file.api.weixin.qq.com/cgi-bin/media/uploadvideo?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['media_id'] = $mediaId;
 		$template['title'] = $title;
 		$template['description'] = $description;
 		$template = json_encode($template);
-		$result = Curl::callWebServer($queryUrl, $template, $queryAction);
-		if(empty($result['type']) || $result['type'] != 'video' || empty($result['media_id'])){
+		$result = Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
+		if (empty($result['type']) || $result['type'] != 'video' || empty($result['media_id'])) {
 			return $result;
 		}
 		$mediaId = $result['media_id'];
 		//群发视频
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/send?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/send?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $toUserList;
 		$template['video']['media_id'] = $mediaId;
 		$template['video']['title'] = $title;
 		$template['video']['description'] = $description;
 		$template['msgtype'] = 'video';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
-
 	/**
 	 * 删除群发
 	 * 请注意，只有已经发送成功的消息才能删除删除消息只是将消息的图文详情页失效，已经收到的用户，还是能在其本地看到消息卡片。 另外，删除群发消息只能删除图文消息和视频消息，其他类型的消息一经发送，无法删除。
@@ -267,37 +253,29 @@ class AdvancedBroadcast {
 	 * @param $msgId 发送出去的消息ID
 	 * @return mixed array("errcode"=>0, "errmsg"=>"ok"} 正常是errcode为0
 	 */
-	public static function delete($msgId){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/delete?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function delete($msgId) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/delete?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['msg_id'] = $msgId;
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
-
-
-
-
-
-	/**
+	/*
 	 * 预览 - 预览图文消息
 	 *
 	 * @param $openId String 发送消息给指定用户,该用户的OpenId
 	 * @param $mediaId String 必须通过self::uploadNews获得的多媒体资源ID
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function previewNewsByGroup($openId, $mediaId){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/preview?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function previewNewsByGroup($openId, $mediaId) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/preview?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $openId;
 		$template['mpnews']['media_id'] = $mediaId;
 		$template['msgtype'] = 'mpnews';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
-
 	/**
 	 * 预览 - 预览文本消息
 	 *
@@ -305,15 +283,14 @@ class AdvancedBroadcast {
 	 * @param $content 文本消息的内容
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function previewTextByGroup($openId, $content){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/preview?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function previewTextByGroup($openId, $content) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/preview?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $openId;
 		$template['text']['content'] = $content;
 		$template['msgtype'] = 'text';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -323,15 +300,14 @@ class AdvancedBroadcast {
 	 * @param $mediaId 需通过基础支持中的上传下载多媒体文件来得到。Media::upload()中返回的media_id字段的值
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function previewVoiceByGroup($openId, $mediaId){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/preview?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function previewVoiceByGroup($openId, $mediaId) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/preview?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $openId;
 		$template['voice']['media_id'] = $mediaId;
 		$template['msgtype'] = 'voice';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -341,15 +317,14 @@ class AdvancedBroadcast {
 	 * @param $mediaId 需通过基础支持中的上传下载多媒体文件来得到。Media::upload()中返回的media_id字段的值
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function previewImageByGroup($openId, $mediaId){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/preview?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function previewImageByGroup($openId, $mediaId) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/preview?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $openId;
 		$template['image']['media_id'] = $mediaId;
 		$template['msgtype'] = 'image';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -359,29 +334,27 @@ class AdvancedBroadcast {
 	 * @param $mediaId 需通过基础支持中的上传下载多媒体文件来得到。Media::upload()中返回的media_id字段的值
 	 * @return mixed array("errcode"=>0, "errmsg"=>"success","msg_id"=>34182} 正常是errcode为0
 	 */
-	public static function previewVideoByGroup($mediaId, $title, $description, $openId){
+	public static function previewVideoByGroup($mediaId, $title, $description, $openId) {
 		//将根据基础支持中上传多媒体得到的mediaId转化为群发视频消息所需要的mediaId。
-		$queryUrl = 'https://file.api.weixin.qq.com/cgi-bin/media/uploadvideo?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+		$queryUrl = 'https://file.api.weixin.qq.com/cgi-bin/media/uploadvideo?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['media_id'] = $mediaId;
 		$template['title'] = $title;
 		$template['description'] = $description;
 		$template = json_encode($template);
-		$result = Curl::callWebServer($queryUrl, $template, $queryAction);
-		if(empty($result['type']) || $result['type'] != 'video' || empty($result['media_id'])){
+		$result = Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
+		if (empty($result['type']) || $result['type'] != 'video' || empty($result['media_id'])) {
 			return $result;
 		}
 		$mediaId = $result['media_id'];
 		//群发视频
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/preview?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/preview?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $openId;
 		$template['mpvideo']['media_id'] = $mediaId;
 		$template['msgtype'] = 'mpvideo';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -390,14 +363,13 @@ class AdvancedBroadcast {
 	 * @param $msgId String 群发消息后返回的消息id
 	 * @return mixed array("msg_status":"SEND_SUCCESS","msg_id"=>34182)
 	 */
-	public static function getStatus($openId, $mediaId){
-		$queryUrl = Config::URL . 'cgi-bin/message/mass/get?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function getStatus($openId, $mediaId) {
+		$queryUrl = Common::URL . 'cgi-bin/message/mass/get?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['touser'] = $openId;
 		$template['image']['media_id'] = $mediaId;
 		$template['msgtype'] = 'image';
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 }

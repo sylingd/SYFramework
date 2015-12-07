@@ -23,19 +23,18 @@ class IntelligentInterface {
 	 * @return bool|mixed
 	 * 《接口协议文档》：http://mp.weixin.qq.com/wiki/images/1/1f/微信语义理解协议文档.zip
 	 */
-	public static function semanticSemproxy($query, $category, $openId, $latitude='', $longitude='', $region='', $city=''){
-		$queryUrl = Config::URL . 'semantic/semproxy/search?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function semanticSemproxy($query, $category, $openId, $latitude='', $longitude='', $region='', $city='') {
+		$queryUrl = Common::URL . 'semantic/semproxy/search?access_token='.AccessToken::getAccessToken();
+		$template = [];
 		$template['query'] = $query;
 		$template['category'] = $category;
-		$template['appid'] = Config::APPID;
+		$template['appid'] = Common::$APPID;
 		$template['uid'] = $openId;
-		if(!empty($latitude)) $template['latitude'] = $latitude;
-		if(!empty($longitude)) $template['longitude'] = $longitude;
-		if(!empty($region)) $template['region'] = $region;
-		if(!empty($city)) $template['city'] = $city;
+		if (!empty($latitude)) $template['latitude'] = $latitude;
+		if (!empty($longitude)) $template['longitude'] = $longitude;
+		if (!empty($region)) $template['region'] = $region;
+		if (!empty($city)) $template['city'] = $city;
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction, 0, 0);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template], FALSE);
 	}
 }

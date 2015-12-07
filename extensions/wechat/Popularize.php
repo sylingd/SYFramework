@@ -31,49 +31,44 @@ class Popularize {
 	 *	  "url"=>"http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI"
 	 * )
 	 */
-	public static function createTicket($type, $expireSeconds, $sceneId){
-		$queryUrl = Config::URL . 'cgi-bin/qrcode/create?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
-		if($type == 1){
+	public static function createTicket($type, $expireSeconds, $sceneId) {
+		$queryUrl = Common::URL . 'cgi-bin/qrcode/create?access_token=' . AccessToken::getAccessToken();
+		$template = [];
+		if ($type == 1) {
 			$template['expire_seconds'] = $expireSeconds;
 			$template['action_name'] = 'QR_SCENE';
-		}else{
+		} else {
 			$template['action_name'] = 'QR_LIMIT_SCENE';
 		}
 		$template['action_info']['scene']['scene_id'] = $sceneId;
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
-
 	/**
 	 * 生成带参数的二维码 - 第二步 通过ticket换取二维码
 	 * @param $ticket Popularize::createTicket()获得的
 	 * @param $filename String 文件路径，如果不为空，则会创建一个图片文件，二维码文件为jpg格式，保存到指定的路径
 	 * @return 直接echo本函数的返回值，并在调用页面添加header('Content-type: image/jpg');，将会展示出一个二维码的图片。
 	 */
-	public static function getQrcode($ticket, $filename=''){
-		$queryUrl = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='.urlencode($ticket);
-		$queryAction = 'GET';
-		$result = Curl::callWebServer($queryUrl, '', $queryAction, 0);
-		if(!empty($filename)){
+	public static function getQrcode($ticket, $filename='') {
+		$queryUrl = Common::MpURL . 'cgi-bin/showqrcode?ticket=' . urlencode($ticket);
+		$result = Common::FetchURL(['url' => $queryUrl], FALSE);
+		if (!empty($filename)) {
 			file_put_contents($filename, $result);
 		}
 		return $result;
 	}
-
 	/**
 	 * 将一条长链接转成短链接。
 	 * 主要使用场景：开发者用于生成二维码的原链接（商品、支付二维码等）太长导致扫码速度和成功率下降，将原长链接通过此接口转成短链接再生成二维码将大大提升扫码速度和成功率。
 	 * @param $longUrl String 需要转换的长链接，支持http://、https://、weixin://wxpay 格式的url
 	 * @return array('errcode'=>0, 'errmsg'=>'错误信息', 'short_url'=>'http://t.cn/asdasd')错误码为0表示正常
 	 */
-	public static function long2short($longUrl){
-		$queryUrl = Config::URL . 'cgi-bin/shorturl?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public static function long2short($longUrl) {
+		$queryUrl = Common::URL . 'cgi-bin/shorturl?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['long_url'] = $longUrl;
 		$template['action'] = 'long2short';
-		return Curl::callWebServer($queryUrl, '', $queryAction);
+		return Common::FetchURL(['url' => $queryUrl]);
 	}
 }

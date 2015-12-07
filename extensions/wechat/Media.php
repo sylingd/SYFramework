@@ -23,35 +23,25 @@ class Media {
 	 *
 	 * @param $filename，文件绝对路径
 	 * @param $type, 媒体文件类型，分别有图片（image）、语音（voice）、视频（video）和缩略图（thumb）
-	 * @return {"type":"TYPE","media_id":"MEDIA_ID","created_at":123456789}
+	 * @return array{"type":"TYPE","media_id":"MEDIA_ID","created_at":123456789}
 	 */
-	public static function upload($filename, $type){
+	public static function upload($filename, $type) {
 		//获取ACCESS_TOKEN
 		$accessToken = AccessToken::getAccessToken();
-		$queryUrl = 'http://file.api.weixin.qq.com/cgi-bin/media/upload?access_token='.$accessToken.'&type='.$type;
-		$data = array();
-		$data['media'] = '@'.$filename;
-		return Curl::callWebServer($queryUrl, $data, 'POST', 1 , 0);
+		$queryUrl = Common::FileURL . 'cgi-bin/media/upload?access_token=' . $accessToken.'&type='.$type;
+		$data = ['media' => '@' . $filename];
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $data]);
 	}
 
 	/**
 	 * 下载多媒体文件
 	 * @param $mediaId 多媒体ID
-	 * @return 头信息如下
-	 *
-	 * HTTP/1.1 200 OK
-	 * Connection: close
-	 * Content-Type: image/jpeg
-	 * Content-disposition: attachment; filename="MEDIA_ID.jpg"
-	 * Date: Sun, 06 Jan 2013 10:20:18 GMT
-	 * Cache-Control: no-cache, must-revalidate
-	 * Content-Length: 339721
-	 * curl -G "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID"
+	 * @return string
 	 */
-	public static function download($mediaId){
+	public static function download($mediaId) {
 		//获取ACCESS_TOKEN
 		$accessToken = AccessToken::getAccessToken();
-		$queryUrl = 'http://file.api.weixin.qq.com/cgi-bin/media/get?access_token='.$accessToken.'&media_id='.$mediaId;
-		return Curl::callWebServer($queryUrl, '', 'GET', 0);
+		$queryUrl = Common::FileURL . 'cgi-bin/media/get?' . http_build_query(['access_token' => $accessToken, 'media_id' => $mediaId]);
+		return Common::FetchURL(['url' => $queryUrl], FALSE);
 	}
 }

@@ -23,15 +23,14 @@ Class CustomService {
 	 *
 	 * @return array( "errcode" : 0, "errmsg" : "ok")
 	 */
-	public function addAccount($kfAccount, $nickname, $password){
-		$queryUrl = Config::URL . 'customservice/kfaccount/add?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public function addAccount($kfAccount, $nickname, $password) {
+		$queryUrl = Common::URL . 'customservice/kfaccount/add?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['kf_account'] = $kfAccount;
 		$template['nickname'] = $nickname;
 		$template['password'] = $password;
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -44,15 +43,14 @@ Class CustomService {
 	 *
 	 * @return array( "errcode" : 0, "errmsg" : "ok")
 	 */
-	public function editAccount($kfAccount, $nickname, $password){
-		$queryUrl = Config::URL . 'customservice/kfaccount/update?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public function editAccount($kfAccount, $nickname, $password) {
+		$queryUrl = Common::URL . 'customservice/kfaccount/update?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['kf_account'] = $kfAccount;
 		$template['nickname'] = $nickname;
 		$template['password'] = $password;
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -65,15 +63,14 @@ Class CustomService {
 	 *
 	 * @return array( "errcode" : 0, "errmsg" : "ok")
 	 */
-	public function delAccount($kfAccount, $nickname, $password){
-		$queryUrl = Config::URL . 'customservice/kfaccount/del?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public function delAccount($kfAccount, $nickname, $password) {
+		$queryUrl = Common::URL . 'customservice/kfaccount/del?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['kf_account'] = $kfAccount;
 		$template['nickname'] = $nickname;
 		$template['password'] = $password;
 		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -88,15 +85,9 @@ Class CustomService {
 		   array("kf_account": "test1@test", "kf_nick": "ntest1", "kf_id": "1001", "kf_headimgurl": " http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0"),
 	 * ))
 	 */
-	public function getAccountList($kfAccount, $nickname, $password){
-		$queryUrl = Config::URL . 'cgi-bin/customservice/getkflist?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'GET';
-		$template = array();
-		$template['kf_account'] = $kfAccount;
-		$template['nickname'] = $nickname;
-		$template['password'] = $password;
-		$template = json_encode($template);
-		return Curl::callWebServer($queryUrl, $template, $queryAction);
+	public function getAccountList($kfAccount, $nickname, $password) {
+		$queryUrl = Common::URL . 'cgi-bin/customservice/getkflist?access_token=' . AccessToken::getAccessToken();
+		return Common::FetchURL(['url' => $queryUrl]);
 	}
 
 	/**
@@ -110,15 +101,15 @@ Class CustomService {
 	 *
 	 * @return array( "errcode" : 0, "errmsg" : "ok")
 	 */
-	public function setAccountImage($kfAccount, $imagePath){
-		if(!file_exists($imagePath)){
+	public function setAccountImage($kfAccount, $imagePath) {
+		if (!file_exists($imagePath)) {
 			return false;
 		}
 		//获取ACCESS_TOKEN
-		$queryUrl = 'http://api.weixin.qq.com/customservice/kfaccount/uploadheadimg?access_token='.AccessToken::getAccessToken().'&kf_account='.$kfAccount;
-		$data = array();
-		$data['media'] = '@'.$imagePath;
-		return Curl::callWebServer($queryUrl, $data, 'POST', 1 , 0);
+		$queryUrl = 'http://api.weixin.qq.com/customservice/kfaccount/uploadheadimg?access_token=' . AccessToken::getAccessToken() . '&kf_account=' . $kfAccount;
+		$data = [];
+		$data['media'] = '@' . $imagePath;
+		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $data]);
 	}
 
 	/**
@@ -138,17 +129,16 @@ Class CustomService {
 	 * 关于opercode 1000 创建未接入会话，1001 接入会话，	 1002 主动发起会话，1004 关闭会话
 				   1005 抢接会话，	 2001 公众号收到消息，2002 客服发送消息，2003 客服收到消息
 	 */
-	public function getRecord($startTime, $endTime, $pageIndex=1, $pageSize=1000, $openId=''){
-		$queryUrl = Config::URL . 'cgi-bin/customservice/getrecord?access_token='.AccessToken::getAccessToken();
-		$queryAction = 'POST';
-		$template = array();
+	public function getRecord($startTime, $endTime, $pageIndex=1, $pageSize=1000, $openId='') {
+		$queryUrl = Common::URL . 'cgi-bin/customservice/getrecord?access_token=' . AccessToken::getAccessToken();
+		$template = [];
 		$template['starttime'] = $startTime;
 		$template['endtime'] = $endTime;
 		$template['openid'] = $openId;
 		$template['pagesize'] = $pageSize;
 		$template['pageindex'] = $pageIndex;
 		$template = json_encode($template);
-		$result = Curl::callWebServer($queryUrl, $template, $queryAction);
-		return isset($result['recordlist']) ? $result['recordlist'] : array();
+		$result = Common::FetchURL(['url' => $queryUrl, 'postfields' => $template]);
+		return isset($result['recordlist']) ? $result['recordlist'] : [];
 	}
 }

@@ -10,35 +10,31 @@
  */
 
 namespace sy\tool\wechat;
-
 class ResponseInitiative {
 
-	protected static $queryUrl = Config::URL . 'cgi-bin/message/custom/send?access_token=';
+	protected static $queryUrl;
 
-	protected static $action = 'POST';
-
+	protected static function init() {
+		self::$queryUrl = Common::URL . 'cgi-bin/message/custom/send?access_token=' . AccessToken::getAccessToken();
+	}
 	/**
 	 * 文本
 	 * @param $tousername
 	 * @param $content 回复的消息内容（换行：在content中能够换行，微信客户端就支持换行显示）
 	 * @return string
 	 */
-	public static function text($tousername, $content){
-		//获取ACCESS_TOKEN
-		$accessToken = AccessToken::getAccessToken();
-		self::$queryUrl = self::$queryUrl.$accessToken;
-
+	public static function text($tousername, $content) {
+		self::init();
 		//开始
-		$template = array(
-			'touser'=>$tousername,
-			'msgtype'=>'text',
-			'text'=>array(
-				'content'=>$content,
-			),
-		);
+		$template = [
+			'touser' => $tousername,
+			'msgtype' => 'text',
+			'text' => [
+				'content' => $content,
+			],
+		];
 		$template = json_encode($template);
-
-		return Curl::callWebServer(self::$queryUrl, $template, self::$action);
+		return Common::FetchURL(['url' => self::$queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -47,21 +43,18 @@ class ResponseInitiative {
 	 * @param $mediaId 通过上传多媒体文件，得到的id。
 	 * @return string
 	 */
-	public static function image($tousername, $mediaId){
-		//获取ACCESS_TOKEN
-		$accessToken = AccessToken::getAccessToken();
-		self::$queryUrl = self::$queryUrl.$accessToken;
-
+	public static function image($tousername, $mediaId) {
+		self::init();
 		//开始
-		$template = array(
-			'touser'=>$tousername,
-			'msgtype'=>'image',
-			'image'=>array(
-				'media_id'=>$mediaId,
-			),
-		);
+		$template = [
+			'touser' => $tousername,
+			'msgtype' => 'image',
+			'image' => [
+				'media_id' => $mediaId,
+			],
+		];
 		$template = json_encode($template);
-		return Curl::callWebServer(self::$queryUrl, $template, self::$action);
+		return Common::FetchURL(['url' => self::$queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -70,21 +63,18 @@ class ResponseInitiative {
 	 * @param $mediaId 通过上传多媒体文件，得到的id
 	 * @return string
 	 */
-	public static function voice($tousername, $mediaId){
-		//获取ACCESS_TOKEN
-		$accessToken = AccessToken::getAccessToken();
-		self::$queryUrl = self::$queryUrl.$accessToken;
-
+	public static function voice($tousername, $mediaId) {
+		self::init();
 		//开始
-		$template = array(
-			'touser'=>$tousername,
-			'msgtype'=>'voice',
-			'voice'=>array(
-				'media_id'=>$mediaId,
-			),
-		);
+		$template = [
+			'touser' => $tousername,
+			'msgtype' => 'voice',
+			'voice' => [
+				'media_id' => $mediaId,
+			],
+		];
 		$template = json_encode($template);
-		return Curl::callWebServer(self::$queryUrl, $template, self::$action);
+		return Common::FetchURL(['url' => self::$queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -95,23 +85,20 @@ class ResponseInitiative {
 	 * @param $description 描述
 	 * @return string
 	 */
-	public static function video($tousername, $mediaId, $title, $description){
-		//获取ACCESS_TOKEN
-		$accessToken = AccessToken::getAccessToken();
-		self::$queryUrl = self::$queryUrl.$accessToken;
-
+	public static function video($tousername, $mediaId, $title, $description) {
+		self::init();
 		//开始
-		$template = array(
-			'touser'=>$tousername,
-			'msgtype'=>'video',
-			'video'=>array(
-				'media_id'=>$mediaId,
-				'title'=>$title,
-				'description'=>$description,
-			),
-		);
+		$template = [
+			'touser' => $tousername,
+			'msgtype' => 'video',
+			'video' => [
+				'media_id' => $mediaId,
+				'title' => $title,
+				'description' => $description,
+			],
+		];
 		$template = json_encode($template);
-		return Curl::callWebServer(self::$queryUrl, $template, self::$action);
+		return Common::FetchURL(['url' => self::$queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -124,25 +111,22 @@ class ResponseInitiative {
 	 * @param $thumbMediaId 缩略图的媒体id，通过上传多媒体文件，得到的id
 	 * @return string
 	 */
-	public static function music($tousername, $title, $description, $musicUrl, $hqMusicUrl, $thumbMediaId){
-		//获取ACCESS_TOKEN
-		$accessToken = AccessToken::getAccessToken();
-		self::$queryUrl = self::$queryUrl.$accessToken;
-
+	public static function music($tousername, $title, $description, $musicUrl, $hqMusicUrl, $thumbMediaId) {
+		self::init();
 		//开始
-		$template = array(
-			'touser'=>$tousername,
-			'msgtype'=>'music',
-			'music'=>array(
-				'title'=>$title,
-				'description'=>$description,
-				'musicurl'=>$musicUrl,
-				'hqmusicurl'=>$hqMusicUrl,
-				'thumb_media_id'=>$thumbMediaId,
-			),
-		);
+		$template = [
+			'touser' => $tousername,
+			'msgtype' => 'music',
+			'music' => [
+				'title' => $title,
+				'description' => $description,
+				'musicurl' => $musicUrl,
+				'hqmusicurl' => $hqMusicUrl,
+				'thumb_media_id' => $thumbMediaId,
+			],
+		];
 		$template = json_encode($template);
-		return Curl::callWebServer(self::$queryUrl, $template, self::$action);
+		return Common::FetchURL(['url' => self::$queryUrl, 'postfields' => $template]);
 	}
 
 	/**
@@ -154,13 +138,13 @@ class ResponseInitiative {
 	 * @param $url 点击图文消息跳转链接
 	 * @return string
 	 */
-	public static function newsItem($title, $description, $picUrl, $url){
-		return $template = array(
-			'title'=>$title,
-			'description'=>$description,
-			'url'=>$picUrl,
-			'picurl'=>$url,
-		);
+	public static function newsItem($title, $description, $picUrl, $url) {
+		return $template = [
+			'title' => $title,
+			'description' => $description,
+			'url' => $picUrl,
+			'picurl' => $url,
+		];
 	}
 
 	/**
@@ -169,21 +153,18 @@ class ResponseInitiative {
 	 * @param $item 数组，每个项由self::newsItem()返回
 	 * @return string
 	 */
-	public static function news($tousername, $item){
-		//获取ACCESS_TOKEN
-		$accessToken = AccessToken::getAccessToken();
-		self::$queryUrl = self::$queryUrl.$accessToken;
-
+	public static function news($tousername, $item) {
+		self::init();
 		//开始
-		$template = array(
-			'touser'=>$tousername,
-			'msgtype'=>'news',
-			'news'=>array(
-				'articles'=>$item
-			),
-		);
+		$template = [
+			'touser' => $tousername,
+			'msgtype' => 'news',
+			'news' => [
+				'articles' => $item
+			],
+		];
 		$template = json_encode($template);
-		return Curl::callWebServer(self::$queryUrl, $template, self::$action);
+		return Common::FetchURL(['url' => self::$queryUrl, 'postfields' => $template]);
 	}
 
 

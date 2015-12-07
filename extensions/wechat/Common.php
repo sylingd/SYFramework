@@ -1,7 +1,6 @@
 <?php
-namespace sy\tool\wechat;
 /**
- * 错误码常量
+ * 常用类，包括基本配置，错误码常量等
  * 
  * @author lane&ShuangYa
  * @package SYFramework
@@ -9,11 +8,9 @@ namespace sy\tool\wechat;
  * @link http://www.lanecn.com http://www.sylingd.com/
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
-class Config {
-	
-	//-------微信相关----------------------
-	const APPID = '';
-	const APPSECRET = '';
+namespace sy\tool\wechat;
+use \sy\lib\YFetchURL;
+class Common {
 
 	//-------系统错误相关--101 到200 ------
 	const ERROR_SYSTEM = 101; //系统错误
@@ -41,4 +38,24 @@ class Config {
 	
 	//-------其他配置---------------------
 	const URL = 'https://api.weixin.qq.com/';
+	const FileURL = 'http://file.api.weixin.qq.com/';
+	const MpURL = 'https://mp.weixin.qq.com/';
+	
+	//-------微信相关----------------------
+	public static $APPID = '';
+	public static $APPSECRET = '';
+	
+	public static function setApp($id, $secret) {
+		self::$APPID = $id;
+		self::$APPSECRET = $secret;
+	}
+	public static function FetchURL($opt, $is_json = TRUE) {
+		$opt = array_merge(array_change_key_case($opt, CASE_LOWER), ['sslversion' => 1, 'header' => 0]);
+		$r = YFetchURL::i($opt)->exec();
+		if ($is_json) {
+			return json_decode($r, 1);
+		} else {
+			return $r;
+		}
+	}
 }

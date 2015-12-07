@@ -20,7 +20,7 @@ class ResponsePassive {
 	 * @param $funcFlag 默认为0，设为1时星标刚才收到的消息
 	 * @return string
 	 */
-	public static function text($fromusername, $tousername, $content, $funcFlag=0){
+	public static function text($fromusername, $tousername, $content, $funcFlag=0) {
 		$template = <<<XML
 <xml>
 	<ToUserName><![CDATA[%s]]></ToUserName>
@@ -42,7 +42,7 @@ XML;
 	 * @param $funcFlag 默认为0，设为1时星标刚才收到的消息
 	 * @return string
 	 */
-	public static function image($fromusername, $tousername, $mediaId, $funcFlag=0){
+	public static function image($fromusername, $tousername, $mediaId, $funcFlag=0) {
 		$template = <<<XML
 <xml>
 	<ToUserName><![CDATA[%s]]></ToUserName>
@@ -66,7 +66,7 @@ XML;
 	 * @param $funcFlag 默认为0，设为1时星标刚才收到的消息
 	 * @return string
 	 */
-	public static function voice($fromusername, $tousername, $mediaId, $funcFlag=0){
+	public static function voice($fromusername, $tousername, $mediaId, $funcFlag=0) {
 		$template = <<<XML
 <xml>
 	<ToUserName><![CDATA[%s]]></ToUserName>
@@ -92,7 +92,7 @@ XML;
 	 * @param $funcFlag 默认为0，设为1时星标刚才收到的消息
 	 * @return string
 	 */
-	public static function video($fromusername, $tousername, $mediaId, $title, $description, $funcFlag=0){
+	public static function video($fromusername, $tousername, $mediaId, $title, $description, $funcFlag=0) {
 		$template = <<<XML
 <xml>
 	<ToUserName><![CDATA[%s]]></ToUserName>
@@ -122,7 +122,7 @@ XML;
 	 * @param $funcFlag 默认为0，设为1时星标刚才收到的消息
 	 * @return string
 	 */
-	public static function music($fromusername, $tousername, $title, $description, $musicUrl, $hqMusicUrl, $thumbMediaId, $funcFlag=0){
+	public static function music($fromusername, $tousername, $title, $description, $musicUrl, $hqMusicUrl, $thumbMediaId, $funcFlag=0) {
 		$template = <<<XML
 <xml>
 	<ToUserName><![CDATA[%s]]></ToUserName>
@@ -151,7 +151,7 @@ XML;
 	 * @param $url 点击图文消息跳转链接
 	 * @return string
 	 */
-	public static function newsItem($title, $description, $picUrl, $url){
+	public static function newsItem($title, $description, $picUrl, $url) {
 		$template = <<<XML
 <item>
   <Title><![CDATA[%s]]></Title>
@@ -171,11 +171,11 @@ XML;
 	 * @param $funcFlag 默认为0，设为1时星标刚才收到的消息
 	 * @return string
 	 */
-	public static function news($fromusername, $tousername, $item, $funcFlag=0){
+	public static function news($fromusername, $tousername, $item, $funcFlag=0) {
 		//多条图文消息信息，默认第一个item为大图,注意，如果图文数超过10，则将会无响应
-		if(count($item) >= 10){
+		if (count($item) >= 10) {
 			$request = array('fromusername'=>$fromusername, 'tousername'=>$tousername);
-			return Msg::returnErrMsg(Config::ERROR_NEWS_ITEM_COUNT_MORE_TEN, '图文消息的项数不能超过10条', $request);
+			return Msg::returnErrMsg(Common::ERROR_NEWS_ITEM_COUNT_MORE_TEN, '图文消息的项数不能超过10条', $request);
 
 		}
 		$template = <<<XML
@@ -201,7 +201,7 @@ XML;
 	 * @param $tousername
 	 * @return string
 	 */
-	public static function forwardToCustomService($fromusername, $tousername){
+	public static function forwardToCustomService($fromusername, $tousername) {
 		$template = <<<XML
 <xml>
 	<ToUserName><![CDATA[%s]]></ToUserName>

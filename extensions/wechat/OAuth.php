@@ -10,16 +10,15 @@
  */
  
 namespace sy\tool\wechat;
-
 class OAuth {
 	/**
 	 * Description: 获取CODE
 	 * @param $scope snsapi_base不弹出授权页面，只能获得OpenId;snsapi_userinfo弹出授权页面，可以获得所有信息
 	 * 将会跳转到redirect_uri/?code=CODE&state=STATE 通过GET方式获取code和state
 	 */
-	public static function getCode($redirect_uri, $state=1, $scope='snsapi_base'){
+	public static function getCode($redirect_uri, $state=1, $scope='snsapi_base') {
 		//公众号的唯一标识
-		$appid = Config::APPID;
+		$appid = Common::$APPID;
 		//授权后重定向的回调链接地址，请使用urlencode对链接进行处理
 		$redirect_uri = urlencode($redirect_uri);
 		//返回类型，请填写code
@@ -40,13 +39,13 @@ class OAuth {
 	 *
 	 * @return Array(access_token, expires_in, refresh_token, openid, scope)
 	 */
-	public static function getAccessTokenAndOpenId($code){
+	public static function getAccessTokenAndOpenId($code) {
 		//填写为authorization_code
 		$grant_type = 'authorization_code';
 		//构造请求微信接口的URL
-		$url = Config::URL . 'sns/oauth2/access_token?' . http_build_query(['appid' => Config::APPID, 'secret' => Config::APPSECRET, 'code' => $code, 'grant_type' => $grant_type]);;
+		$url = Common::URL . 'sns/oauth2/access_token?' . http_build_query(['appid' => Common::$APPID, 'secret' => Common::$APPSECRET, 'code' => $code, 'grant_type' => $grant_type]);;
 		//请求微信接口, Array(access_token, expires_in, refresh_token, openid, scope)
-		return Curl::callWebServer($url);
+		return json_decode(YFetchURL(['url' => $url]), 1);
 	}
 
 	/**
@@ -61,10 +60,9 @@ class OAuth {
 		"openid"=>"用户唯一标识",
 		"scope"=>"用户授权的作用域，使用逗号（,）分隔")
 	 */
-	public static function refreshToken($refreshToken){
-		$queryUrl = Config::URL . 'sns/oauth2/refresh_token?appid='.Config::APPID.'&grant_type=refresh_token&refresh_token='.$refreshToken;
-		$queryAction = 'GET';
-		return Curl::callWebServer($queryUrl, '', $queryAction);
+	public static function refreshToken($refreshToken) {
+		$queryUrl = Common::URL . 'sns/oauth2/refresh_token?appid='.Common::$APPID.'&grant_type=refresh_token&refresh_token='.$refreshToken;
+		return  Common::FetchURL(['url' => $queryUrl]);
 	}
 
 	/**
@@ -86,10 +84,9 @@ class OAuth {
 					 "privilege"=>array("PRIVILEGE1", "PRIVILEGE2"),
 				);
 	 */
-	public static function getUserInfo($accessToken, $openId, $lang='zh_CN'){
-		$queryUrl = Config::URL . 'sns/userinfo?access_token='. $accessToken . '&openid='. $openId .'&lang=zh_CN';
-		$queryAction = 'GET';
-		return Curl::callWebServer($queryUrl, '', $queryAction);
+	public static function getUserInfo($accessToken, $openId, $lang='zh_CN') {
+		$queryUrl = Common::URL . 'sns/userinfo?access_token='. $accessToken . '&openid='. $openId .'&lang=zh_CN';
+		return Common::FetchURL(['url' => $queryUrl]);
 	}
 
 	/**
@@ -98,9 +95,8 @@ class OAuth {
 	 * @param $openId
 	 * @return array("errcode"=>0,"errmsg"=>"ok")
 	 */
-	public static function checkAccessToken($accessToken, $openId){
-		$queryUrl = Config::URL . 'sns/auth?access_token='.$accessToken.'&openid='.$openId;
-		$queryAction = 'GET';
-		return Curl::callWebServer($queryUrl, '', $queryAction);
+	public static function checkAccessToken($accessToken, $openId) {
+		$queryUrl = Common::URL . 'sns/auth?access_token='.$accessToken.'&openid='.$openId;
+		return Common::FetchURL(['url' => $queryUrl]);
 	}
 }

@@ -10,17 +10,16 @@
  */
 
 namespace sy\tool\wechat;
-use \sy\lib\YFetchURL;
 
 class AccessToken {
 
 	/**
 	 * 获取微信Access_Token
 	 */
-	public static function getAccessToken(){
+	public static function getAccessToken() {
 		//检测本地是否已经拥有access_token，并且检测access_token是否过期
 		$accessToken = self::_checkAccessToken();
-		if($accessToken === false){
+		if ($accessToken === false) {
 			$accessToken = self::_getAccessToken();
 		}
 		return $accessToken['access_token'];
@@ -30,11 +29,11 @@ class AccessToken {
 	 * 从微信服务器获取微信ACCESS_TOKEN
 	 * @return Ambigous|bool
 	 */
-	private static function _getAccessToken(){
-		$url = Config::URL . 'cgi-bin/token?' . http_build_query(['grant_type' => 'client_credential', 'appid' => Config::APPID, 'secret' => Config::APPSECRET]);
-		$accessToken = json_decode(YFetchURL::i(['url' => $url])->exec(), 1);
-		if(!isset($accessToken['access_token'])){
-			return Msg::returnErrMsg(Config::ERROR_GET_ACCESS_TOKEN, '获取ACCESS_TOKEN失败');
+	private static function _getAccessToken() {
+		$url = Common::URL . 'cgi-bin/token?' . http_build_query(['grant_type' => 'client_credential', 'appid' => Common::$APPID, 'secret' => Common::$APPSECRET]);
+		$accessToken = Common::FetchURL(['url' => $url]);
+		if (!isset($accessToken['access_token'])) {
+			return Msg::returnErrMsg(Common::ERROR_GET_ACCESS_TOKEN, '获取ACCESS_TOKEN失败');
 		}
 		$accessToken['time'] = time();
 		$accessTokenJson = json_encode($accessToken);
@@ -55,14 +54,12 @@ class AccessToken {
 	 *			  -10是预留的网络延迟时间
 	 * @return bool
 	 */
-	private static function _checkAccessToken(){
+	private static function _checkAccessToken() {
 		//获取access_token。是上面的获取方法获取到后存起来的。
 		// $accessToken = YourDatabase::get('access_token');
-		$data = file_get_contents('access_token');
-		$accessToken['value'] = $data;
-		if(!empty($accessToken['value'])){
+		if (!empty($accessToken['value'])) {
 			$accessToken = json_decode($accessToken['value'], true);
-			if(time() - $accessToken['time'] < $accessToken['expires_in']-10){
+			if (time() - $accessToken['time'] < $accessToken['expires_in']-10) {
 				return $accessToken;
 			}
 		}

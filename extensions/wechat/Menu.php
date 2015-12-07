@@ -33,29 +33,29 @@ class Menu {
 	 *
 	 * @return bool
 	 */
-	public static function setMenu($menuList){
+	public static function setMenu($menuList) {
 		//树形排布
 		$menuList2 = $menuList;
-		foreach($menuList as $key=>$menu){
-			foreach($menuList2 as $k=>$menu2){
-				if($menu['id'] == $menu2['pid']){
+		foreach($menuList as $key=>$menu) {
+			foreach($menuList2 as $k=>$menu2) {
+				if ($menu['id'] == $menu2['pid']) {
 					$menuList[$key]['sub_button'][] = $menu2;
 					unset($menuList[$k]);
 				}
 			}
 		}
 		//处理数据
-		foreach($menuList as $key=>$menu){
+		foreach($menuList as $key=>$menu) {
 			//处理type和code
-			if(@$menu['type'] == 'view'){
+			if (@$menu['type'] == 'view') {
 				$menuList[$key]['url'] = $menu['code'];
 				//处理URL。因为URL不能在转换JSON时被转为UNICODE
 				$menuList[$key]['url'] = urlencode($menuList[$key]['url']);
-			}else if(@$menu['type'] == 'click'){
+			}else if (@$menu['type'] == 'click') {
 				$menuList[$key]['key'] = $menu['code'];
-			}else if(@!empty($menu['type'])){
+			}else if (@!empty($menu['type'])) {
 				$menuList[$key]['key'] = $menu['code'];
-				if(!isset($menu['sub_button'])) $menuList[$key]['sub_button'] = array();
+				if (!isset($menu['sub_button'])) $menuList[$key]['sub_button'] = [];
 			}
 			unset($menuList[$key]['code']);
 			//处理PID和ID
@@ -64,18 +64,18 @@ class Menu {
 			//处理名字。因为汉字不能在转换JSON时被转为UNICODE
 			$menuList[$key]['name'] = urlencode($menu['name']);
 			//处理子类菜单
-			if(isset($menu['sub_button'])){
+			if (isset($menu['sub_button'])) {
 				unset($menuList[$key]['type']);
-				foreach($menu['sub_button'] as $k=>$son){
+				foreach($menu['sub_button'] as $k=>$son) {
 					//处理type和code
-					if($son['type'] == 'view'){
+					if ($son['type'] == 'view') {
 						$menuList[$key]['sub_button'][$k]['url'] = $son['code'];
 						$menuList[$key]['sub_button'][$k]['url'] = urlencode($menuList[$key]['sub_button'][$k]['url']);
-					}else if($son['type'] == 'click'){
+					}else if ($son['type'] == 'click') {
 						$menuList[$key]['sub_button'][$k]['key'] = $son['code'];
-					}else{
+					} else {
 						$menuList[$key]['sub_button'][$k]['key'] = $son['code'];
-						$menuList[$key]['sub_button'][$k]['sub_button'] = array();
+						$menuList[$key]['sub_button'][$k]['sub_button'] = [];
 					}
 					unset($menuList[$key]['sub_button'][$k]['code']);
 					//处理PID和ID
@@ -87,7 +87,7 @@ class Menu {
 			}
 		}
 		//整理格式
-		$data = array();
+		$data = [];
 		$menuList = array_values($menuList);
 		$data['button'] = $menuList;
 		//转换成JSON
@@ -95,9 +95,9 @@ class Menu {
 		$data = urldecode($data);
 		//获取ACCESS_TOKEN
 		$accessToken = AccessToken::getAccessToken();
-		$url = Config::URL . 'cgi-bin/menu/create?access_token='.$accessToken;
-		$result = Curl::callWebServer($url, $data, 'POST');
-		if($result['errcode'] == 0){
+		$url = Common::URL . 'cgi-bin/menu/create?access_token=' . $accessToken;
+		$result = Common::FetchURL(['url' => $url, 'postfields' => $data]);
+		if ($result['errcode'] == 0) {
 			return true;
 		}
 		return $result;
@@ -109,11 +109,11 @@ class Menu {
 	 *
 	 * 返回：{"menu":{"button":[{"type":"click","name":"今日歌曲","key":"V1001_TODAY_MUSIC","sub_button":[]},{"type":"click","name":"歌手简介","key":"V1001_TODAY_SINGER","sub_button":[]},{"name":"菜单","sub_button":[{"type":"view","name":"搜索","url":"http://www.soso.com/","sub_button":[]},{"type":"view","name":"视频","url":"http://v.qq.com/","sub_button":[]},{"type":"click","name":"赞一下我们","key":"V1001_GOOD","sub_button":[]}]}]}}
 	 */
-	public static function getMenu(){
+	public static function getMenu() {
 		//获取ACCESS_TOKEN
 		$accessToken = AccessToken::getAccessToken();
-		$url = Config::URL . 'cgi-bin/menu/get?access_token='.$accessToken;
-		return Curl::callWebServer($url, '', 'GET');
+		$url = Common::URL . 'cgi-bin/menu/get?access_token=' . $accessToken;
+		return Common::FetchURL(['url' => $url]);
 	}
 
 	/**
@@ -122,10 +122,10 @@ class Menu {
 	 *
 	 * 成功返回：{"errcode":0,"errmsg":"ok"}
 	 */
-	public static function delMenu(){
+	public static function delMenu() {
 		//获取ACCESS_TOKEN
 		$accessToken = AccessToken::getAccessToken();
-		$url = Config::URL . 'cgi-bin/menu/delete?access_token='.$accessToken;
-		return Curl::callWebServer($url, '', 'GET');
+		$url = Common::URL . 'cgi-bin/menu/delete?access_token=' . $accessToken;
+		return Common::FetchURL(['url' => $url]);
 	}
 }

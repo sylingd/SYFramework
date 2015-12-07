@@ -26,7 +26,7 @@
 	$tuwenList[] = array('title'=>'标题1', 'description'=>'描述1', 'pic_url'=>'图片URL1', 'url'=>'点击跳转URL1');
 	$tuwenList[] = array('title'=>'标题2', 'description'=>'描述2', 'pic_url'=>'图片URL2', 'url'=>'点击跳转URL2');
 	//构建图文消息格式
-	$itemList = array();
+	$itemList = [];
 	foreach ($tuwenList as $tuwen) {
 		$itemList[] = \sy\tool\wechat\ResponseInitiative::newsItem($tuwen['title'], $tuwen['description'], $tuwen['pic_url'], $tuwen['url']);
 	}
@@ -53,8 +53,8 @@
 	$tuwenList[] = array('title'=>'标题1', 'description'=>'描述1', 'pic_url'=>'图片URL1', 'url'=>'点击跳转URL1');
 	$tuwenList[] = array('title'=>'标题2', 'description'=>'描述2', 'pic_url'=>'图片URL2', 'url'=>'点击跳转URL2');
 	//构建图文消息格式
-	$itemList = array();
-	foreach($tuwenList as $tuwen){
+	$itemList = [];
+	foreach($tuwenList as $tuwen) {
 		$itemList[] = \sy\tool\wechat\ResponsePassive::newsItem($tuwen['title'], $tuwen['description'], $tuwen['pic_url'], $tuwen['url']);
 	}
 	\sy\tool\wechat\ResponsePassive::news($fromusername, $tousername, $itemList);
@@ -144,7 +144,7 @@
 		die('error');
 	}
 	//上传图文消息
-	$list = array();
+	$list = [];
 	$list[] = array('thumb_media_id'=>$menuId['media_id'] , 'author'=>'作者', 'title'=>'标题', 'content_source_url'=>'www.lanecn.com', 'digest'=>'摘要', 'show_cover_pic'=>'1');
 	$list[] = array('thumb_media_id'=>$menuId['media_id'] , 'author'=>'作者', 'title'=>'标题', 'content_source_url'=>'www.lanecn.com', 'digest'=>'摘要', 'show_cover_pic'=>'0');
 	$list[] = array('thumb_media_id'=>$menuId['media_id'] , 'author'=>'作者', 'title'=>'标题', 'content_source_url'=>'www.lanecn.com', 'digest'=>'摘要', 'show_cover_pic'=>'0');
