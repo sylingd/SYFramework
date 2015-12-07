@@ -41,13 +41,43 @@ class Common {
 	const FileURL = 'http://file.api.weixin.qq.com/';
 	const MpURL = 'https://mp.weixin.qq.com/';
 	
-	//-------微信相关----------------------
+	//-------微信公众号相关---------------
 	public static $APPID = '';
 	public static $APPSECRET = '';
 	
-	public static function setApp($id, $secret) {
+	
+	//-------微信支付配置-----------------
+	public static $MCHID = '';
+	public static $PAYKEY = '';
+	/**
+	 * 默认紧错误上报（注意：上报超时间为【1s】，上报无论成败【永不抛出异常】，不会影响接口调用流程），开启上报之后，方便微信监控请求调用的质量，建议至少开启错误上报。
+	 * 上报等级，0.关闭上报; 1.仅错误出错上报; 2.全量上报
+	 */
+	const PAY_REPORT = 1;
+	const PAY_SSLKEY = __DIR__ . '/data/apiclient_key.pem';
+	const PAY_SSLCERT = __DIR__ . '/data/apiclient_cert.pem';
+	
+	//-------微信支付缺少参数--1501到1550-
+	const ERROR_PAY_NO_NOTIFY = 1501; //未设置NotifyURL
+	const ERROR_PAY_NO_OPENID = 1502; //缺少必填参数openid
+	const ERROR_PAY_NO_OUTTRADENO = 1503; //缺少必填参数out_trade_no
+	const ERROR_PAY_NO_BODY = 1504; //缺少必填参数body
+	const ERROR_PAY_NO_TOTALFEE = 1505; //缺少必填参数total_fee
+	const ERROR_PAY_NO_TRADETYPE = 1506; //缺少必填参数trade_type
+	const ERROR_PAY_NO_PRODUCTID = 1507; //缺少必填参数produce_id
+	const ERROR_PAY_NO_QUERY = 1508; //out_trade_no、transaction_id至少一个
+	const ERROR_PAY_NO_REFUNDFEE = 1509; //缺少必填参数refund_fee
+	const ERROR_PAY_NO_BILLDATE = 1510; //缺少必填参数bill_date
+	const ERROR_PAY_NO_AUTHCODE = 1511; //缺少必填参数auth_code
+	const ERROR_PAY_NO_URL = 1512; //没有传递URL
+	
+	public static function setWx($id, $secret) {
 		self::$APPID = $id;
 		self::$APPSECRET = $secret;
+	}
+	public static function setWxPay($MCHID, $PAYKEY) {
+		self::$MCHID = $MCHID;
+		self::$PAYKEY = $PAYKEY;
 	}
 	public static function FetchURL($opt, $is_json = TRUE) {
 		$opt = array_merge(array_change_key_case($opt, CASE_LOWER), ['sslversion' => 1, 'header' => 0]);

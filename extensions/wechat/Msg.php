@@ -10,6 +10,7 @@
  */
 
 namespace sy\tool\wechat;
+use \Sy;
 
 class Msg {
 	/**
@@ -18,13 +19,18 @@ class Msg {
 	 * @param string $errorMsg 错误信息
 	 * @return Ambigous <multitype:unknown , multitype:, boolean>
 	 */
-	public static function returnErrMsg($code,  $errorMsg = null) {
-		$returnMsg = array('error_code' => $code);
-		if (!empty($errorMsg)) {
-			$returnMsg['custom_msg'] = $errorMsg;
+	public static function returnErrMsg($code, $errorMsg = NULL) {
+		if (Sy::$debug) {
+			echo '微信扩展发生错误', "\n";
+			echo '错误码：', $code, "\n";
+			if (!empty($errorMsg)) {
+				echo $errorMsg;
+			}
+			exit;
+		} else {
+			echo '系统内部错误';
+			exit;
 		}
-		$returnMsg['custom_msg'] = '出错啦！'.$returnMsg['custom_msg'];
-		exit($returnMsg['custom_msg']);
 	}
 }
 ?>
