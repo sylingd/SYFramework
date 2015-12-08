@@ -18,7 +18,7 @@ use \sy\base\SYException;
 set_exception_handler(function ($e) {
 	@header('Content-Type:text/html; charset=utf-8');
 	if (!($e instanceof SYException)) {
-		$e = new SYException($e->getMessage(), '10000');
+		$e = new SYException($e->getMessage(), '10000', [$e->getFile(), $e->getLine()]);
 	}
 	echo $e->getHtml();
 	exit;

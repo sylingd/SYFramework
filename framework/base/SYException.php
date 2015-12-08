@@ -16,6 +16,14 @@ use \Sy;
 
 //普通异常类
 class SYException extends \Exception {
+	public function __construct($message, $code, $file = NULL) {
+		$this->message = $message;
+		$this->code = $code;
+		if ($file !== NULL) {
+			$this->file = $file[0];
+			$this->line = $file[1];
+		}
+	}
 	public function __toString() {
 		return $this->getText();
 	}

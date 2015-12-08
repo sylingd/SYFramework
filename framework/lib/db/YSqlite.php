@@ -35,7 +35,7 @@ class YSqlite extends YPdo {
 	 * @access protected
 	 */
 	protected function connect() {
-		$id = static::$current;
+		$id = $this->current;
 		//对老版本的支持
 		if ($this->dbInfo[$id]['version'] === 'sqlite3') {
 			$dsn = 'sqlite:';

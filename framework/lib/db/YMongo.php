@@ -39,27 +39,36 @@ class YMongo {
 	public $dbObject = [];
 	public $collectionObject = [];
 	public $lastError = [];
+	protected $current;
 	static protected $_instance = NULL;
-	static protected $current = 'default';
 	static public function i($id = 'default') {
 		if (static::$_instance === NULL) {
-			static::$_instance = new static;
+			static::$_instance = new static($id);
+		} else {
+			static::$_instance->setCurrent($id);
 		}
-		static::$current = $id;
 		static::$_instance->dbObject[$id] = NULL;
 		static::$_instance->collectionObject[$id] = NULL;
 		static::$_instance->lastError[$id] = NULL;
 		return static::$_instance;
 	}
 	/**
+	 * 设置当前Server
+	 * @param string $current
+	 */
+	public function setCurrent($current) {
+		$this->current = $current;
+	}
+	/**
 	 * 构造函数，自动连接
 	 * @access public
 	 */
-	public function __construct() {
+	public function __construct($current) {
 		if (!class_exists('MongoClient', FALSE)) {
 			throw new SYException('Class "MongoClient" is required', '10022');
 		}
-		if (isset(Sy::$app['mongo']) && static::$current === 'default') {
+		$this->setCurrent($current);
+		if (isset(Sy::$app['mongo']) && $current === 'default') {
 			$this->setParam(Sy::$app['mongo']);
 		}
 	}
@@ -68,7 +77,7 @@ class YMongo {
 	 * @access protected
 	 */
 	protected function connect() {
-		$id = static::$current;
+		$id = $this->current;
 		$dsn = 'mongodb://';
 		//多个服务器
 		if (is_array($this->dbInfo[$id]['server'])) {
@@ -104,7 +113,7 @@ class YMongo {
 	 * @param array $param Redis服务器参数
 	 */
 	public function setParam($param) {
-		$id = static::$current;
+		$id = $this->current;
 		$this->dbInfo[$id] = $param;
 		$this->link[$id] = NULL;
 		$this->connect();
@@ -116,7 +125,7 @@ class YMongo {
 	 * @return string
 	 */
 	protected function setQuery($k) {
-		$id = static::$current;
+		$id = $this->current;
 		return str_replace('#@__', $this->dbInfo[$id]['prefix'], $k);
 	}
 	/**
@@ -126,7 +135,7 @@ class YMongo {
 	 * @return object(this)
 	 */
 	public function db($name) {
-		$id = static::$current;
+		$id = $this->current;
 		try {
 			$this->dbObject[$id] = $this->link[$id]->selectDB($name);
 		} catch (Exception $e) {
@@ -141,7 +150,7 @@ class YMongo {
 	 * @return object(this)
 	 */
 	public function select($collection) {
-		$id = static::$current;
+		$id = $this->current;
 		if (isset($this->dbObject[$id]) && is_object($this->dbObject[$id])) {
 			$db = $this->dbObject[$id];
 		} elseif (isset($this->linkDB[$id])) {
@@ -165,7 +174,7 @@ class YMongo {
 	 * @return mixed
 	 */
 	protected function executeCommand($method, $param = []) {
-		$id = static::$current;
+		$id = $this->current;
 		try {
 			$r = call_user_func_array([$this->collectionObject[$id], $method], $param);
 		} catch (Exception $e) {
@@ -184,14 +193,14 @@ class YMongo {
 	 * @return array
 	 */
 	public function getLastError() {
-		$id = static::$current;
+		$id = $this->current;
 		return $this->lastError[$id];
 	}
 	/**
 	 * 魔术方法调用
 	 */
 	public function __call($method, $args) {
-		$id = static::$current;
+		$id = $this->current;
 		if (isset($this->collectionObject[$id]) && is_object($this->collectionObject[$id]) && method_exists($this->collectionObject[$id], $method)) {
 			//collection
 			return $this->executeCommand($method, $args);

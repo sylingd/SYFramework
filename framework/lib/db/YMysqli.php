@@ -29,7 +29,7 @@ class YMysqli {
 		if (static::$_instance === NULL) {
 			static::$_instance = new static;
 		}
-		static::$current = $id;
+		$this->current = $id;
 		return static::$_instance;
 	}
 	/**
@@ -40,7 +40,7 @@ class YMysqli {
 		if (!class_exists('mysqli', FALSE)) {
 			throw new SYException('Class "MySQLi" is required', '10020');
 		}
-		if (isset(Sy::$app['mysql']) && static::$current === 'default') {
+		if (isset(Sy::$app['mysql']) && $this->current === 'default') {
 			$this->setParam(Sy::$app['mysql']);
 		}
 	}
@@ -50,7 +50,7 @@ class YMysqli {
 	 * @param array $param MySQL服务器参数
 	 */
 	public function setParam($param) {
-		$id = static::$current;
+		$id = $this->current;
 		$this->dbInfo[$id] = $param;
 		$this->link[$id] = NULL;
 		$this->connect();
@@ -60,7 +60,7 @@ class YMysqli {
 	 * @access protected
 	 */
 	protected function connect() {
-		$id = static::$current;
+		$id = $this->current;
 		$config = $this->dbInfo[$id];
 		$this->link[$id] = new mysqli($config['host'], $config['user'], $config['password'], $config['name'], $config['port']);
 		if ($this->link[$id]->connect_error) {
@@ -75,7 +75,7 @@ class YMysqli {
 	 * @return string
 	 */
 	protected function setQuery($sql) {
-		$id = static::$current;
+		$id = $this->current;
 		return str_replace('#@__', $this->dbInfo[$id]['prefix'], $sql);
 	}
 	/**
@@ -85,7 +85,7 @@ class YMysqli {
 	 * @return array
 	 */
 	public function getAll($key) {
-		$id = static::$current;
+		$id = $this->current;
 		$rs = $this->result[$id][$key];
 		$rs = $rs->fetch_all(MYSQLI_ASSOC);
 		return $rs;
@@ -96,7 +96,7 @@ class YMysqli {
 	 * @param string $key
 	 */
 	public function free($key) {
-		$id = static::$current;
+		$id = $this->current;
 		$this->result[$id][$key]->free();
 		$this->result[$id][$key] = NULL;
 	}
@@ -106,7 +106,7 @@ class YMysqli {
 	 * @return int
 	 */
 	public function getLastId() {
-		$id = static::$current;
+		$id = $this->current;
 		return intval($this->link[$id]->insert_id);
 	}
 	/**
@@ -116,7 +116,7 @@ class YMysqli {
 	 * @return mixed
 	 */
 	public function getArray($key) {
-		$id = static::$current;
+		$id = $this->current;
 		if (!isset($this->result[$id][$key]) || empty($this->result[$id][$key])) {
 			return NULL;
 		}
@@ -132,7 +132,7 @@ class YMysqli {
 	 * @param array $data 参数
 	 */
 	public function query($key, $sql, $data = NULL) {
-		$id = static::$current;
+		$id = $this->current;
 		$sql = $this->setQuery($sql);
 		if (is_array($data)) {
 			foreach ($data as $v) {
@@ -170,7 +170,7 @@ class YMysqli {
 	 * @access public
 	 */
 	public function beginTransaction() {
-		$id = static::$current;
+		$id = $this->current;
 		$this->link[$id]->autocommit(FALSE);
 	}
 	/**
@@ -179,7 +179,7 @@ class YMysqli {
 	 * @param string $sql
 	 */
 	public function addOne($sql) {
-		$id = static::$current;
+		$id = $this->current;
 		$this->link[$id]->query($this->setQuery($sql, $id));
 	}
 	/**
@@ -187,7 +187,7 @@ class YMysqli {
 	 * @access public
 	 */
 	public function commit() {
-		$id = static::$current;
+		$id = $this->current;
 		$this->link[$id]->commit();
 	}
 
@@ -196,7 +196,7 @@ class YMysqli {
 	 * @access public
 	 */
 	public function rollback() {
-		$id = static::$current;
+		$id = $this->current;
 		$this->link[$id]->rollback();
 	}
 	/**

@@ -23,24 +23,26 @@ class YRedis {
 	protected $dbInfo = [];
 	protected $transaction = [];
 	protected $result = [];
+	protected $current = 'default';
 	static protected $_instance = NULL;
-	static protected $current = 'default';
 	static public function i($id = 'default') {
 		if (static::$_instance === NULL) {
-			static::$_instance = new static;
+			static::$_instance = new static($id);
+		} else {
+			static::$_instance->setCurrent($id);
 		}
-		static::$current = $id;
 		return static::$_instance;
 	}
 	/**
 	 * 构造函数，自动连接
 	 * @access public
 	 */
-	public function __construct() {
+	public function __construct($current) {
 		if (!class_exists('Redis', FALSE)) {
 			throw new SYException('Class "Redis" is required', '10022');
 		}
-		if (isset(Sy::$app['redis']) && static::$current === 'default') {
+		$this->setCurrent($current);
+		if (isset(Sy::$app['redis']) && $current === 'default') {
 			$this->setParam(Sy::$app['redis']);
 		}
 	}
@@ -49,7 +51,7 @@ class YRedis {
 	 * @access protected
 	 */
 	protected function connect() {
-		$id = static::$current;
+		$id = $this->current;
 		$this->link[$id] = new Redis;
 		$this->link[$id]->connect($this->dbInfo[$id]['host'], $this->dbInfo['port']);
 		if (!empty($this->dbInfo[$id]['password'])) {
@@ -62,7 +64,7 @@ class YRedis {
 	 * @param array $param Redis服务器参数
 	 */
 	public function setParam($param) {
-		$id = static::$current;
+		$id = $this->current;
 		$this->dbInfo[$id] = $param;
 		$this->link[$id] = NULL;
 		$this->connect();
@@ -74,14 +76,14 @@ class YRedis {
 	 * @return string
 	 */
 	protected function setQuery($k) {
-		$id = static::$current;
+		$id = $this->current;
 		return str_replace('#@__', $this->dbInfo[$id]['prefix'], $k);
 	}
 	/**
 	 * 使用魔术方法，调用phpredis的方法
 	 */
 	public function __call($name, $args) {
-		$id = static::$current;
+		$id = $this->current;
 		if (!method_exists($this->link[$id], $name)) {
 			throw new SYDBException("Method '$name' not exists", $this->dbtype, '');
 		}
@@ -141,7 +143,7 @@ class YRedis {
 	 * @access public
 	 */
 	public function beginTransaction() {
-		$id = static::$current;
+		$id = $this->current;
 		$this->transaction[$id] = $this->link[$id]->mulit();
 	}
 	/**
@@ -149,7 +151,7 @@ class YRedis {
 	 * @access public
 	 */
 	public function commit() {
-		$id = static::$current;
+		$id = $this->current;
 		$r = $this->transaction[$id]->exec();
 		$this->transaction[$id] = NULL;
 		return $r;

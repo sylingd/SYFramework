@@ -35,7 +35,7 @@ class YMysql extends YPdo {
 	 * @access protected
 	 */
 	protected function connect() {
-		$id = static::$current;
+		$id = $this->current;
 		$config = $this->dbInfo[$id];
 		$dsn = 'mysql:host=' . $config['host'] . ';port=' . $config['port'] . ';';
 		if (isset($config['name'])) {
@@ -72,7 +72,7 @@ class YMysql extends YPdo {
 	 * @access public
 	 */
 	public function beginTransaction() {
-		$id = static::$current;
+		$id = $this->current;
 		$this->link[$id]->beginTransaction();
 	}
 	/**
@@ -81,7 +81,7 @@ class YMysql extends YPdo {
 	 * @param string $sql
 	 */
 	public function addOne($sql) {
-		$id = static::$current;
+		$id = $this->current;
 		$this->link[$id]->exec($this->setQuery($sql));
 	}
 	/**
@@ -89,7 +89,7 @@ class YMysql extends YPdo {
 	 * @access public
 	 */
 	public function commit() {
-		$id = static::$current;
+		$id = $this->current;
 		$this->link[$id]->commit();
 	}
 	/**
@@ -97,7 +97,7 @@ class YMysql extends YPdo {
 	 * @access public
 	 */
 	public function rollback() {
-		$id = static::$current;
+		$id = $this->current;
 		$this->link[$id]->rollBack();
 	}
 }
