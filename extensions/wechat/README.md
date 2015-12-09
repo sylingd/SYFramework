@@ -34,15 +34,15 @@
 
 #### 范例
 
-* 发送文本`ResponsePassive::text($fromusername, $tousername, '文本消息内容');`
+* 发送文本 `ResponsePassive::text($fromusername, $tousername, '文本消息内容');`
 
-* 发送图片`ResponsePassive::image($fromusername, $tousername, $mediaId);`
+* 发送图片 `ResponsePassive::image($fromusername, $tousername, $mediaId);`
 
-* 发送语音`ResponsePassive::voice($fromusername, $tousername, $mediaId);`
+* 发送语音 `ResponsePassive::voice($fromusername, $tousername, $mediaId);`
 
-* 发送视频`ResponsePassive::video($fromusername, $tousername, $mediaId, '视频标题', '视频描述');`
+* 发送视频 `ResponsePassive::video($fromusername, $tousername, $mediaId, '视频标题', '视频描述');`
 
-* 发送音乐`ResponsePassive::music($fromusername, $tousername, '音乐标题', '音乐描述', '音乐链接', '高质量音乐链接，WIFI环境优先使用该链接播放音乐', '缩略图的媒体id，通过上传多媒体文件，得到的id');`
+* 发送音乐 `ResponsePassive::music($fromusername, $tousername, '音乐标题', '音乐描述', '音乐链接', '高质量音乐链接，WIFI环境优先使用该链接播放音乐', '缩略图的媒体id，通过上传多媒体文件，得到的id');`
 
 * 发送图文
 
@@ -82,7 +82,7 @@
 
 如不设置，每次请求中，首次调用getAccessToken/getFullAccessToken方法都会从微信服务器获取AccessToken
 
-以文件
+以文件为例
 
 读
 
@@ -113,15 +113,15 @@
 
 #### 范例
 
-* 发送文本内容¨ResponseInitiative::text($tousername, '文本消息内容');`
+* 发送文本内容 `ResponseInitiative::text($tousername, '文本消息内容');`
 
-* 发送图片`ResponseInitiative::image($tousername, $mediaId);`
+* 发送图片 `ResponseInitiative::image($tousername, $mediaId);`
 
-* 发送语音`ResponseInitiative::voice($tousername, $mediaId);`
+* 发送语音 `ResponseInitiative::voice($tousername, $mediaId);`
 
-* 发送视频`ResponseInitiative::video($tousername, $mediaId, '视频描述', '视频标题');`
+* 发送视频 `ResponseInitiative::video($tousername, $mediaId, '视频描述', '视频标题');`
 
-* 发送音乐`ResponseInitiative::music($tousername, '音乐标题', '音乐描述', '音乐链接', '高质量音乐链接，WIFI环境优先使用该链接播放音乐', '缩略图的媒体id，通过上传多媒体文件，得到的id');`
+* 发送音乐 `ResponseInitiative::music($tousername, '音乐标题', '音乐描述', '音乐链接', '高质量音乐链接，WIFI环境优先使用该链接播放音乐', '缩略图的媒体id，通过上传多媒体文件，得到的id');`
 
 * 发送图文消息
 
@@ -155,21 +155,21 @@
 
 #### 范例
 
-* 分组管理 - 创建分组`UserManage::createGroup('分组名');`
+* 分组管理 - 创建分组 `UserManage::createGroup('分组名');`
 
-* 分组管理 - 获取分组列表`UserManage::getGroupList();`
+* 分组管理 - 获取分组列表 `UserManage::getGroupList();`
 
-* 分组管理 - 查询用户所在分组`UserManage::getGroupByOpenId($openId);`
+* 分组管理 - 查询用户所在分组 `UserManage::getGroupByOpenId($openId);`
 
-* 分组管理 - 修改分组名`UserManage::editGroupName($groupId, '新的组名');`
+* 分组管理 - 修改分组名 `UserManage::editGroupName($groupId, '新的组名');`
 
-* 分组管理 - 移动用户分组`UserManage::editUserGroup($openId, $groupId);`
+* 分组管理 - 移动用户分组 `UserManage::editUserGroup($openId, $groupId);`
 
-* 用户管理 - 获取用户基本信息`UserManage::getUserInfo($openId);`
+* 用户管理 - 获取用户基本信息 `UserManage::getUserInfo($openId);`
 
-* 用户管理 - 获取关注者列表`UserManage::getFansList($next_openId='');`
+* 用户管理 - 获取关注者列表 `UserManage::getFansList($next_openId='');`
 
-* 用户管理 - 获取网络状态`UserManage::getNetworkState();`
+* 用户管理 - 获取网络状态 `UserManage::getNetworkState();`
 
 * 设置备注名
 
@@ -357,12 +357,13 @@ $articles 是图文消息列表，结构如下：
 		array('thumb_media_id'=>'多媒体ID，由多媒体上传接口获得' , 'author'=>'作者', 'title'=>'标题', 'content_source_url'=>'www.lanecn.com', 'digest'=>'摘要', 'show_cover_pic'=>'是否设置为封面（0或者1）'),
 	);
 
-'thumb_media_id'多媒体ID，由多媒体上传接口获得：Media::upload($filename, $type);
-'author'作者
-'title'标题
-'content_source_url'一个URL，点击“阅读全文”跳转的地址
-'digest'摘要
-'show_cover_pic'0或1，是否设置为封面
+
+	'thumb_media_id'多媒体ID，由多媒体上传接口获得：Media::upload($filename, $type);
+	'author'作者
+	'title'标题
+	'content_source_url'一个URL，点击“阅读全文”跳转的地址
+	'digest'摘要
+	'show_cover_pic'0或1，是否设置为封面
 
 下面的方法，图文消息的参数mediaId是由上面这个方法Menu::uploadNews($articles);获得的，其他的mediaId是多媒体上传获得的Media::upload($filename, $type);
 根据分组群发的所有接口最后一个参数,$isToAll，默认未false。使用true且成功群发，会使得此次群发进入历史消息列表。
@@ -394,17 +395,17 @@ $articles 是图文消息列表，结构如下：
 	AdvancedBroadcast::delete($msgId);
 	$msgId:以上的群发接口成功时都会返回msg_id这个字段
 
-* 预览图文消息`AdvancedBroadcast::previewNewsByGroup($openId, $mediaId);`
+* 预览图文消息 `AdvancedBroadcast::previewNewsByGroup($openId, $mediaId);`
 
-* 预览文本消息`AdvancedBroadcast::previewTextByGroup($openId, $content);`
+* 预览文本消息 `AdvancedBroadcast::previewTextByGroup($openId, $content);`
 
-* 预览语音消息`AdvancedBroadcast::previewVoiceByGroup($openId, $mediaId);`
+* 预览语音消息 `AdvancedBroadcast::previewVoiceByGroup($openId, $mediaId);`
 
-* 预览图片消息`AdvancedBroadcast::previewImageByGroup($openId, $mediaId);`
+* 预览图片消息 `AdvancedBroadcast::previewImageByGroup($openId, $mediaId);`
 
-* 预览视频消息`AdvancedBroadcast::previewVideoByGroup($mediaId, $title, $description, $openId);`
+* 预览视频消息 `AdvancedBroadcast::previewVideoByGroup($mediaId, $title, $description, $openId);`
 
-* 查询群发消息发送状态【订阅号与服务号认证后均可用】`AdvancedBroadcast::getStatus($openId, $mediaId);`
+* 查询群发消息发送状态【订阅号与服务号认证后均可用】 `AdvancedBroadcast::getStatus($openId, $mediaId);`
 
 ### 多客服接口
 
@@ -423,6 +424,7 @@ $articles 是图文消息列表，结构如下：
 	CustomService::getRecord($startTime, $endTime, $pageIndex=1, $pageSize=1000, $openId='')
 
 'startTime':查询开始时间，UNIX时间戳
+
 'startTime':查询结束时间，UNIX时间戳，每次查询不能跨日查询
 
 * 将用户发送的消息转发到客服：
@@ -441,9 +443,10 @@ $articles 是图文消息列表，结构如下：
 
 	CustomService::addAccount($kfAccount, $nickname, $password)
 
-$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
-$nickname String 昵称
-$password String 密码
+
+	$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
+	$nickname String 昵称
+	$password String 密码
 
 * 修改客服帐号
 
@@ -451,9 +454,10 @@ $password String 密码
 
 	CustomService::editAccount($kfAccount, $nickname, $password)
 
-$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
-$nickname String 昵称
-$password String 密码
+
+	$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
+	$nickname String 昵称
+	$password String 密码
 
 * 删除客服帐号
 
@@ -461,9 +465,10 @@ $password String 密码
 
 	CustomService::delAccount($kfAccount, $nickname, $password)
 
-$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
-$nickname String 昵称
-$password String 密码
+
+	$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
+	$nickname String 昵称
+	$password String 密码
 
 * 获取所有客服账号
 
@@ -471,9 +476,10 @@ $password String 密码
 
 	CustomService::getAccountList($kfAccount, $nickname, $password)
 
-$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
-$nickname String 昵称
-$password String 密码
+
+	$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
+	$nickname String 昵称
+	$password String 密码
 
 * 设置客服帐号的头像
 
@@ -481,8 +487,9 @@ $password String 密码
 
 	CustomService::setAccountImage($kfAccount, $imagePath)
 
-$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
-$imagePath String 待上传的头像文件路径
+
+	$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
+	$imagePath String 待上传的头像文件路径
 
 ### 智能接口
 
@@ -502,19 +509,14 @@ $imagePath String 待上传的头像文件路径
 
 	IntelligentInterface::semanticSemproxy($query, $category, $openId, $latitude='', $longitude='', $region='', $city='')
 
-$query 输入文本串，如“查一下明天从北京到上海的南航机票"
 
-$category String 需要使用的服务类型，如“flight,hotel”，多个用“,”隔开，不能为空。详见《接口协议文档》
-
-$latitude Float 纬度坐标，与经度同时传入；与城市二选一传入。详见《接口协议文档》
-
-$longitude Float 经度坐标，与纬度同时传入；与城市二选一传入。详见《接口协议文档》
-
-$region String 区域名称，在城市存在的情况下可省；与经纬度二选一传入。详见《接口协议文档》
-
-$city 城市名称，如“北京”，与经纬度二选一传入
-
-$openId
+	$query 输入文本串，如“查一下明天从北京到上海的南航机票"
+	$category String 需要使用的服务类型，如“flight,hotel”，多个用“,”隔开，不能为空。详见《接口协议文档》
+	$latitude Float 纬度坐标，与经度同时传入；与城市二选一传入。详见《接口协议文档》
+	$longitude Float 经度坐标，与纬度同时传入；与城市二选一传入。详见《接口协议文档》
+	$region String 区域名称，在城市存在的情况下可省；与经纬度二选一传入。详见《接口协议文档》
+	$city 城市名称，如“北京”，与经纬度二选一传入
+	$openId
 
 ### 推广支持
 
@@ -596,8 +598,8 @@ $longUrl String 需要转换的长链接，支持http://、https://、weixin://w
 
 * 向用户推送模板消息
 
-	TemplateMessage::sendTemplateMessage($data, $touser, $templateId, $url, $topcolor='#FF0000'){
-$data = array(
+	TemplateMessage::sendTemplateMessage($data, $touser, $templateId, $url, $topcolor='#FF0000');
+	$data = array(
 		'first'=>array('value'=>'您好，您已成功消费。', 'color'=>'#0A0A0A')
 		'keynote1'=>array('value'=>'巧克力', 'color'=>'#CCCCCC')
 		'keynote2'=>array('value'=>'39.8元', 'color'=>'#CCCCCC')
