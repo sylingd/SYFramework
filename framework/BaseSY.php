@@ -39,6 +39,8 @@ class BaseSY {
 	public static $routeParam = 'r';
 	//调试模式
 	public static $debug = TRUE;
+	//CLI模式
+	public static $isCli = FALSE;
 	/**
 	 * 初始化：创建Application
 	 * @access public
@@ -55,6 +57,10 @@ class BaseSY {
 			}
 		} elseif (!is_array($config)) {
 			throw new SYException('Config can not be recognised', '10003');
+		}
+		//PHP运行模式
+		if (PHP_SAPI === 'cli') {
+			static::$isCli = TRUE;
 		}
 		//框架所在的绝对路径
 		static::$frameworkDir =  rtrim(str_replace('\\', '/', __DIR__ ), '/') . '/';

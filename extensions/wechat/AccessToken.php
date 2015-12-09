@@ -10,60 +10,73 @@
  */
 
 namespace sy\tool\wechat;
+use \Sy;
+use \sy\lib\YCookie;
 
 class AccessToken {
-
+	protected static $accessToken = NULL;
+	protected static $handle = [];
 	/**
-	 * 获取微信Access_Token
+	 * 获取微信Access_Token（详细的）
+	 * @return array
+	 */
+	public static function getFullAccessToken() {
+		if (self::$accessToken === NULL) {
+			self::checkAccessToken();
+		}
+		return self::$accessToken;
+	}
+	/**
+	 * 获取微信Access_Token（简略的）
+	 * @return string
 	 */
 	public static function getAccessToken() {
-		//检测本地是否已经拥有access_token，并且检测access_token是否过期
-		$accessToken = self::_checkAccessToken();
-		if ($accessToken === false) {
-			$accessToken = self::_getAccessToken();
-		}
-		return $accessToken['access_token'];
+		$at = self::getFullAccessToken();
+		return $at['access_token'];
 	}
-
+	/**
+	 * 设置储存和读取句柄
+	 * @param string $type read/write
+	 * @param mixed $handle 可被call_user_func调用的函数/方法
+	 */
+	public static function setHandle($type, $handle) {
+		if (!is_callable($handle)) {
+			return FALSE;
+		}
+		if ($type === 'read' || $type === 'write') {
+			self::$handle[$type] = $handle;
+		}
+	}
 	/**
 	 * 从微信服务器获取微信ACCESS_TOKEN
-	 * @return Ambigous|bool
+	 * @return array|bool
 	 */
-	private static function _getAccessToken() {
+	protected static function reloadAccessToken() {
 		$url = Common::URL . 'cgi-bin/token?' . http_build_query(['grant_type' => 'client_credential', 'appid' => Common::$APPID, 'secret' => Common::$APPSECRET]);
 		$accessToken = Common::FetchURL(['url' => $url]);
 		if (!isset($accessToken['access_token'])) {
 			return Msg::returnErrMsg(Common::ERROR_GET_ACCESS_TOKEN, '获取ACCESS_TOKEN失败');
 		}
-		$accessToken['time'] = time();
-		$accessTokenJson = json_encode($accessToken);
-		//存入数据库
-		/**
-		 * 这里通常我会把access_token存起来，然后用的时候读取，判断是否过期，如果过期就重新调用此方法获取，存取操作请自行完成
-		 *
-		 * 请将变量$accessTokenJson给存起来，这个变量是一个字符串
-		 */
-		// $f = fopen('access_token', 'w+');
-		// fwrite($f, $accessTokenJson);
-		// fclose($f);
+		$accessToken['time'] = $_SERVER['REQUEST_TIME'];
+		if (isset(self::$handle['write'])) {
+			$accessToken = call_user_func(self::$handle['write'], $accessToken);
+		}
 		return $accessToken;
 	}
-
 	/**
 	 * 检测微信ACCESS_TOKEN是否过期
-	 *			  -10是预留的网络延迟时间
-	 * @return bool
+	 * -10是预留的网络延迟时间
 	 */
-	private static function _checkAccessToken() {
-		//获取access_token。是上面的获取方法获取到后存起来的。
-		// $accessToken = YourDatabase::get('access_token');
-		if (!empty($accessToken['value'])) {
-			$accessToken = json_decode($accessToken['value'], true);
-			if (time() - $accessToken['time'] < $accessToken['expires_in']-10) {
-				return $accessToken;
-			}
+	protected static function checkAccessToken() {
+		//获取access_token
+		if (isset(self::$handle['read'])) {
+			$accessToken = call_user_func(self::$handle['read']);
 		}
-		return false;
+		if (isset($accessToken) && is_array($accessToken) && (time() - $accessToken['time'] < $accessToken['expires_in']-10)) {
+			self::$accessToken = $accessToken;
+		} else {
+			self::$accessToken = self::reloadAccessToken();
+		}
 	}
 }
 ?>

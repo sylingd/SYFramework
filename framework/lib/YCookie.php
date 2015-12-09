@@ -12,7 +12,7 @@
  */
 
 namespace sy\lib;
-use Sy;
+use \Sy;
 use \sy\base\SYException;
 
 class YCookie {

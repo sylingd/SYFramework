@@ -6,6 +6,9 @@ use \sy\tool\wechat\Common;
 if (!class_exists('WxPayDataBase', FALSE)) {
 	require('WxPayDataBase.php');
 }
+if (!class_exists('WxPayNotify', FALSE)) {
+	require('WxPayNotify.php');
+}
 /**
  * 
  * 接口访问类，包含所有微信支付API列表的封装，类中方法为static方法，
@@ -401,7 +404,7 @@ class WxPayApi
  	 * 回调类成员函数方法:notify(array($this, you_function));
  	 * $callback  原型为：function function_name($data){}
  	 */
-	public static function notify($callback, &$msg)
+	public static function notify($callback, &$msg, $cback)
 	{
 		//获取通知的数据
 		$xml = file_get_contents('php://input');
@@ -412,7 +415,7 @@ class WxPayApi
 			$msg = $e->getMessage();
 			return false;
 		}
-		return call_user_func($callback, $result);
+		return call_user_func($callback, $result, $cback);
 	}
 	
 	/**
@@ -546,6 +549,27 @@ class WxPayApi
 		$time2 = explode( ".", $time );
 		$time = $time2[0];
 		return $time;
+	}
+	/**
+	 * 获取WxPayDataBase接口
+	 * @access public
+	 * @return object
+	 */
+	public static function getObject($name) {
+		if (substr($name, 0, 5) === 'WxPay' && class_exists($name, FALSE)) {
+			return new $name;
+		}
+	}
+	/**
+	 * 获取WxPayNotify接口
+	 * @access public
+	 * @return object
+	 */
+	public static function getNotify($type = 'default') {
+		$classname = 'WxPay' . ucfirst($type) . 'Notify'
+		if (class_exists($classname, FALSE)) {
+			return new $classname;
+		}
 	}
 }
 

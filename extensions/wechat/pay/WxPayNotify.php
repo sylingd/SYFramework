@@ -17,11 +17,11 @@ class WxPayNotify extends WxPayNotifyReply
 	 * 回调入口
 	 * @param bool $needSign  是否需要签名输出
 	 */
-	final public function Handle($needSign = true)
+	final public function Handle($cback, $needSign = true)
 	{
 		$msg = "OK";
 		//当返回false的时候，表示notify中调用NotifyCallBack回调失败获取签名校验失败，此时直接回复失败
-		$result = WxPayApi::notify(array($this, 'NotifyCallBack'), $msg);
+		$result = WxPayApi::notify(array($this, 'NotifyCallBack'), $msg, $cback);
 		if($result == false){
 			$this->SetReturn_code("FAIL");
 			$this->SetReturn_msg($msg);
@@ -31,8 +31,8 @@ class WxPayNotify extends WxPayNotifyReply
 			//该分支在成功回调到NotifyCallBack方法，处理完成之后流程
 			$this->SetReturn_code("SUCCESS");
 			$this->SetReturn_msg("OK");
+			$this->ReplyNotify($needSign);
 		}
-		$this->ReplyNotify($needSign);
 	}
 	
 	/**
@@ -47,7 +47,6 @@ class WxPayNotify extends WxPayNotifyReply
 	 */
 	public function NotifyProcess($data, &$msg)
 	{
-		//TODO 用户基础该类之后需要重写该方法，成功的时候返回true，失败返回false
 		return true;
 	}
 	
@@ -86,5 +85,42 @@ class WxPayNotify extends WxPayNotifyReply
 			$this->SetSign();
 		}
 		WxPayApi::replyNotify($this->ToXml());
+	}
+}
+
+class WxPayDefaultNotify extends WxPayNotify {
+	//查询订单
+	public function Queryorder($transaction_id)
+	{
+		$input = new WxPayOrderQuery();
+		$input->SetTransaction_id($transaction_id);
+		$result = WxPayApi::orderQuery($input);
+		if(array_key_exists("return_code", $result)
+			&& array_key_exists("result_code", $result)
+			&& $result["return_code"] == "SUCCESS"
+			&& $result["result_code"] == "SUCCESS")
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	//重写回调处理函数
+	public function NotifyProcess($data, &$msg, $cback)
+	{
+		$notfiyOutput = array();
+		
+		if(!array_key_exists("transaction_id", $data)){
+			$msg = "输入参数不正确";
+			return false;
+		}
+		//查询订单，判断订单真实性
+		if(!$this->Queryorder($data["transaction_id"])){
+			$msg = "订单查询失败";
+			return false;
+		}
+		//进行业务处理
+		call_user_func($cback);
+		return true;
 	}
 }
