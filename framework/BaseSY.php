@@ -47,6 +47,7 @@ class BaseSY {
 	 * @param mixed $config设置
 	 */
 	public static function createApplication($config = NULL) {
+		static::$frameworkDir =  str_replace('\\', '/', __DIR__ ) . '/';
 		if ($config === NULL) {
 			throw new SYException('Configuration is required', '10001');
 		} elseif (is_string($config)) {
@@ -63,7 +64,6 @@ class BaseSY {
 			static::$isCli = TRUE;
 		}
 		//框架所在的绝对路径
-		static::$frameworkDir =  rtrim(str_replace('\\', '/', __DIR__ ), '/') . '/';
 		static::$rootDir = str_replace('\\', '/', realpath(static::$frameworkDir . '../')) . '/';
 		//程序相对网站根目录所在
 		$now = $_SERVER['PHP_SELF'];
