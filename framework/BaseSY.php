@@ -281,4 +281,22 @@ class BaseSY {
 		}
 		include (static::viewPath($_tpl));
 	}
+	/**
+	 * 获取Model操作类
+	 * @access public
+	 * @param string $modelName
+	 * @return object
+	 */
+	public static function model($modelName) {
+		//Model名称
+		$modelClass = 'M' . ucfirst($modelName);
+		if (!class_exists($modelClass)) {
+			$fileName = static::$appDir . 'models/' . $modelName . '.php';
+			if (!is_file($fileName)) {
+				throw new SYException('Model ' . $fileName . ' not exists', '10010');
+			}
+			require ($fileName);
+		}
+		return $modelClass::i();
+	}
 }

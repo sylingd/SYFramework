@@ -16,7 +16,7 @@ use Sy;
 use \sy\base\SYException;
 
 class Controller {
-	protected $_m = [];
+	protected $_framework_m = [];
 	/**
 	 * 加载Model
 	 * @access protected
@@ -24,20 +24,13 @@ class Controller {
 	 * @param string $loadAs
 	 */
 	protected function load_model($modelName, $loadAs) {
+		$this->loadModel($modelName);
+	}
+	protected function loadModel($modelName, $loadAs) {
 		//是否已经加载
-		if (in_array($modelName, $this->_m, TRUE)) {
+		if (in_array($modelName, $this->_framework_m, TRUE)) {
 			return;
 		}
-		//load
-		$appDir = Sy::$appDir;
-		$fileName = $appDir . 'models/' . $modelName . '.php';
-		if (!is_file($fileName)) {
-			throw new SYException('Model ' . $fileName . ' not exists', '10010');
-		}
-		require ($fileName);
-		$this->_m[] = $modelName;
-		//Model名称
-		$m_file = 'M' . ucfirst($modelName);
-		$this->$loadAs = $m_file::_i();
+		$this->$loadAs = Sy::model($modelName);
 	}
 }
