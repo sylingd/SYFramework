@@ -176,5 +176,6 @@ abstract class YPdo {
 		if (!empty($key)) {
 			$this->result[$id][$key] = $st;
 		}
+		return $this;
 	}
 }
