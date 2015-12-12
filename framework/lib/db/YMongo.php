@@ -73,7 +73,7 @@ class YMongo {
 		}
 	}
 	/**
-	 * 连接到Redis
+	 * 连接到MongoDB
 	 * @access protected
 	 */
 	protected function connect() {
@@ -110,7 +110,7 @@ class YMongo {
 	/**
 	 * 设置Server
 	 * @access public
-	 * @param array $param Redis服务器参数
+	 * @param array $param MongoDB服务器参数
 	 */
 	public function setParam($param) {
 		$id = $this->current;
