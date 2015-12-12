@@ -12,7 +12,7 @@
  */
 
 namespace sy\tool;
-use Sy;
+use \Sy;
 
 class YCaptcha {
 	protected $im = NULL;
@@ -24,7 +24,7 @@ class YCaptcha {
 	protected $chineseWord = NULL;
 	protected $bgcolor;
 	static $_instance = NULL;
-	static public function _i() {
+	static public function i() {
 		if (self::$_instance === NULL) {
 			self::$_instance = new self;
 		}
