@@ -16,6 +16,7 @@ use \Memcached;
 use \Sy;
 
 class YMemcached {
+	protected $dbtype = 'Memcached';
 	protected $link = NULL;
 	static protected $_instance = NULL;
 	static public function i() {
@@ -26,7 +27,7 @@ class YMemcached {
 	}
 	public function __construct() {
 		if (!class_exists('Memcached', FALSE)) {
-			throw new SYException('Class "Memcached" is required', '10022');
+			throw new SYException('Class "Memcached" is required', '10025');
 		}
 		if (isset(Sy::$app['memcached'])) {
 			$this->setParam(Sy::$app['memcached']);
@@ -70,7 +71,7 @@ class YMemcached {
 	 */
 	public function __call($method, $args) {
 		if (!method_exists($this->link, $method)) {
-			throw new SYException("Method '$method' not extsts");
+			throw new SYDBException("Method '$method' not extsts", $this->dbtype);
 		}
 		if (in_array($method, ['add', 'append', 'decrement', 'delete', 'get', 'prepend', 'increment', 'replace', 'set', 'touch'], TRUE)) {
 			$args[0] = $this->setQuery($args[0]);

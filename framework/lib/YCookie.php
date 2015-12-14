@@ -21,7 +21,7 @@ class YCookie {
 	 * @access public
 	 * @param array $param
 	 * @param string $param[name] 名称
-	 * @param string $param[value 内容
+	 * @param string $param[value] 内容
 	 * @param int $param[expire] 过期时间，-1为失效，0为SESSION，不传递为从config读取，其他为当前时间+$expire
 	 * @param string $param[path] 若不传递，则从config读取
 	 * @param string $param[domain] 若不传递，则从config读取

@@ -65,7 +65,7 @@ class YMongo {
 	 */
 	public function __construct($current) {
 		if (!class_exists('MongoClient', FALSE)) {
-			throw new SYException('Class "MongoClient" is required', '10022');
+			throw new SYException('Class "MongoClient" is required', '10024');
 		}
 		$this->setCurrent($current);
 		if (isset(Sy::$app['mongo']) && $current === 'default') {

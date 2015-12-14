@@ -42,12 +42,16 @@ class BaseSY {
 	//CLI模式
 	public static $isCli = FALSE;
 	/**
-	 * 初始化：创建Application
-	 * @access public
+	 * 初始化：创建Application（通用）
+	 * @access protected
 	 * @param mixed $config设置
 	 */
-	public static function createApplication($config = NULL) {
+	protected static function createApplicationInit($config = NULL) {
 		static::$frameworkDir =  str_replace('\\', '/', __DIR__ ) . '/';
+		//PHP运行模式
+		if (PHP_SAPI === 'cli') {
+			static::$isCli = TRUE;
+		}
 		if ($config === NULL) {
 			throw new SYException('Configuration is required', '10001');
 		} elseif (is_string($config)) {
@@ -58,10 +62,6 @@ class BaseSY {
 			}
 		} elseif (!is_array($config)) {
 			throw new SYException('Config can not be recognised', '10003');
-		}
-		//PHP运行模式
-		if (PHP_SAPI === 'cli') {
-			static::$isCli = TRUE;
 		}
 		//框架所在的绝对路径
 		static::$rootDir = str_replace('\\', '/', realpath(static::$frameworkDir . '../')) . '/';
@@ -80,17 +80,44 @@ class BaseSY {
 		if (isset($config['debug'])) {
 			static::$debug = $config['debug'];
 		}
+		//编码相关
 		mb_internal_encoding($config['charset']);
-		//是否启用CSRF验证
-		if ($config['csrf']) {
-			\sy\lib\YSecurity::csrfSetCookie();
-		}
 		//加载App的基本函数
 		if (is_file(static::$appDir . 'common.php')) {
 			require(static::$appDir . 'common.php');
 		}
+	}
+	/**
+	 * 初始化：创建WebApplication
+	 * @access public
+	 * @param mixed $config设置
+	 */
+	public static function createApplication($config = NULL) {
+		static::createApplicationInit($config);
+		//是否启用CSRF验证
+		if ($config['csrf']) {
+			\sy\lib\YSecurity::csrfSetCookie();
+		}
 		//开始路由分发
 		static::router();
+	}
+	/**
+	 * 初始化：创建ConsoleApplication
+	 * @access public
+	 * @param mixed $config设置
+	 */
+	public static function createConsoleApplication($config = NULL) {
+		static::createApplicationInit($config);
+		if (!static::$isCli) {
+			throw new SYException('Must run at CLI mode', '10005');
+		}
+		if (isset(static::$app['console'])) {
+			list($fileName, $callback) = static::$app['console'];
+			require(static::$appDir . '/' . $fileName);
+			if (is_callable($callback)) {
+				call_user_func($callback);
+			}
+		}
 	}
 	/**
 	 * 报错：HTTP状态

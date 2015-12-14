@@ -20,7 +20,7 @@ class SYDBException extends SYException {
 	protected $dbtype;
 	protected $dbname;
 	protected $execute;
-	public function __construct($message, $dbtype, $execute) {
+	public function __construct($message, $dbtype, $execute = '') {
 		$this->message = $message;
 		$this->dbtype = $dbtype;
 		$this->execute = $execute;
