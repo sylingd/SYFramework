@@ -39,7 +39,9 @@ return [
 	],
 	//Controller列表
 	'controller' => [
-		'document'
+		'document',
+		'admin/user',
+		'admin/setting'
 	],
 	//默认的Router
 	'defaultRouter' => 'document/hello',

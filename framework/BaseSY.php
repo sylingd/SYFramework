@@ -150,11 +150,14 @@ class BaseSY {
 		if (empty($r)) {
 			$r = static::$app['defaultRouter'];
 		}
-		$r = explode('/', $r);
-		if (count($r) !== 2) {
+		if (strpos($r, '.') !== FALSE || strpos($r, '/') === FALSE) {
 			static::httpStatus('404', TRUE);
 		}
-		list($controllerName, $actionName) = $r;
+		//多级路由支持
+		$last = strrpos($r, '/');
+		$controllerName = substr($r, 0, $last);
+		$actionName = substr($r, $last + 1);
+		$isPath = strpos($controllerName, '/');
 		//Alias路由表
 		if (isset(static::$app['alias'][$controllerName])) {
 			$controllerName = static::$app['alias'][$controllerName];
@@ -163,16 +166,30 @@ class BaseSY {
 		if (!in_array($controllerName, static::$app['controller'], TRUE)) {
 			static::httpStatus('404', TRUE);
 		}
+		//多级路由时，引入顶级路由（如果存在）
+		if ($isPath !== FALSE) {
+			$topController = substr($controllerName, 0, $isPath);
+			$topControllerFile = static::$appDir . 'controllers/' . $topController . '/_base.php';
+			if (is_file($topControllerFile)) {
+				require($topControllerFile);
+			}
+		}
+		//初始化Controller
 		$fileName = static::$appDir . 'controllers/' . $controllerName . '.php';
-		$className = 'C' . ucfirst($controllerName);
+		if ($isPath !== FALSE) {
+			$className = substr($controllerName, strrpos($controllerName, '/') + 1);
+		} else {
+			$className = $controllerName;
+		}
+		$className = 'C' . ucfirst($className);
 		if (!is_file($fileName)) {
 			throw new SYException('Controller ' . $controllerName . ' not exists', '10004');
 		}
 		if (!class_exists($className, FALSE)) {
-			require ($fileName);
+			require($fileName);
 		}
-		//初始化Controller
 		$controller = new $className;
+		//执行动作
 		$actionName = 'action' . ucfirst($actionName);
 		if (!method_exists($controller, $actionName)) {
 			static::httpStatus('404', TRUE);
@@ -200,7 +217,7 @@ class BaseSY {
 			return;
 		}
 		if (is_file($fileName)) {
-			require ($fileName);
+			require($fileName);
 		}
 	}
 	/**
@@ -294,19 +311,22 @@ class BaseSY {
 	/**
 	 * 引入模板
 	 * @access public
-	 * @param string $_tpl 模板文件
+	 * @param string $__tpl 模板文件
 	 * @param array $_param 参数
 	 */
-	public static function view($_tpl, $_param = NULL) {
+	public static function view($__tpl, $_param = NULL) {
 		//是否启用CSRF验证
 		if (static::$app['csrf']) {
 			$_csrf_token = \sy\lib\YSecurity::csrfGetHash();
 		}
 		if (is_array($_param)) {
-			unset($_param['_tpl'], $_param['_csrf_token']);
+			unset($_param['__tpl'], $_param['__viewPath'], $_param['_csrf_token']);
 			extract($_param);
 		}
-		include (static::viewPath($_tpl));
+		$__viewPath = static::viewPath($__tpl);
+		if (is_file($__viewPath)) {
+			include($__viewPath);
+		}
 	}
 	/**
 	 * 获取Model操作类
