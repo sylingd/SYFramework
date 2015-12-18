@@ -210,7 +210,7 @@ $groupId = '分组ID'; //在添加新分组、获取分组列表的时候可以�
 参数：$scope：snsapi_base不弹出授权页面，只能获得OpenId;snsapi_userinfo弹出授权页面，可以获得所有信息
 参数：$redirect_uri：将会跳转到redirect_uri/?code=CODE&state=STATE 通过GET方式获取code和state。获取CODE时，发送请求和参数给微信服务器，微信服务器会处理后将跳转到本参数指定的URL页面
 
-	OAuth::getCode($redirect_uri, $state=1, $scope='snsapi_base');
+	OAuth::getCode($redirect_uri, $scope='snsapi_base');
 
 * 通过code换取网页授权access_token（access_token网页版）
 
