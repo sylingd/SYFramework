@@ -95,7 +95,7 @@ class BaseSY {
 	public static function createApplication($config = NULL) {
 		static::createApplicationInit($config);
 		//是否启用CSRF验证
-		if ($config['csrf']) {
+		if (isset(static::$app['csrf']) && static::$app['csrf']) {
 			\sy\lib\YSecurity::csrfSetCookie();
 		}
 		//开始路由分发
