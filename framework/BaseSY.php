@@ -157,11 +157,11 @@ class BaseSY {
 		$last = strrpos($r, '/');
 		$controllerName = substr($r, 0, $last);
 		$actionName = substr($r, $last + 1);
-		$isPath = strpos($controllerName, '/');
 		//Alias路由表
 		if (isset(static::$app['alias'][$controllerName])) {
 			$controllerName = static::$app['alias'][$controllerName];
 		}
+		$isPath = strpos($controllerName, '/');
 		//controller列表
 		if (!in_array($controllerName, static::$app['controller'], TRUE)) {
 			static::httpStatus('404', TRUE);
@@ -238,8 +238,11 @@ class BaseSY {
 			return $url . static::$siteDir;
 		}
 		unset($param[0]);
+		//多级路由支持
+		$last = strrpos($router, '/');
+		$controllerName = substr($router, 0, $last);
+		$actionName = substr($router, $last + 1);
 		//Alias路由表
-		list($controllerName, $actionName) = explode('/', $router);
 		if (in_array($controllerName, static::$app['alias'], TRUE)) {
 			$controllerName = array_search($controllerName, static::$app['alias']);
 		}

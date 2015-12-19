@@ -52,7 +52,8 @@ return [
 	//虚拟路由表
 	//例如'user'=>'eu_user'
 	'alias' => [
-		'doc' => 'document'
+		'doc' => 'document',
+		'aduser' => 'admin/user'
 	],
 	//console支持
 	//格式：['console函数/方法所在文件', '初始化函数（支持格式同call_user_func）']

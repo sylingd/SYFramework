@@ -30,6 +30,5 @@ use \sy\lib\YHtml;
 	</div>
 	<p><a href=""></a></p>
 	<p><?=$url?></p>
-	<p><?=YOp::_i()->set('I am libs')?></p>
-	<p><?=YOp::_i()->get()?></p>
+	<p><?=Sy::createUrl('admin/user/hello')?></p>
 </body>

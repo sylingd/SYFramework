@@ -12,7 +12,7 @@ use \sy\lib\YHtml;
 
 class MTest {
 	static $_instance = NULL;
-	static public function _i() {
+	static public function i() {
 		if (self::$_instance === NULL) {
 			self::$_instance = new self;
 		}
