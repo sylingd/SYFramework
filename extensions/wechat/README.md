@@ -810,29 +810,32 @@ php生成订单 - JS打开支付 - 用户支付 - 微信后台通知商户 - 商
 
 * 首先生成订单
 
-	use \sy\tool\wechat\pay\WxPayApi;
+	use \sy\tool\wechat\WxPay;
+	use \sy\tool\wechat\WxPayData;
 	$openId = '用户的openid';
 	//统一下单
-	$input = WxPayApi::getObject('WxPayUnifiedOrder');
-	$input->SetBody("test");
-	$input->SetAttach("test");
-	$input->SetOut_trade_no('商户网站内部订单号');
-	$input->SetTotal_fee('总价格，单位：分');
-	$input->SetTime_start(date("YmdHis"));
-	$input->SetTime_expire(date("YmdHis", time() + 600));
-	$input->SetGoods_tag("test");
-	$input->SetNotify_url("微信后台通知URL");
-	$input->SetTrade_type("JSAPI");
-	$input->SetOpenid($openId);
-	$order = WxPayApi::unifiedOrder($input);
-	$jsapi = WxPayApi::getObject('WxPayJsApiPay');
-	$jsapi->SetAppid($order["appid"]);
-	$jsapi->SetTimeStamp($_SERVER['REQUEST_TIME']);
-	$jsapi->SetNonceStr(WxPayApi::getNonceStr());
-	$jsapi->SetPackage("prepay_id=" . $order['prepay_id']);
-	$jsapi->SetSignType("MD5");
-	$jsapi->SetPaySign($jsapi->MakeSign());
-	$jsApiParameters = json_encode($jsapi->GetValues());
+	$input = [
+		'body' => '商品描述',
+		'attach' => '商品名称',
+		'out_trade_no' => '商户网站内部订单号',
+		'total_fee' => '总价格，单位：分',
+		'time_start' => date('YmdHis'),
+		'time_expire' => date('YmdHis', time() + 600), //交易超时
+		'goods_tag' => '', //商品标签
+		'notify_url' => '微信后台通知URL',
+		'trade_type' => 'JSAPI',
+		'openid' => $openid
+	];
+	$order = WxPay::unifiedOrder($input);
+	$jsapi = new WxPayData([
+		'appid' => $order['appid'],
+		'timeStamp' => time(),
+		'nonceStr' => WxPay::getNonceStr(),
+		'package' => 'prepay_id=' . $order['prepay_id'],
+		'signType' => 'MD5'
+	]);
+	$jsapi->values['paySign'] = $jsapi->MakeSign();
+	$jsApiParameters = json_encode($jsapi->values);
 
 * JS打开支付界面
 
@@ -864,14 +867,16 @@ php生成订单 - JS打开支付 - 用户支付 - 微信后台通知商户 - 商
 * 后台接收微信通知
 
 	use \sy\tool\wechat\Wechat;
-	use \sy\tool\wechat\WxPayApi;
-	$notify = WxPayApi::getNotify();
-	$notify->Handle(function(){
+	use \sy\tool\wechat\WxPay;
+	$notify = WxPay::getNotify();
+	list($check, $output, $data) = $notify->check();
+	if ($check) {
+		//验证成功
 		//进行业务处理，如自动发货等
 		//注意判断此订单是否已经处理过
-		
-		//获取参数
-		$wechat = new Wechat;
-		$wechat->getRequest('out_trade_no');
-	},false);
-
+		$out_trade_no = $data->out_trade_no;
+		$total_fee = $data->total_fee;
+	} else {
+		//验证失败，不做处理
+		echo $output;
+	}

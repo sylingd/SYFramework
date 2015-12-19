@@ -54,8 +54,8 @@ class Common {
 	 * 上报等级，0.关闭上报; 1.仅错误出错上报; 2.全量上报
 	 */
 	const PAY_REPORT = 1;
-	const PAY_SSLKEY = __DIR__ . '/data/apiclient_key.pem';
-	const PAY_SSLCERT = __DIR__ . '/data/apiclient_cert.pem';
+	const PAY_SSLKEY = __DIR__ . '/data/pay_apiclient_key.pem';
+	const PAY_SSLCERT = __DIR__ . '/data/pay_apiclient_cert.pem';
 	
 	//-------微信支付缺少参数--1501到1550-
 	const ERROR_PAY_NO_NOTIFY = 1501; //未设置NotifyURL
