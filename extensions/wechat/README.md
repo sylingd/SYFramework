@@ -46,6 +46,7 @@
 
 * 发送图文
 
+
 	//创建图文消息内容
 	$tuwenList = [];
 	$tuwenList[] = ['title'=>'标题1', 'description'=>'描述1', 'pic_url'=>'图片URL1', 'url'=>'点击跳转URL1'];
@@ -125,6 +126,7 @@
 
 * 发送图文消息
 
+
 	//创建图文消息内容
 	$tuwenList = array();
 	$tuwenList[] = array('title'=>'标题1', 'description'=>'描述1', 'pic_url'=>'图片URL1', 'url'=>'点击跳转URL1');
@@ -175,17 +177,19 @@
 
 开发者可以通过该接口对指定用户设置备注名，该接口暂时开放给微信认证的服务号。
 
-参数：$openId：用户的openId
-
-参数：$remark：新的昵称
-
+	参数：$openId：用户的openId
+	参数：$remark：新的昵称
 	UserManage::setRemark($openId, $remark);
 
 #### 关于获取用户信息的新亮点 - unionId：
-	获取用户信息是根据openId获取，同一个微信用户对于不同的公众号，是不同的openId。那问题就来了，如果你有多个公众号，想要共享一份用户数据，可是同一个用户在不同的公众号是不同的openId，我们无法判断是否是同一个用户，现在微信引入了UnionId的概念。
-	如果开发者有在多个公众号，或在公众号、移动应用之间统一用户帐号的需求，需要前往微信开放平台（open.weixin.qq.com）绑定公众号后，才可利用UnionID机制来满足上述需求。
-	在绑定了公众号后，我们根据openId获取用户信息的时候，会新增一个字段“unionid”，只要是同一个用户，在不同的公众号用不同的openId获取用户信息的时候unionid是相同的。
-	此功能不需要新增/修改代码，只需要在微信开放平台绑定公众号就可以了。仍旧使用获取用户信息接口UserManage::getUserInfo($openId);
+
+获取用户信息是根据openId获取，同一个微信用户对于不同的公众号，是不同的openId。那问题就来了，如果你有多个公众号，想要共享一份用户数据，可是同一个用户在不同的公众号是不同的openId，我们无法判断是否是同一个用户，现在微信引入了UnionId的概念。
+
+如果开发者有在多个公众号，或在公众号、移动应用之间统一用户帐号的需求，需要前往微信开放平台（open.weixin.qq.com）绑定公众号后，才可利用UnionID机制来满足上述需求。
+
+在绑定了公众号后，我们根据openId获取用户信息的时候，会新增一个字段“unionid”，只要是同一个用户，在不同的公众号用不同的openId获取用户信息的时候unionid是相同的。
+
+此功能不需要新增/修改代码，只需要在微信开放平台绑定公众号就可以了。仍旧使用获取用户信息接口`UserManage::getUserInfo($openId);`
 
 ### 网页授权
 
@@ -199,51 +203,46 @@
 
 #### 参数
 
-$openId = '用户和微信公众号的唯一ID'; //在变量$require['openid']中
-$mediaId = "通过上传多媒体文件，得到的id。";
-$groupId = '分组ID'; //在添加新分组、获取分组列表的时候可以得到
+	$openId = '用户和微信公众号的唯一ID'; //在变量$require['openid']中
+	$mediaId = "通过上传多媒体文件，得到的id。";
+	$groupId = '分组ID'; //在添加新分组、获取分组列表的时候可以得到
 
 #### 范例
 
-* 获取CODE。
+* 获取CODE
 
-参数：$scope：snsapi_base不弹出授权页面，只能获得OpenId;snsapi_userinfo弹出授权页面，可以获得所有信息
-参数：$redirect_uri：将会跳转到redirect_uri/?code=CODE&state=STATE 通过GET方式获取code和state。获取CODE时，发送请求和参数给微信服务器，微信服务器会处理后将跳转到本参数指定的URL页面
 
+	参数：$scope：snsapi_base不弹出授权页面，只能获得OpenId;snsapi_userinfo弹出授权页面，可以获得所有信息
+	参数：$redirect_uri：将会跳转到redirect_uri/?code=CODE&state=STATE 通过GET方式获取code和state。获取CODE时，发送请求和参数给微信服务器，微信服务器会处理后将跳转到本参数指定的URL页面
 	OAuth::getCode($redirect_uri, $scope='snsapi_base');
 
 * 通过code换取网页授权access_token（access_token网页版）
 
 首先请注意，这里通过code换取的网页授权access_token,与基础支持中的access_token不同。公众号可通过下述接口来获取网页授权access_token。如果网页授权的作用域为snsapi_base，则本步骤中获取到网页授权access_token的同时，也获取到了openid，snsapi_base式的网页授权流程即到此为止
 
-参数：$code getCode()获取的code参数。$code = $_GET['code'];
-
+	参数：$code getCode()获取的code参数。$code = $_GET['code'];
 	OAuth::getAccessTokenAndOpenId($code);
 
 * 刷新access_token（如果需要）
 
 由于access_token拥有较短的有效期，当access_token超时后，可以使用refresh_token进行刷新，refresh_token拥有较长的有效期（7天、30天、60天、90天），当refresh_token失效的后，需要用户重新授权。
 
-参数：$refreshToken：通过本类的第二个方法getAccessTokenAndOpenId可以获得一个数组，数组中有一个字段是refresh_token，就是这里的参数
-
+	参数：$refreshToken：通过本类的第二个方法getAccessTokenAndOpenId可以获得一个数组，数组中有一个字段是refresh_token，就是这里的参数
 	OAuth::refreshToken($refreshToken);
 
 * 拉取用户信息(需scope为 snsapi_userinfo)
 
 如果网页授权作用域为snsapi_userinfo，则此时开发者可以通过access_token和openid拉取用户信息了。
 
-参数：$accessToken:网页授权接口调用凭证。通过本类的第二个方法getAccessTokenAndOpenId可以获得一个数组，数组中有一个字段是access_token，就是这里的参数（注意：此access_token与基础支持的access_token不同）
-
-参数：$openId:用户的唯一标识
-
-参数：$lang:返回国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
-
+	参数：$accessToken:网页授权接口调用凭证。通过本类的第二个方法getAccessTokenAndOpenId可以获得一个数组，数组中有一个字段是access_token，就是这里的参数（注意：此access_token与基础支持的access_token不同）
+	参数：$openId:用户的唯一标识
+	参数：$lang:返回国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
 	OAuth::getUserInfo($accessToken, $openId, $lang='zh_CN');
 
 * 检验授权凭证（access_token）是否有效
 
-参数：$accessToken:网页授权接口调用凭证。通过本类的第二个方法getAccessTokenAndOpenId可以获得一个数组，数组中有一个字段是access_token，就是这里的参数（注意：此access_token与基础支持的access_token不同）
 
+	参数：$accessToken:网页授权接口调用凭证。通过本类的第二个方法getAccessTokenAndOpenId可以获得一个数组，数组中有一个字段是access_token，就是这里的参数（注意：此access_token与基础支持的access_token不同）
 	OAuth::checkAccessToken($accessToken, $openId);
 
 ### 多媒体上传下载
@@ -311,12 +310,12 @@ $groupId = '分组ID'; //在添加新分组、获取分组列表的时候可以�
 		array('id'=>'5', 'pid'=>'0', 'name'=>'顶级分类三', 'type'=>'2', 'code'=>'lane_wechat_menu_3'),
 	);
 
-'id'是您的系统中对分类的唯一编号；
-'pid'是该分类的上级分类，顶级分类则填写0；
-'name'是分类名称；
-'type'是菜单类型，如果该分类下有子分类请务必留空；
-'type'的值从以下类型中选择：click、view、scancode_push、scancode_waitmsg、pic_sysphoto、pic_photo_or_album、pic_weixin、location_select。
-'code'是view类型的URL或者其他类型的自定义key，如果该分类下有子分类请务必留空。
+	'id'是您的系统中对分类的唯一编号；
+	'pid'是该分类的上级分类，顶级分类则填写0；
+	'name'是分类名称；
+	'type'是菜单类型，如果该分类下有子分类请务必留空；
+	'type'的值从以下类型中选择：click、view、scancode_push、scancode_waitmsg、pic_sysphoto、pic_photo_or_album、pic_weixin、location_select。
+	'code'是view类型的URL或者其他类型的自定义key，如果该分类下有子分类请务必留空。
 
 * 获取微信菜单
 
@@ -366,6 +365,7 @@ $articles 是图文消息列表，结构如下：
 	'show_cover_pic'0或1，是否设置为封面
 
 下面的方法，图文消息的参数mediaId是由上面这个方法Menu::uploadNews($articles);获得的，其他的mediaId是多媒体上传获得的Media::upload($filename, $type);
+
 根据分组群发的所有接口最后一个参数,$isToAll，默认未false。使用true且成功群发，会使得此次群发进入历史消息列表。
 
 * 根据分组进行群发 - 发送图文消息：`AdvancedBroadcast::sentNewsByGroup($groupId, $mediaId, $isToAll=false);`
@@ -442,8 +442,7 @@ $articles 是图文消息列表，结构如下：
 开发者可以通过本接口为公众号添加客服账号，每个公众号最多添加10个客服账号。
 
 	CustomService::addAccount($kfAccount, $nickname, $password)
-
-
+	
 	$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
 	$nickname String 昵称
 	$password String 密码
@@ -465,7 +464,6 @@ $articles 是图文消息列表，结构如下：
 
 	CustomService::delAccount($kfAccount, $nickname, $password)
 
-
 	$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
 	$nickname String 昵称
 	$password String 密码
@@ -475,7 +473,6 @@ $articles 是图文消息列表，结构如下：
 必须先在公众平台官网为公众号设置微信号后才能使用该能力。
 
 	CustomService::getAccountList($kfAccount, $nickname, $password)
-
 
 	$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
 	$nickname String 昵称
@@ -487,7 +484,6 @@ $articles 是图文消息列表，结构如下：
 
 	CustomService::setAccountImage($kfAccount, $imagePath)
 
-
 	$kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
 	$imagePath String 待上传的头像文件路径
 
@@ -495,7 +491,7 @@ $articles 是图文消息列表，结构如下：
 
 #### 简介
 
-智能接口。
+智能接口
 
 #### 名称
 
@@ -508,7 +504,6 @@ $articles 是图文消息列表，结构如下：
 单类别意图比较明确，识别的覆盖率比较大，所以如果只要使用特定某个类别，建议将category只设置为该类别。
 
 	IntelligentInterface::semanticSemproxy($query, $category, $openId, $latitude='', $longitude='', $region='', $city='')
-
 
 	$query 输入文本串，如“查一下明天从北京到上海的南航机票"
 	$category String 需要使用的服务类型，如“flight,hotel”，多个用“,”隔开，不能为空。详见《接口协议文档》
@@ -539,20 +534,18 @@ $articles 是图文消息列表，结构如下：
 两种二维码分别适用于帐号绑定、用户来源统计等场景。
 
 	Popularize::createTicket($type, $expireSeconds, $sceneId);
-
-$type Int 临时二维码类型为1，永久二维码类型为2
-
-$expireSeconds Int 过期时间，只在类型为临时二维码时有效。最大为1800，单位秒
-
-$sceneId Int 场景值ID，临时二维码时为32位非0整型，永久二维码时最大值为100000（目前参数只支持1--100000）
+	
+	$type Int 临时二维码类型为1，永久二维码类型为2
+	$expireSeconds Int 过期时间，只在类型为临时二维码时有效。最大为1800，单位秒
+	$sceneId Int 场景值ID，临时二维码时为32位非0整型，永久二维码时最大值为100000（目前参数只支持1--100000）
 
 * 生成带参数的二维码 - 第二步 通过ticket换取二维码
 
+
 	Popularize::getQrcode($ticket, $filename='')
 
-$ticket Popularize::createTicket()获得的
-
-$filename String 文件路径，如果不为空，则会创建一个图片文件，二维码文件为jpg格式，保存到指定的路径
+	$ticket Popularize::createTicket()获得的
+	$filename String 文件路径，如果不为空，则会创建一个图片文件，二维码文件为jpg格式，保存到指定的路径
 
 返回值：如果传递了第二个参数filename则会在filename指定的路径生成一个二维码的图片。如果第二个参数filename为空，则直接echo本函数的返回值，并在调用页面添加header('Content-type: image/jpg');，将会展示出一个二维码的图片。
 
@@ -562,7 +555,7 @@ $filename String 文件路径，如果不为空，则会创建一个图片文件
 
 	Popularize::long2short($longUrl);
 
-$longUrl String 需要转换的长链接，支持http://、https://、weixin://wxpay 格式的url
+	$longUrl String 需要转换的长链接，支持http://、https://、weixin://wxpay 格式的url
 
 ### 模板消息接口
 
@@ -598,6 +591,7 @@ $longUrl String 需要转换的长链接，支持http://、https://、weixin://w
 
 * 向用户推送模板消息
 
+
 	TemplateMessage::sendTemplateMessage($data, $touser, $templateId, $url, $topcolor='#FF0000');
 	$data = array(
 		'first'=>array('value'=>'您好，您已成功消费。', 'color'=>'#0A0A0A')
@@ -607,26 +601,26 @@ $longUrl String 需要转换的长链接，支持http://、https://、weixin://w
 		'keynote3'=>array('value'=>'欢迎再次购买。', 'color'=>'#173177')
 	);
 
-$touser 接收方的OpenId。
-$templateId 模板Id。在公众平台线上模板库中选用模板获得ID
-$url URL
-$topcolor 顶部颜色，可以为空。默认是红色
+	$touser 接收方的OpenId。
+	$templateId 模板Id。在公众平台线上模板库中选用模板获得ID
+	$url URL
+	$topcolor 顶部颜色，可以为空。默认是红色
 
-注意：推送后用户到底是否成功接受，微信会向公众号推送一个消息。消息类型为事件消息，可以在lanewechat/wechatrequest.lib.php文件中的方法eventTemplateSendJobFinish(&$request)中收到这条消息。
+注意：推送后用户到底是否成功接受，微信会向公众号推送一个消息。消息类型为事件消息，可以在Request.php文件中的方法`eventTemplateSendJobFinish(&$request)`中收到这条消息。
 
 * 设置行业
 
+
 	TemplateMessage::setIndustry($industryId1, $industryId2)
-
-$industryId1 公众号模板消息所属行业编号 请打开连接查看行业编号 http://mp.weixin.qq.com/wiki/17/304c1885ea66dbedf7dc170d84999a9d.html#.E8.AE.BE.E7.BD.AE.E6.89.80.E5.B1.9E.E8.A1.8C.E4.B8.9A
-
-$industryId2 公众号模板消息所属行业编号。在公众平台线上模板库中选用模板获得ID
+	
+	$industryId1 公众号模板消息所属行业编号 请打开连接查看行业编号 http://mp.weixin.qq.com/wiki/17/304c1885ea66dbedf7dc170d84999a9d.html#.E8.AE.BE.E7.BD.AE.E6.89.80.E5.B1.9E.E8.A1.8C.E4.B8.9A
+	$industryId2 公众号模板消息所属行业编号。在公众平台线上模板库中选用模板获得ID
 
 * 获得模板ID
 
-	TemplateMessage::getTemplateId($templateIdShort)
 
-$templateIdShort 模板库中模板的编号，有“TM**”和“OPENTMTM**”等形式
+	TemplateMessage::getTemplateId($templateIdShort)
+	$templateIdShort 模板库中模板的编号，有“TM**”和“OPENTMTM**”等形式
 
 ### 安全性
 
@@ -639,6 +633,7 @@ $templateIdShort 模板库中模板的编号，有“TM**”和“OPENTMTM**”�
 \sy\tool\wechat\Auth;
 
 * 获取微信服务器IP列表，用于验证每次的请求来源是否是微信服务器。
+
 
 	Auth::getWeChatIPList();
 
@@ -656,9 +651,10 @@ $templateIdShort 模板库中模板的编号，有“TM**”和“OPENTMTM**”�
 
 * 获取自动回复规则
 
+
 	AutoReply::getRole($industryId1, $industryId2);
 
-返回结果与字段说明请查看http://mp.weixin.qq.com/wiki/7/7b5789bb1262fb866d01b4b40b0efecb.html
+返回结果与字段说明请查看[官方文档](http://mp.weixin.qq.com/wiki/7/7b5789bb1262fb866d01b4b40b0efecb.html)
 
 ### 实例示范：
 
@@ -810,6 +806,7 @@ php生成订单 - JS打开支付 - 用户支付 - 微信后台通知商户 - 商
 
 * 首先生成订单
 
+
 	use \sy\tool\wechat\WxPay;
 	use \sy\tool\wechat\WxPayData;
 	$openId = '用户的openid';
@@ -839,6 +836,7 @@ php生成订单 - JS打开支付 - 用户支付 - 微信后台通知商户 - 商
 
 * JS打开支付界面
 
+
 	<script>
 	function jsApiCall() {
 		WeixinJSBridge.invoke(
@@ -865,6 +863,7 @@ php生成订单 - JS打开支付 - 用户支付 - 微信后台通知商户 - 商
 	<button onclick="callpay()">立即支付</button>
 
 * 后台接收微信通知
+
 
 	use \sy\tool\wechat\Wechat;
 	use \sy\tool\wechat\WxPay;
