@@ -65,4 +65,61 @@ class YCookie {
 		$name = Sy::$app['cookie']['prefix'] . $name;
 		return isset($_COOKIE[$name]) ? $_COOKIE[$name] : NULL;
 	}
+	/**
+	 * Cookie是否存在
+	 * @access public
+	 * @param string $name
+	 * @return string
+	 */
+	public static function exists($name) {
+		$name = Sy::$app['cookie']['prefix'] . $name;
+		return isset($_COOKIE[$name]);
+	}
+	/**
+	 * 安全的设置Cookie（防止篡改）
+	 * @param int $type 类型
+	 *  1.签名方式，仅防止篡改，不防止任意读取
+	 *  2.secueityCode方式，防止篡改与读取，还用于保证数据完整性
+	 * @param array $cookie
+	 */
+	public static function sSet($type, $cookie) {
+		if ($type === 1) {
+			$sign = md5($cookie['value'] . Sy::$app['cookieKey']);
+			self::set($cookie);
+			$cookie['name'] .= '_sign';
+			$cookie['value'] = $sign;
+			self::set($cookie);
+		} else {
+			$cookie['value'] = YSecurity::secueityCode($cookie['value'], 'ENCODE');
+		}
+	}
+	/**
+	 * 安全的获取Cookie
+	 * @param string $name
+	 * @param int $type 如不输入，将自动检测
+	 */
+	public static function sGet($name, $type = 0) {
+		$v = self::get($name);
+		if ($v === NULL) {
+			return NULL;
+		}
+		if ($type === 1 || ($type === 0 && self::exists($name . '_sign'))) {
+			$sign = md5($v . Sy::$app['cookieKey']);
+			if ($sign === self::get($name . '_sign')) {
+				return $v;
+			} else {
+				return NULL;
+			}
+		}
+		if ($type === 2 || $type === 0) {
+			$vv = YSecurity::secueityCode($v, 'DECODE');
+			if (is_string($vv)) {
+				return $vv;
+			}
+			if ($vv === NULL && $type === 2) {
+				return NULL;
+			}
+		}
+		return NULL;
+	}
 }
