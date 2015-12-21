@@ -14,6 +14,45 @@
 
 * 加解密协议请参考微信公众平台官方文档。
 
+## 综述
+
+本组件封装了大部分关于微信的操作
+
+**所有组件在使用前，都需要设置微信的`client_id`和`client_secret`**
+
+设置方法：`\sy\tool\wechat\Common::setWx('client_id', 'client_secret');`
+
+被动接受消息时，相关函数封装于`\sy\tool\wechat\Wechat`，使用方法：
+
+	use \sy\tool\wechat\Wechat;
+	$wechat = new Wechat('微信后台填入的Token');
+	//上一步中，将会自动验证是否是微信服务器发来的消息
+	//如果验证失败，则不进行下面的任何操作
+	
+	//第一次使用（在微信后台填写地址时）
+	$wechat->checkSignature();
+	exit;
+	//上面两句只在第一次填写时使用，验证通过后请去掉
+	
+	$event = $wechat->switchType(); //获取消息类型
+	switch ($event['type']) {
+		case 'text':
+			//收到文本消息
+			break;
+		case 'eventSubscribe':
+			//普通关注
+			break;
+		case 'eventQrsceneSubscribe':
+			//扫描二维码关注
+			break;
+	}
+	//更多类型请参见Request.php
+	
+	//获取请求参数，一律小写
+	$fromusername = $wechat->getRequest('fromusername');
+	//事件返回中也包含fromusername和tousername
+	$fromusername = $event['fromusername'];
+
 ## 函数详解
 
 ### 被动给用户发送消息
@@ -28,8 +67,8 @@
 
 #### 参数
 
-	$fromusername = "谁发给你的？（用户的openId）"  //变量$request['fromusername']中
-	$tousername = "你的公众号Id"; //变量$require['tousername']中
+	$fromusername = "你的公众号ID";
+	$tousername = "谁发给你的？（用户的openId）";
 	$mediaId = "通过上传多媒体文件，得到的id。";
 
 #### 范例
@@ -742,11 +781,11 @@ $articles 是图文消息列表，结构如下：
 	<?php
 
 	$data = array(
-	 'first'=>array('value'=>'您好，您已成功消费。', 'color'=>'#0A0A0A')
-	 'keynote1'=>array('value'=>'巧克力', 'color'=>'#CCCCCC')
-	 'keynote2'=>array('value'=>'39.8元', 'color'=>'#CCCCCC')
-	 'keynote3'=>array('value'=>'2014年9月16日', 'color'=>'#CCCCCC')
-	 'keynote3'=>array('value'=>'欢迎再次购买。', 'color'=>'#173177')
+		'first'=>array('value'=>'您好，您已成功消费。', 'color'=>'#0A0A0A')
+		'keynote1'=>array('value'=>'巧克力', 'color'=>'#CCCCCC')
+		'keynote2'=>array('value'=>'39.8元', 'color'=>'#CCCCCC')
+		'keynote3'=>array('value'=>'2014年9月16日', 'color'=>'#CCCCCC')
+		'keynote3'=>array('value'=>'欢迎再次购买。', 'color'=>'#173177')
 	);
 
 	//$touser 接收方的OpenId。
@@ -809,6 +848,9 @@ php生成订单 - JS打开支付 - 用户支付 - 微信后台通知商户 - 商
 
 	use \sy\tool\wechat\WxPay;
 	use \sy\tool\wechat\WxPayData;
+	//设置基本参数
+	\sy\tool\wechat\Common::setWx('client_id', 'client_secret');
+	\sy\tool\wechat\Common::setWxPay('商户ID', 'KEY');
 	$openId = '用户的openid';
 	//统一下单
 	$input = [
@@ -849,14 +891,14 @@ php生成订单 - JS打开支付 - 用户支付 - 微信后台通知商户 - 商
 	}
 	function callpay() {
 		if (typeof WeixinJSBridge == "undefined"){
-		    if (document.addEventListener) {
-		        document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
-		    } else if (document.attachEvent) {
-		        document.attachEvent('WeixinJSBridgeReady', jsApiCall); 
-		        document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
-		    }
+			if (document.addEventListener) {
+				document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+			} else if (document.attachEvent) {
+				document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+				document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+			}
 		}else{
-		    jsApiCall();
+			jsApiCall();
 		}
 	}
 	</script>
@@ -867,6 +909,9 @@ php生成订单 - JS打开支付 - 用户支付 - 微信后台通知商户 - 商
 
 	use \sy\tool\wechat\Wechat;
 	use \sy\tool\wechat\WxPay;
+	//设置基本参数
+	\sy\tool\wechat\Common::setWx('client_id', 'client_secret');
+	\sy\tool\wechat\Common::setWxPay('商户ID', 'KEY');
 	$notify = WxPay::getNotify();
 	list($check, $output, $data) = $notify->check();
 	if ($check) {
