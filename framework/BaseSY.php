@@ -41,6 +41,8 @@ class BaseSY {
 	public static $debug = TRUE;
 	//CLI模式
 	public static $isCli = FALSE;
+	//当前Controller
+	public static $controller = NULL;
 	/**
 	 * 初始化：创建Application（通用）
 	 * @access protected
@@ -70,8 +72,6 @@ class BaseSY {
 		$dir = str_replace('\\', '/', dirname($now));
 		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
 		static::$siteDir = $dir;
-		//网站根目录
-		static::$webrootDir = substr(static::$rootDir, 0, strlen(static::$rootDir) - strlen(static::$siteDir)) . '/';
 		//基本信息
 		$config['cookie']['path'] = str_replace('@app/', $dir, $config['cookie']['path']);
 		static::$app = $config;
@@ -94,6 +94,8 @@ class BaseSY {
 	 */
 	public static function createApplication($config = NULL) {
 		static::createApplicationInit($config);
+		//网站根目录
+		static::$webrootDir = static::$rootDir, 0, strlen(static::$rootDir) - strlen(static::$siteDir)) . '/';
 		//是否启用CSRF验证
 		if (isset(static::$app['csrf']) && static::$app['csrf']) {
 			\sy\lib\YSecurity::csrfSetCookie();
@@ -108,6 +110,8 @@ class BaseSY {
 	 */
 	public static function createConsoleApplication($config = NULL) {
 		static::createApplicationInit($config);
+		//网站根目录
+		static::$webrootDir = static::$rootDir;
 		if (!static::$isCli) {
 			throw new SYException('Must run at CLI mode', '10005');
 		}
@@ -136,9 +140,13 @@ class BaseSY {
 		} else {
 			@header("HTTP/$version $status");
 		}
-		if ($end) {
-			echo isset($statusText) ? $statusText : $status . ' error';
-			exit;
+		if (is_object(static::$controller) && method_exists(static::$controller, '_handle_http_' . $status)) {
+			call_user_func([static::$controller, '_handle_http_' . $status]);
+		} else {
+			if ($end) {
+				echo isset($statusText) ? $statusText : $status . ' error';
+				exit;
+			}
 		}
 	}
 	/**
@@ -188,13 +196,13 @@ class BaseSY {
 		if (!class_exists($className, FALSE)) {
 			require($fileName);
 		}
-		$controller = new $className;
+		static::$controller = new $className;
 		//执行动作
 		$actionName = 'action' . ucfirst($actionName);
-		if (!method_exists($controller, $actionName)) {
+		if (!method_exists(static::$controller, $actionName)) {
 			static::httpStatus('404', TRUE);
 		}
-		$controller->$actionName();
+		call_user_func([$controller, $actionName]);
 	}
 	/**
 	 * 自动加载类
@@ -232,9 +240,16 @@ class BaseSY {
 		$router = $param[0];
 		$anchor = isset($param['#']) ? '#' . $param['#'] : '';
 		unset($param[static::$routeParam], $param['#']);
+		//Handle
+		if (method_exists(static::$controller, '_handle_url') && !empty($router)) {
+			$handle = call_user_func([static::$controller, '_handle_url'], $router, $anchor, $param, $ext);
+			if (is_string($handle)) {
+				return $handle;
+			}
+		}
 		//基本URL
 		$url = ($_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
-		if ($param[0] === '') {
+		if (empty($router)) {
 			return $url . static::$siteDir;
 		}
 		unset($param[0]);
