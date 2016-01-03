@@ -29,11 +29,6 @@
 	//上一步中，将会自动验证是否是微信服务器发来的消息
 	//如果验证失败，则不进行下面的任何操作
 	
-	//第一次使用（在微信后台填写地址时）
-	$wechat->checkSignature();
-	exit;
-	//上面两句只在第一次填写时使用，验证通过后请去掉
-	
 	$event = $wechat->switchType(); //获取消息类型
 	switch ($event['type']) {
 		case 'text':

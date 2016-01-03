@@ -20,22 +20,26 @@ class Wechat {
 	 * @var array
 	 */
 	protected $request;
+	protected $rawRequest;
 
 	/**
 	 * 初始化，判断此次请求是否为验证请求，并以数组形式保存
 	 * @param string $token 验证信息
-	 * @param boolean $debug 调试模式，默认为关闭
+	 * @param boolean $noCheckSignature 强制不进入签名校验模式（即首次验证）
 	 */
-	public function __construct($token) {
+	public function __construct($token, $noCheckSignature = FALSE) {
 		$this->token = $token;
+		$this->rawRequest = file_get_contents('php://input');
 		//未通过消息真假性验证
-	   if ($this->isValid() && $this->validateSignature()) {
+		if ($this->isValid() && $this->validateSignature()) {
 			return $_GET['echostr'];
 		}
+		//签名校验模式
+		if (empty($this->rawRequest) && isset($_GET['signature']) && isset($_GET['echostr']) && !$noCheckSignature) {
+			$this->checkSignature();
+		}
 		//接受并解析微信中心POST发送XML数据
-		$xml = (array) simplexml_load_string(file_get_contents('php://input'), 'SimpleXMLElement', LIBXML_NOCDATA);
-
-		//将数组键名转换为小写
+		$xml = (array)simplexml_load_string($this->rawRequest, 'SimpleXMLElement', LIBXML_NOCDATA);
 		$this->request = array_change_key_case($xml, CASE_LOWER);
 	}
 
