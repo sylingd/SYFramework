@@ -1,13 +1,18 @@
 <?php
-namespace sy\tool\wechat;
-use \sy\lib\YFetchURL;
 /**
  * 
  * 接口访问类，包含所有微信支付API列表的封装，类中方法为static方法，
  * 每个接口有默认超时时间（除提交被扫支付为10s，上报超时时间为1s外，其他均为6s）
- * @author widyhu
  *
+ * @author ShuangYa
+ * @package SYFramework
+ * @category Extension
+ * @link http://www.lanecn.com http://www.sylingd.com/
+ * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
+ 
+namespace sy\tool\wechat;
+use \sy\lib\YFetchURL;
 class WxPay {
 	/**
 	 * 统一下单，WxPayUnifiedOrder中out_trade_no、body、total_fee、trade_type必填
