@@ -95,7 +95,7 @@ class BaseSY {
 	public static function createApplication($config = NULL) {
 		static::createApplicationInit($config);
 		//网站根目录
-		static::$webrootDir = static::$rootDir, 0, strlen(static::$rootDir) - strlen(static::$siteDir)) . '/';
+		static::$webrootDir = substr(static::$rootDir, 0, strlen(static::$rootDir) - strlen(static::$siteDir)) . '/';
 		//是否启用CSRF验证
 		if (isset(static::$app['csrf']) && static::$app['csrf']) {
 			\sy\lib\YSecurity::csrfSetCookie();
@@ -202,7 +202,7 @@ class BaseSY {
 		if (!method_exists(static::$controller, $actionName)) {
 			static::httpStatus('404', TRUE);
 		}
-		call_user_func([$controller, $actionName]);
+		call_user_func([static::$controller, $actionName]);
 	}
 	/**
 	 * 自动加载类
