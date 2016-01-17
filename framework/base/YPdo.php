@@ -168,7 +168,8 @@ abstract class YPdo {
 		try {
 			$r = $st->execute();
 			if ($r === FALSE) {
-				throw new SYDBException(YHtml::encode($st->errorInfo()), $this->dbtype, $sql);
+				$e = $st->errorInfo();
+				throw new SYDBException(YHtml::encode($e[2]), $this->dbtype, $sql);
 			}
 		} catch (PDOException $e) {
 			throw new SYDBException(YHtml::encode($e->getMessage()), $this->dbtype, $sql);
