@@ -24,7 +24,9 @@
 
 * lib\db\YRedis [phpredis](https://github.com/phpredis/phpredis)
 
-* lib\db\YMongo MongoDB驱动
+* lib\db\YMongo Mongo扩展
+
+* lib\db\YMongoDB MongoDB扩展
 
 * tool\YCaptcha GD库
 

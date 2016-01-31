@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MongoDB支持类
+ * Mongo支持类
  * 
  * @author ShuangYa
  * @package SYFramework
@@ -13,9 +13,9 @@
 
 namespace sy\lib\db;
 use \Sy;
-//MongoDB主类
+//Mongo主类
 use \MongoClient;
-//MongoDB异常
+//Mongo异常
 use \MongoException;
 use \MongoResultException;
 use \MongoCursorException;
@@ -47,9 +47,6 @@ class YMongo {
 		} else {
 			static::$_instance->setCurrent($id);
 		}
-		static::$_instance->dbObject[$id] = NULL;
-		static::$_instance->collectionObject[$id] = NULL;
-		static::$_instance->lastError[$id] = NULL;
 		return static::$_instance;
 	}
 	/**
@@ -58,14 +55,16 @@ class YMongo {
 	 */
 	public function setCurrent($current) {
 		$this->current = $current;
+		$this->dbObject[$id] = NULL;
+		$this->collectionObject[$id] = NULL;
 	}
 	/**
 	 * 构造函数，自动连接
 	 * @access public
 	 */
 	public function __construct($current) {
-		if (!class_exists('MongoClient', FALSE)) {
-			throw new SYException('Class "MongoClient" is required', '10024');
+		if (!extension_loaded('mongo')) {
+			throw new SYException('Extension "mongo" is required', '10024');
 		}
 		$this->setCurrent($current);
 		if (isset(Sy::$app['mongo']) && $current === 'default') {
@@ -178,11 +177,7 @@ class YMongo {
 		try {
 			$r = call_user_func_array([$this->collectionObject[$id], $method], $param);
 		} catch (Exception $e) {
-			$this->lastError[$id] = [
-				'message' => $e->getMessage(),
-				'method' => $method,
-				'param' => $param
-			];
+			$this->setError($e->getMessage(), 'executeCommand - ' . $method, $param);
 			return FALSE;
 		}
 		return $r;
@@ -195,6 +190,121 @@ class YMongo {
 	public function getLastError() {
 		$id = $this->current;
 		return $this->lastError[$id];
+	}
+	protected function setError($message, $method, $param) {
+		$id = $this->current;
+		$this->lastError[$id] = [
+			'message' => $message,
+			'method' => $method,
+			'param' => $param
+		];
+	}
+	/**
+	 * 执行读操作
+	 * @access public
+	 * @param array $filter
+	 * @return array
+	 */
+	public function get($filter, $option) {
+		$id = $this->current;
+		try {
+			if (!isset($option['projection'])) {
+				$option['projection'] = [];
+			}
+			$cursor = $this->collectionObject[$id]->find($filter, $option['projection']);
+			$cursor->maxTimeMS($this->option[$id]['timeout']);
+			if (isset($option['limit'])) {
+				$cursor->limit($option['limit']);
+			}
+			if (isset($option['sort'])) {
+				$cursor->sort($option['sort']);
+			}
+			if (isset($option['skip'])) {
+				$cursor->skip($option['skip']);
+			}
+		} catch (\Exception $e) {
+			$this->setError($e->getMessage(), 'GET', [$filter, $option]);
+			return FALSE;
+		}
+		return $cursor;
+	}
+	public function getOne($filter, $option = []) {
+		$id = $this->current;
+		try {
+			if (!isset($option['projection'])) {
+				$option['projection'] = [];
+			}
+			$result = $this->collectionObject[$id]->findOne($filter, $option['projection'], ['maxTimeMS' => $this->option[$id]['timeout']]);
+		} catch (\Exception $e) {
+			$this->setError($e->getMessage(), 'GET', [$filter, $option]);
+			return FALSE;
+		}
+		return $result;
+	}
+	/**
+	 * 删除记录
+	 * @access public
+	 * @param array $filter
+	 * @return object
+	 */
+	public function delete($filter, $justOne = FALSE) {
+		$id = $this->current;
+		try {
+			$this->collectionObject[$id]->remove($filter, [
+				'justOne' => $justOne,
+				'safe' => $this->option[$id]['safe'],
+				'timeout' => $this->option[$id]['timeout']
+			]);
+		} catch (\Exception $e) {
+			$this->setError($e->getMessage(), 'DELETE', $filter);
+			return FALSE;
+		}
+		return $result;
+	}
+	/**
+	 * 更新记录
+	 * @access public
+	 * @param array $filter 查询条件
+	 * @param array $to 设置为
+	 * @param boolean $justOne 是否仅更新一条记录
+	 * @param boolean $autoInsert 在没有匹配记录时，是否自动插入
+	 * @return object
+	 */
+	public function update($filter, $to, $justOne = FALSE, $autoInsert = FALSE) {
+		$id = $this->current;
+		try {
+			$this->collectionObject[$id]->update($filter, ['$set' => $to], [
+				'multiple' => !$justOne,
+				'safe' => $this->option[$id]['safe'],
+				'upsert' => $autoInsert
+			]);
+		} catch (\Exception $e) {
+			$this->setError($e->getMessage(), 'UPDATE', [$filter, $to]);
+			return FALSE;
+		}
+		return TRUE;
+	}
+	/**
+	 * 增加记录
+	 * @access public
+	 * @param array $data
+	 * @return array
+	 */
+	public function insert($data) {
+		$id = $this->current;
+		try {
+			$oid = $this->collectionObject[$id]->insert($data, [
+				'safe' => $this->option[$id]['safe'],
+				'timeout' => $this->option[$id]['timeout']
+			]);
+			if (isset($data['_id'])) {
+				$oid = $data['_id'];
+			}
+		} catch (\Exception $e) {
+			$this->setError($e->getMessage(), 'INSERT', $data);
+			return FALSE;
+		}
+		return [strval($oid), $result];
 	}
 	/**
 	 * 魔术方法调用
@@ -234,5 +344,12 @@ class YMongo {
 				@$link->close();
 			}
 		}
+	}
+	//静态方法：实例化ID
+	public static function MongoID($id) {
+		if (!\MongoId::isValid($id)) {
+			return FALSE;
+		}
+		return new \MongoId($id);
 	}
 }

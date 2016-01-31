@@ -28,6 +28,8 @@
 
 * 10025 需要Memcached扩展 lib/cache/YMemcached.php
 
+* 10026 需要MongoDB扩展 lib/db/YMongoDB.php
+
 * 10040 无法连接到FTP服务器 tool/YFtp.php
 
 * 10041 无法登录到FTP服务器 tool/YFtp.php
