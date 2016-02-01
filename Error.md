@@ -34,6 +34,12 @@
 
 * 10041 无法登录到FTP服务器 tool/YFtp.php
 
-* 10050 需要CURL扩展 lib/YFetchURL.php
+* 10050 需要CURL或fsockopen lib/YFetchURL.php
 
 * 10051 CURL返回错误 lib/YFetchURL.php
+
+* 10052 无效URL lib/YFetchURL.php
+
+* 10053 socket连接失败 lib/YFetchURL.php
+
+* 10054 socket连接超时 lib/YFetchURL.php
