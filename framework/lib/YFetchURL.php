@@ -2,7 +2,6 @@
 
 /**
  * URL抓取类
- * fsockopen暂不支持文件上传！
  * 
  * @author ShuangYa
  * @package SYFramework
@@ -122,6 +121,20 @@ class YFetchURL {
 			if (isset($this->opt['timeout_ms'])) {
 				unset($this->opt['timeout']);
 			}
+			//处理POST数据
+			if (is_array($this->opt['postfields'])) {
+				if (count(array_filter($this->opt['postfields'], function($v) { return (strpos($v, '@') === 0); })) > 0) {
+					if (version_compare(PHP_VERSION, '5.6') >= 0 && is_array($this->opt['postfields'])) {
+						foreach ($this->opt['postfields'] as $k => $v) {
+							if (is_string($v) && strpos($v, '@') === 0) {
+								$this->opt['postfields'][$k] = new CURLFile(ltrim($v, '@'));
+							}
+						}
+					}
+				} else {
+					$this->opt['postfields'] = http_build_query($this->opt['postfields']);
+				}
+			}
 			//处理其他参数
 			foreach ($this->opt as $k => $v) {
 				if (defined('CURLOPT_' . strtoupper($k))) {
@@ -182,8 +195,36 @@ class YFetchURL {
 				$request .= 'Host: ' . $urlInfo['host'] . "\r\n";
 				$request .= 'User-Agent: ' . $this->opt['useragent'] . "\r\n";
 				if ($this->opt['customrequest'] === 'POST') {
-					$queryString = is_array($this->opt['postfields']) ? http_build_query($this->opt['postfields']) : $this->opt['postfields'];
-					$request .= 'Content-Type: application/x-www-form-urlencoded' . "\r\n";
+					$queryString = '';
+					$isFile = FALSE;
+					if (is_array($this->opt['postfields'])) {
+						if (count(array_filter($this->opt['postfields'], function($v) { return (strpos($v, '@') === 0); })) > 0) {
+							$isFile = TRUE;
+							$boundary = substr(str_replace(' ', '', strval(microtime())), 2, 15);
+							foreach ($this->opt['postfields'] as $k => $v) {
+								$queryString .= '-----------------------------' . $boundary . "\r\n";
+								if (strpos($v, '@') === 0) {
+									//文件
+									$filename = substr($v, strrpos($v, '/') + 1);
+									$queryString .= 'Content-Disposition: form-data; name="' .$k . '"; filename="' . $filename .'"' . "\r\n";
+									$mimeType = Sy::getMimeType(pathinfo(PATHINFO_EXTENSION));
+									is_null($mimeType) && $mimeType = 'application/octet-stream';
+									$queryString .= 'Content-Type: ' . $mimeType . "\r\n\r\n";
+									$queryString .= implode('', file(ltrim($v, '@')));
+									$queryString .= "\r\n" . '-----------------------------' . $boundary . "--\r\n";
+								} else {
+									//表单文本
+									$queryString .= 'Content-Disposition: form-data; name="' .$k . '"' . "\r\n";
+									$queryString .= rawurlencode($v) . "\r\n";
+								}
+							}
+						} else {
+							$queryString = http_build_query($this->opt['postfields']);
+						}
+					} else {
+						$queryString = $this->opt['postfields'];
+					}
+					$request .= 'Content-Type: ' . ($isFile ? 'multipart/form-data; boundary=---------------------------' . $boundary : 'application/x-www-form-urlencoded') . "\r\n";
 					$request .= 'Content-Length: ' . strlen($queryString) . "\r\n";
 				}
 				if (isset($urlInfo['user'])) {
