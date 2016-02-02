@@ -43,4 +43,21 @@ class CDocument extends Controller {
 		Sy::setMimeType('png');
 		$captcha->show('png');
 	}
+	/**
+	 * 测试：FetchURL
+	 */
+	public function actionFetchurl() {
+		$f = \sy\lib\YFetchURL::i();
+		$f->connectMethod = 'fsockopen';
+		$f->setopt([
+			'url' => 'http://127.0.0.1/',
+			'postfields' => [
+				'a' => 'aaa',
+				'b' => 'bbb',
+				'f' => '@' . Sy::$rootDir . 'Error.md'
+			]
+		]);
+		xdebug_start_trace();
+		print_r($f->exec());
+	}
 }

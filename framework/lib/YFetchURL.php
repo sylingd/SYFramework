@@ -103,7 +103,7 @@ class YFetchURL {
 	public function exec() {
 		//基本处理
 		if (isset($this->opt['postfields']) && !isset($this->opt['customrequest'])) {
-			$this->opt['customrequest'] === 'POST';
+			$this->opt['customrequest'] = 'POST';
 		}
 		if ($this->connectMethod === 'curl') {
 			//处理请求方式
@@ -191,7 +191,7 @@ class YFetchURL {
 				} else {
 					$this->opt['customrequest'] = 'GET';
 				}
-				$request  = $this->opt['customrequest'] . ' ' . $urlInfo['path'] . '  HTTP/1.1' . '\r\n';
+				$request  = $this->opt['customrequest'] . ' ' . $urlInfo['path'] . ' HTTP/1.1' . "\r\n";
 				$request .= 'Host: ' . $urlInfo['host'] . "\r\n";
 				$request .= 'User-Agent: ' . $this->opt['useragent'] . "\r\n";
 				if ($this->opt['customrequest'] === 'POST') {
@@ -207,7 +207,7 @@ class YFetchURL {
 									//文件
 									$filename = substr($v, strrpos($v, '/') + 1);
 									$queryString .= 'Content-Disposition: form-data; name="' .$k . '"; filename="' . $filename .'"' . "\r\n";
-									$mimeType = Sy::getMimeType(pathinfo(PATHINFO_EXTENSION));
+									$mimeType = Sy::getMimeType(pathinfo($filename, PATHINFO_EXTENSION));
 									is_null($mimeType) && $mimeType = 'application/octet-stream';
 									$queryString .= 'Content-Type: ' . $mimeType . "\r\n\r\n";
 									$queryString .= implode('', file(ltrim($v, '@')));
@@ -233,16 +233,16 @@ class YFetchURL {
 				foreach ($this->header as $k => $v) {
 					$request .= $k . ': ' . $v . "\r\n";
 				}
-				$request .= "\r\n\r\n";
+				$request .= "\r\n";
 				if ($this->opt['customrequest'] === 'POST') {
 					$request .= $queryString;
 				}
 				//执行
 				fwrite($this->handle, $request);
 				$response = '';
-				do {
+				while (!feof($this->handle)) {
 					$response .= fread($this->handle, 512);
-				} while (!preg_match('/\\r\\n\\r\\n$/', $response));
+				}
 				//超时错误
 				$info = stream_get_meta_data($this->handle);
 				if ($info['time_out']) {
