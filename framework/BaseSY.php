@@ -215,6 +215,10 @@ class BaseSY {
 			//是否为App自有class
 			if (isset(static::$app['class'][$className])) {
 				$fileName = str_replace('@app/', static::$appDir, static::$app['class'][$className]);
+			} elseif (is_string(static::$app['appNamespace']) && strpos($className, static::$app['appNamespace'] . '\\') === 0) {
+				//namespace匹配
+				$fileName = substr($className, strlen(static::$app['appNamespace']) + 1) . '.php';
+				$fileName = static::$appDir . str_replace('\\', '/', $fileName);
 			} else {
 				return;
 			}

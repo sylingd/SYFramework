@@ -79,28 +79,6 @@ class YMysqli {
 		return str_replace('#@__', $this->dbInfo[$id]['prefix'], $sql);
 	}
 	/**
-	 * 获取所有结果
-	 * @access public
-	 * @param string $key
-	 * @return array
-	 */
-	public function getAll($key) {
-		$id = $this->current;
-		$rs = $this->result[$id][$key];
-		$rs = $rs->fetch_all(MYSQLI_ASSOC);
-		return $rs;
-	}
-	/**
-	 * 释放结果
-	 * @access public
-	 * @param string $key
-	 */
-	public function free($key) {
-		$id = $this->current;
-		$this->result[$id][$key]->free();
-		$this->result[$id][$key] = NULL;
-	}
-	/**
 	 * 获取最后产生的ID
 	 * @access public
 	 * @return int
@@ -108,21 +86,6 @@ class YMysqli {
 	public function getLastId() {
 		$id = $this->current;
 		return intval($this->link[$id]->insert_id);
-	}
-	/**
-	 * 获取一个结果
-	 * @access public
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function getArray($key) {
-		$id = $this->current;
-		if (!isset($this->result[$id][$key]) || empty($this->result[$id][$key])) {
-			return NULL;
-		}
-		$rs = $this->result[$id][$key];
-		$rs = $rs->fetch_array(MYSQLI_ASSOC);
-		return $rs;
 	}
 	/**
 	 * 执行查询
@@ -140,13 +103,17 @@ class YMysqli {
 				$sql = str_replace('?', "'$v'", $sql, 1);
 			}
 		}
-		$r = $this->link[$id]->query($sql);
+		$rs = $this->link[$id]->query($sql);
 		//执行失败
-		if ($r !== TRUE) {
+		if ($rs === FALSE) {
 			throw new SYDBException(YHtml::encode($this->link[$id]->error), $this->dbtype, YHtml::encode($sql));
 		}
-		if ($key !== NULL) {
-			$this->result[$id][$key] = $r;
+		if (is_object($rs)) {
+			$r = $rs->fetch_all(MYSQLI_ASSOC);
+			$rs->free();
+			return $r;
+		} else {
+			return NULL;
 		}
 	}
 	/**
@@ -160,10 +127,7 @@ class YMysqli {
 		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
 			$sql .= ' LIMIT 0,1';
 		}
-		$this->query('one', $sql, $data);
-		$r = $this->getArray('one');
-		$this->free('one');
-		return $r;
+		return $this->query($sql, $data);
 	}
 	/**
 	 * 事务：开始
@@ -205,7 +169,7 @@ class YMysqli {
 	 */
 	public function __destruct() {
 		foreach ($this->link as $link) {
-			if (method_exists($link, 'close')) {
+			if (is_object($link) && method_exists($link, 'close')) {
 				@$link->close();
 			}
 		}

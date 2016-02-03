@@ -11,6 +11,7 @@
 
 return [
 	'appName' => 'Demo',
+	'appNamespace' => 'demo',
 	//调试模式
 	'debug' => TRUE,
 	//App根目录，相对于framework目录

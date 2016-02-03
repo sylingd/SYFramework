@@ -95,30 +95,6 @@ abstract class YPdo {
 		return str_replace('#@__', $this->dbInfo[$id]['prefix'], $sql);
 	}
 	/**
-	 * 获取所有结果
-	 * @access public
-	 * @param string $key
-	 * @param string $id
-	 * @return array
-	 */
-	public function getAll($key) {
-		$id = $this->current;
-		$rs = $this->result[$id][$key];
-		$rs->setFetchMode(PDO::FETCH_ASSOC);
-		$rs = $rs->fetchAll();
-		return $rs;
-	}
-	/**
-	 * 释放结果
-	 * @access public
-	 * @param string $key
-	 * @param string $id
-	 */
-	public function free($key) {
-		$id = $this->current;
-		$this->result[$id][$key] = NULL;
-	}
-	/**
 	 * 获取最后产生的ID
 	 * @access public
 	 * @param string $id
@@ -129,31 +105,13 @@ abstract class YPdo {
 		return intval($this->link[$id]->lastInsertId());
 	}
 	/**
-	 * 获取一个结果
-	 * @access public
-	 * @param string $key
-	 * @param string $id
-	 * @return mixed
-	 */
-	public function getArray($key) {
-		$id = $this->current;
-		if (!isset($this->result[$id][$key]) || empty($this->result[$id][$key])) {
-			return NULL;
-		}
-		$rs = $this->result[$id][$key];
-		$rs->setFetchMode(PDO::FETCH_ASSOC);
-		$rs = $rs->fetch();
-		return $rs;
-	}
-	/**
 	 * 执行查询
 	 * @access public
-	 * @param string $key
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
-	 * @param string $id
+	 * @return array
 	 */
-	public function query($key, $sql, $data = NULL) {
+	public function query($sql, $data = NULL) {
 		$id = $this->current;
 		$prepare_sql = $this->setQuery($sql);
 		$st = $this->link[$id]->prepare($prepare_sql);
@@ -174,9 +132,7 @@ abstract class YPdo {
 		} catch (PDOException $e) {
 			throw new SYDBException(YHtml::encode($e->getMessage()), $this->dbtype, $sql);
 		}
-		if (!empty($key)) {
-			$this->result[$id][$key] = $st;
-		}
-		return $this;
+		$st->setFetchMode(PDO::FETCH_ASSOC);
+		return $st->fetchAll();
 	}
 }

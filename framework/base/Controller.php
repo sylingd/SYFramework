@@ -23,9 +23,6 @@ class Controller {
 	 * @param string $modelName
 	 * @param string $loadAs
 	 */
-	protected function load_model($modelName, $loadAs) {
-		$this->loadModel($modelName);
-	}
 	protected function loadModel($modelName, $loadAs) {
 		//是否已经加载
 		if (in_array($modelName, $this->_framework_m, TRUE)) {

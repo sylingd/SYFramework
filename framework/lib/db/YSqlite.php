@@ -62,9 +62,6 @@ class YSqlite extends YPdo {
 		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
 			$sql .= ' LIMIT 0,1';
 		}
-		$this->query('one', $sql, $data);
-		$r = $this->getArray('one');
-		$this->free('one');
-		return $r;
+		return $this->query($sql, $data);
 	}
 }

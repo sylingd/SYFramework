@@ -47,7 +47,7 @@ class YMysql extends YPdo {
 			$this->link[$id]->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
 			$this->result[$id] = [];
 		} catch (PDOException $e) {
-			throw new SYDBException(YHtml::encode($e->getMessage), 2, $dsn);
+			throw new SYDBException(YHtml::encode($e->getMessage), $this->dbtype, $dsn);
 		}
 	}
 	/**
@@ -62,10 +62,7 @@ class YMysql extends YPdo {
 		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
 			$sql .= ' LIMIT 0,1';
 		}
-		$this->query('one', $sql, $data);
-		$r = $this->getArray('one');
-		$this->free('one');
-		return $r;
+		return $this->query($sql, $data);
 	}
 	/**
 	 * 事务：开始
