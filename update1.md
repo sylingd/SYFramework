@@ -1,3 +1,19 @@
+# 1.2
+
+## 不向下兼容的更新
+
+* 修改Controller和Model的命名方式
+
+## 升级指南
+
+* 将Controller类名从原有的“大写字母C + 首字母大写的Controller名”修改为“首字母大写的Controller名”，即去掉字母“C”，例如“CHome”改为“Home”
+
+* 将Model类名从原有的“大写字母M + 首字母大写的Model名”修改为“首字母大写的Model名”，即去掉字母“M”，例如“MUser”改为“User”
+
+* 在配置文件中加入应用的namespace：`'appNamespace' => 'demo'`（demo请按需要修改）
+
+* 将Controller的namespace修改为`demo\controller`，Model的namespace修改为`demo\model`（demo请按需要修改）
+
 # 1.1
 
 ## 不向下兼容的更新

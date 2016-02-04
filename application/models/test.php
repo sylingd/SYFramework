@@ -8,9 +8,11 @@
  * @link http://www.sylingd.com/
  */
 
+namespace demo\model;
+
 use \sy\lib\YHtml;
 
-class MTest {
+class Test {
 	static $_instance = NULL;
 	static public function i() {
 		if (self::$_instance === NULL) {

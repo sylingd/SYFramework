@@ -2,7 +2,7 @@
 
 此框架是原为泷涯自用
 
-目前最新版本为`1.1`
+目前最新版本为`1.2`
 
 此项目基于[Apache License 2.0](http://opensource.org/licenses/Apache-2.0)开源
 
@@ -38,6 +38,12 @@
 
 # ChangeLog
 
+## 1.2
+
+* 修改Controller和Model的命名方式
+
+[详细](update1.md#1.2)
+
 ## 1.1
 
 * 移除YMysqli、YMysql、YSqlite的`key`参数
@@ -46,7 +52,7 @@
 
 * 移除部分老旧函数
 
-[详细](update1.md)
+[详细](update1.md#1.1)
 
 ## 1.0
 

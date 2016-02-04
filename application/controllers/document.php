@@ -9,9 +9,12 @@
  * @link http://www.sylingd.com/
  */
 
+namespace demo\controller;
+
+use \Sy;
 use \sy\base\Controller;
 use \sy\lib\YHtml;
-class CDocument extends Controller {
+class Document extends Controller {
 	public function __construct() {
 	}
 	/**
@@ -29,6 +32,17 @@ class CDocument extends Controller {
 	public function actionStart() {
 		Sy::setMimeType('html');
 		Sy::view('document/start/' . $_GET['title']);
+	}
+	/**
+	 * 类库说明
+	 */
+	public function actionClass() {
+		Sy::setMimeType('html');
+		$path = Sy::$appDir . 'data/class/' . $_GET['f'] . '.txt';
+		if (!is_file($path)) {
+			exit;
+		}
+		// Sy::view('document/class', ['class' => file_get_contents(Sy::$appDir . 'data/class/' . $f . '.txt'), 'file' => $_GET['f']]);
 	}
 	/**
 	 * 测试：验证码

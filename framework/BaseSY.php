@@ -189,7 +189,7 @@ class BaseSY {
 		} else {
 			$className = $controllerName;
 		}
-		$className = 'C' . ucfirst($className);
+		$className = '\\' . static::$app['appNamespace'] . '\\controller\\' . ucfirst($className);
 		if (!is_file($fileName)) {
 			throw new SYException('Controller ' . $controllerName . ' not exists', '10004');
 		}
@@ -358,7 +358,7 @@ class BaseSY {
 	 */
 	public static function model($modelName) {
 		//Model名称
-		$modelClass = 'M' . ucfirst($modelName);
+		$modelClass = '\\' . static::$app['appNamespace'] . '\\model\\' . ucfirst($modelName);
 		if (!class_exists($modelClass)) {
 			$fileName = static::$appDir . 'models/' . $modelName . '.php';
 			if (!is_file($fileName)) {

@@ -28,7 +28,4 @@ use \sy\lib\YHtml;
 			<a href="<?=Sy::createUrl(['document/start', 'title' => 'Router'])?>">路由（Router）</a>
 		</div>
 	</div>
-	<p><a href=""></a></p>
-	<p><?=$url?></p>
-	<p><?=Sy::createUrl('admin/user/hello')?></p>
 </body>

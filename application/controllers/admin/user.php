@@ -9,9 +9,13 @@
  * @link http://www.sylingd.com/
  */
 
+namespace demo\controller;
+
+use \Sy;
 use \sy\base\Controller;
 use \sy\lib\YHtml;
-class CUser extends Controller {
+
+class User extends Controller {
 	public function __construct() {
 	}
 	/**

@@ -19,17 +19,25 @@ use \sy\lib\YHtml;
 					<li>在<code>index.php</code>的同级目录下新建一个文件夹，这里可以取名叫<code>myapp</code></li>
 					<li>复制<code>application/config.php</code>到myapp下，打开<code>config.php</code>，解释如下：</li>
 					<pre>return [
-	//应用名称，可随意修改
 	'appName' => 'Demo',
-	//调试模式，一般来说，开发的时候设置为TRUE，实际部署设置为FALSE
+	//应用所使用的namespace
+	'appNamespace' => 'demo',
+	//调试模式
 	'debug' => TRUE,
-	//App根目录，相对于framework目录，这里就应该是'../myapp/'
-	'dir' => '../myapp/',
-	//编码，一般来说不用修改
+	//App根目录，相对于framework目录
+	'dir' => '../application/',
+	//编码
 	'charset' => 'utf-8',
-	//语言
+	//默认语言
 	'language' => 'zh-CN',
-	//是否启用URL重写，根据各自需要修改
+	//加密Key，被YSecurity::securityCode使用
+	'cookieKey' => 'test',
+	//加密Key，被YSecurity::password使用
+	//请在开发过程中定下，实际过程中修改可能导致不可预料的后果
+	'securityKey' => 'test',
+	//是否默认开启CSRF验证
+	'csrf' => FALSE,
+	//是否启用URL重写
 	'rewrite' => FALSE,
 	//URL后缀，仅rewrite启用时有效
 	'rewriteExt' => 'html',
@@ -40,12 +48,14 @@ use \sy\lib\YHtml;
 		'article/list' => '@root/article/list/{{id}}-{{page}}.html',
 		'user/view' => 'member/view-{{id}}.html'
 	],
-	//Controller列表，只有存在于列表中的，才会被调用
+	//Controller列表
 	'controller' => [
-		'home'
+		'document',
+		'admin/user',
+		'admin/setting'
 	],
-	//默认的Router，当直接访问index.php时使用
-	'defaultRouter' => 'home/hello',
+	//默认的Router
+	'defaultRouter' => 'document/hello',
 	//会被Autoload加载的class列表
 	'class' => [
 		'demo\libs\option' => '@app/libs/option.php'
@@ -53,13 +63,35 @@ use \sy\lib\YHtml;
 	//虚拟路由表
 	//例如'user'=>'eu_user'
 	'alias' => [
+		'doc' => 'document',
+		'aduser' => 'admin/user'
 	],
+	//console支持
+	//格式：['console函数/方法所在文件', '初始化函数（支持格式同call_user_func）']
+	'console' => ['worker.php', 'Worker::Init'],
+	//Cookie相关
+	'cookie' => [
+		'prefix' => '',
+		'expire' => 7200,
+		'path' => '@app/',
+		'domain' => $_SERVER['HTTP_HOST']
+	],
+	//Redis支持
 	'redis' => [
 		'host' => '127.0.0.1',
 		'port' => '6379',
 		'password' => '',
 		'prefix' => 'pre_'
 	],
+	//MongoDB支持
+	'mongo' => [
+		'host' => '127.0.0.1',
+		'port' => '6379',
+		'user' => '',
+		'password' => '',
+		'prefix' => 'pre_'
+	],
+	//MySQL支持
 	'mysql' => [
 		'host' => '127.0.0.1',
 		'port' => '3306',
@@ -67,8 +99,14 @@ use \sy\lib\YHtml;
 		'password' => 'root',
 		'name' => 'test',
 		'prefix' => 'pre_'
+	],
+	//SQLite支持
+	'sqlite' => [
+		'version' => 'sqlite3',
+		'path' => '@app/data/db.sq3'
 	]
-];</pre>
+];
+</pre>
 				</ol>
 			</div>
 		</div>
@@ -82,11 +120,13 @@ use \sy\lib\YHtml;
 					<li>在<code>controllers</code>下新建一个文件，取名为<code>home.php</code>，<strong>并加入到<code>config.php</code>的controller列表中去</strong>，修改文件，写入以下内容：</li>
 					<pre><?=YHtml::encode('<?php')?>
 
+namespace demo\controller; //此处的demo须与配置文件中的appNamespace一致
+use \Sy;
 use \sy\base\Controller;
 use \sy\lib\YHtml;
-//注意：Controller类命名规则为：大写字母C+首字母大写的Controller名
-//例如本例中，Controller名为home，则Controller类名为CHome
-class CHome extends Controller {
+//注意：Controller类命名规则为：首字母大写的Controller名
+//例如本例中，Controller名为home，则Controller类名为Home
+class Home extends Controller {
 	public function __construct() {
 	}
 	//供公开调用的方法必须以action开头，action后连接<strong>首字母大写</strong>的方法名
