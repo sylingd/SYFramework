@@ -62,7 +62,8 @@ class YMysql extends YPdo {
 		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
 			$sql .= ' LIMIT 0,1';
 		}
-		return $this->query($sql, $data);
+		$r = $this->query($sql, $data);
+		return current($r);
 	}
 	/**
 	 * 事务：开始
