@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PDO_MySQL支持类
+ * PDO_PostgreSQL支持类
  * 
  * @author ShuangYa
  * @package SYFramework
@@ -19,15 +19,15 @@ use \sy\lib\YHtml;
 use \sy\base\SYException;
 use \sy\base\SYDBException;
 
-class YMysql extends YPdo {
-	protected $dbtype = 'MySQL';
+class YPg extends YPdo {
+	protected $dbtype = 'PostgreSQL';
 	/**
 	 * 自动连接
 	 * @access public
 	 */
 	public function autoConnect() {
-		if (isset(Sy::$app['mysql'])) {
-			$this->setParam(Sy::$app['mysql']);
+		if (isset(Sy::$app['pg'])) {
+			$this->setParam(Sy::$app['pg']);
 		}
 	}
 	/**
@@ -37,11 +37,10 @@ class YMysql extends YPdo {
 	protected function connect() {
 		$id = $this->current;
 		$config = $this->dbInfo[$id];
-		$dsn = 'mysql:host=' . $config['host'] . ';port=' . $config['port'] . ';';
+		$dsn = 'pgsql:host=' . $config['host'] . ';port=' . $config['port'] . ';';
 		if (isset($config['name'])) {
 			$dsn .= 'dbname=' . $config['name'] . ';';
 		}
-		$dsn .= 'charset=' . strtolower(str_replace('-', '', Sy::$app['charset']));
 		try {
 			$this->link[$id] = new PDO($dsn, $config['user'], $config['password']);
 			$this->link[$id]->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);

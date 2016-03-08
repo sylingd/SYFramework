@@ -120,7 +120,11 @@ abstract class YPdo {
 		}
 		if (is_array($data)) {
 			foreach ($data as $k => $v) {
-				$st->bindValue($k + 1, $v);
+				if (is_numeric($k)) {
+					$st->bindValue($k + 1, $v);
+				} else {
+					$st->bindValue($k, $v);
+				}
 			}
 		}
 		try {
