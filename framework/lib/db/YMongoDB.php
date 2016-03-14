@@ -250,7 +250,7 @@ class YMongoDB {
 	public function update($filter, $to, $justOne = FALSE, $autoInsert = FALSE) {
 		$id = $this->current;
 		try {
-			$bulk = new MongoDB\Driver\BulkWrite;
+			$bulk = new \MongoDB\Driver\BulkWrite;
 			$bulk->update(
 				$filter,
 				['$set' => $to],
@@ -272,9 +272,9 @@ class YMongoDB {
 	public function insert($data) {
 		$id = $this->current;
 		try {
-			$bulk = new MongoDB\Driver\BulkWrite;
+			$bulk = new \MongoDB\Driver\BulkWrite;
 			$oid = $bulk->insert($data);
-			if (empty($id)) {
+			if (empty($oid)) {
 				$oid = $data['_id'];
 			}
 			$result = $this->link[$id]->executeBulkWrite($this->getNamespace(), $bulk, $this->writeConcern[$id]);
