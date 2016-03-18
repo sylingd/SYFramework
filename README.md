@@ -2,7 +2,7 @@
 
 此框架是原为泷涯自用，现面向大众开源
 
-目前最新版本为`1.2`
+目前最新版本为`1.3`
 
 此项目基于[Apache License 2.0](http://opensource.org/licenses/Apache-2.0)开源
 
@@ -19,6 +19,8 @@
 * lib\db\YMysql PDO扩展和PDO_MySQL驱动
 
 * lib\db\YSqlite PDO扩展和PDO_SQLite驱动
+
+* lib\db\YPg PDO扩展和PDO_PostgreSQL驱动
 
 * lib\db\YRedis [phpredis](https://github.com/phpredis/phpredis)
 
@@ -38,21 +40,33 @@
 
 # ChangeLog
 
+## 1.3
+
+* Add.PostgreSQL支持
+
+* Add.增强对ConsoleApp的支持
+
+* Fix.YMysql和YMysqli中getOne函数返回格式不正确的BUG
+
+* Fix.YMongoDB中存在的几个BUG
+
+[详细](update1.md#1-3)
+
 ## 1.2
 
-* 修改Controller和Model的命名方式
+* Mod.Controller和Model的命名方式
 
-[详细](update1.md#1.2)
+[详细](update1.md#1-2)
 
 ## 1.1
 
-* 移除YMysqli、YMysql、YSqlite的`key`参数
+* Add.自动加载namespace匹配的应用自有类库
 
-* 支持自动加载namespace匹配的应用自有类库
+* Del.YMysqli、YMysql、YSqlite的`key`参数
 
-* 移除部分老旧函数
+* Del.部分老旧函数
 
-[详细](update1.md#1.1)
+[详细](update1.md#1-1)
 
 ## 1.0
 

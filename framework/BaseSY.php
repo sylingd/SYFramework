@@ -109,18 +109,23 @@ class BaseSY {
 	 * @param mixed $config设置
 	 */
 	public static function createConsoleApplication($config = NULL) {
+		global $argv;
 		static::createApplicationInit($config);
 		//网站根目录
 		static::$webrootDir = static::$rootDir;
 		if (!static::$isCli) {
 			throw new SYException('Must run at CLI mode', '10005');
 		}
-		if (isset(static::$app['console'])) {
-			list($fileName, $callback) = static::$app['console'];
-			require(static::$appDir . '/' . $fileName);
-			if (is_callable($callback)) {
-				call_user_func($callback);
-			}
+		//根据参数决定运行Worker
+		$run = $argv[1];
+		if (!empty($run) && isset(static::$app['console'][$run])) {
+			list($fileName, $callback) = static::$app['console'][$run];
+		} else {
+			list($fileName, $callback) = static::$app['console']['default'];
+		}
+		require(static::$appDir . '/workers/' . $fileName);
+		if (is_callable($callback)) {
+			call_user_func($callback);
 		}
 	}
 	/**

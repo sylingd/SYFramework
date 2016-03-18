@@ -58,7 +58,10 @@ return [
 	],
 	//console支持
 	//格式：['console函数/方法所在文件', '初始化函数（支持格式同call_user_func）']
-	'console' => ['worker.php', 'Worker::Init'],
+	'console' => [
+		'default' => ['worker.php', 'Worker::init'],
+		'test' => ['worker.php', 'Worker::test']
+	],
 	//Cookie相关
 	'cookie' => [
 		'prefix' => '',

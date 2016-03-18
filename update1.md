@@ -1,3 +1,34 @@
+# 1.3
+
+## 不向下兼容的更新
+
+* 增强对ConsoleApp的支持
+
+## 升级指南
+
+* 如不使用ConsoleApp，可忽略
+
+* 打开config.php，修改`console`为以下格式：
+
+	//原代码
+	'console' => ['文件名', '初始化函数'],
+	//例如；
+	'console' => ['Worker.php', 'Worker::init'],
+	//修改为
+	'console' => [
+		'console应用1' => ['文件名', '初始化函数'],
+		'console应用2' => ['文件名', '初始化函数']
+	],
+	//例如：
+	'console' => [
+		'default' => ['Worker.php', 'Worker::init'],
+		'mailer' => ['Worker.php', 'Worker::mailer']
+	],
+
+* 使用`php worker.php default`或`php worker.php`则会启动default，使用`php worker.php mailer`则会启动mailer
+
+* ConsoleApp主文件放置于`应用目录/workers`目录下
+
 # 1.2
 
 ## 不向下兼容的更新
