@@ -16,6 +16,7 @@ namespace sy\base;
 use \Sy;
 use \PDO;
 use \sy\base\SYException;
+use \sy\base\SYDException;
 use \sy\lib\YHtml;
 
 abstract class YPdo {
@@ -116,7 +117,7 @@ abstract class YPdo {
 		$prepare_sql = $this->setQuery($sql);
 		$st = $this->link[$id]->prepare($prepare_sql);
 		if ($st === FALSE) {
-			throw new SYDBException('Failed to prepare SQL', $this->dbtype, $sql);
+			throw new SYDException('Failed to prepare SQL', $this->dbtype, $sql);
 		}
 		if (is_array($data)) {
 			foreach ($data as $k => $v) {
@@ -131,10 +132,10 @@ abstract class YPdo {
 			$r = $st->execute();
 			if ($r === FALSE) {
 				$e = $st->errorInfo();
-				throw new SYDBException(YHtml::encode($e[2]), $this->dbtype, $sql);
+				throw new SYDException(YHtml::encode($e[2]), $this->dbtype, $sql);
 			}
 		} catch (PDOException $e) {
-			throw new SYDBException(YHtml::encode($e->getMessage()), $this->dbtype, $sql);
+			throw new SYDException(YHtml::encode($e->getMessage()), $this->dbtype, $sql);
 		}
 		$st->setFetchMode(PDO::FETCH_ASSOC);
 		return $st->fetchAll();

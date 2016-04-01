@@ -16,7 +16,7 @@ use \Sy;
 //异常
 use \Exception;
 use \sy\base\SYException;
-use \sy\base\SYDBException;
+use \sy\base\SYDException;
 
 class YMongoDB {
 	protected $dbtype = 'MongoDB';
@@ -94,7 +94,7 @@ class YMongoDB {
 		try {
 			$this->link[$id] = new \MongoDB\Driver\Manager($dsn);
 		} catch (\Exception $e) {
-			throw new SYDBException($e->getMessage(), $this->dbtype, '');
+			throw new SYDException($e->getMessage(), $this->dbtype, '');
 		}
 		$this->setOption();
 		if (isset($this->dbInfo[$id]['name'])) {
@@ -134,7 +134,7 @@ class YMongoDB {
 			$name = $this->dbInfo[$id]['name'];
 		}
 		if (empty($name)) {
-			throw new SYDBException('Unknow database', $this->dbtype, '');
+			throw new SYDException('Unknow database', $this->dbtype, '');
 		}
 		$this->currentDB[$id] = $name;
 		return $this;
@@ -148,7 +148,7 @@ class YMongoDB {
 	public function select($collection) {
 		$id = $this->current;
 		if (empty($this->currentDB[$id])) {
-			throw new SYDBException('You must select a database', $this->dbtype, '');
+			throw new SYDException('You must select a database', $this->dbtype, '');
 		}
 		$collection = $this->setQuery($collection);
 		$this->currentCollection[$id] = $collection;

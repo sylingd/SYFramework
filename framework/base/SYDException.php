@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 异常类
  * 
@@ -16,7 +15,7 @@ use \Sy;
 use \sy\base\SYException;
 
 //数据库相关异常
-class SYDBException extends SYException {
+class SYDException extends SYException {
 	protected $dbtype;
 	protected $dbname;
 	protected $execute;

@@ -71,7 +71,7 @@ class YMemcached {
 	 */
 	public function __call($method, $args) {
 		if (!method_exists($this->link, $method)) {
-			throw new SYDBException("Method '$method' not extsts", $this->dbtype);
+			throw new SYDException("Method '$method' not extsts", $this->dbtype);
 		}
 		if (in_array($method, ['add', 'append', 'decrement', 'delete', 'get', 'prepend', 'increment', 'replace', 'set', 'touch'], TRUE)) {
 			$args[0] = $this->setQuery($args[0]);

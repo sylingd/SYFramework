@@ -29,7 +29,7 @@ use \MongoWriteConcernException;
 //其他异常
 use \Exception;
 use \sy\base\SYException;
-use \sy\base\SYDBException;
+use \sy\base\SYDException;
 
 class YMongo {
 	protected $dbtype = 'MongoDB';
@@ -96,13 +96,13 @@ class YMongo {
 		try {
 			$this->link[$id] = new MongoClient($dsn, $option);
 		} catch (MongoConnectionException $e) {
-			throw new SYDBException($e->getMessage(), $this->dbtype, '');
+			throw new SYDException($e->getMessage(), $this->dbtype, '');
 		}
 		if (isset($this->dbInfo[$id]['name'])) {
 			try {
 				$this->linkDB[$id] = $this->link[$id]->selectDB($this->dbInfo[$id]['name']);
 			} catch (Exception $e) {
-				throw new SYDBException($e->getMessage(), $this->dbtype, 'SELECT DB ' . $this->dbInfo[$id]['name']);
+				throw new SYDException($e->getMessage(), $this->dbtype, 'SELECT DB ' . $this->dbInfo[$id]['name']);
 			}
 		}
 	}
@@ -138,7 +138,7 @@ class YMongo {
 		try {
 			$this->dbObject[$id] = $this->link[$id]->selectDB($name);
 		} catch (Exception $e) {
-			throw new SYDBException($e->getMessage(), $this->dbtype, 'SELECT DB ' . $name);
+			throw new SYDException($e->getMessage(), $this->dbtype, 'SELECT DB ' . $name);
 		}
 		return $this;
 	}
@@ -155,13 +155,13 @@ class YMongo {
 		} elseif (isset($this->linkDB[$id])) {
 			$db = $this->linkDB[$id];
 		} else {
-			throw new SYDBException('You must select a database', $this->dbtype, '');
+			throw new SYDException('You must select a database', $this->dbtype, '');
 		}
 		$collection = $this->setQuery($collection);
 		try {
 			$this->collectionObject[$id] = $db->selectCollection($collection);
 		} catch (Exception $e) {
-			throw new SYDBException($e->getMessage(), $this->dbtype, 'SELECT Collection ' . $collection);
+			throw new SYDException($e->getMessage(), $this->dbtype, 'SELECT Collection ' . $collection);
 		}
 		return $this;
 	}
@@ -331,7 +331,7 @@ class YMongo {
 		} elseif (method_exists($this->link[$id], $method)) {
 			return call_user_func_array([$this->link[$id], $method], $args);
 		} else {
-			throw new SYDBException("Method '$method' not extsts", $this->dbtype, '');
+			throw new SYDException("Method '$method' not extsts", $this->dbtype, '');
 		}
 	}
 	/**

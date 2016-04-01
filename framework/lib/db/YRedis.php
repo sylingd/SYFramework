@@ -15,7 +15,7 @@ namespace sy\lib\db;
 use \Sy;
 use \Redis;
 use \sy\base\SYException;
-use \sy\base\SYDBException;
+use \sy\base\SYDException;
 
 class YRedis {
 	protected $dbtype = 'Redis';
@@ -85,7 +85,7 @@ class YRedis {
 	public function __call($name, $args) {
 		$id = $this->current;
 		if (!method_exists($this->link[$id], $name)) {
-			throw new SYDBException("Method '$name' not exists", $this->dbtype);
+			throw new SYDException("Method '$name' not exists", $this->dbtype);
 		}
 		$name_lower = strtolower($name);
 		if (in_array($name_lower, ['mget', 'getmultiple', 'sdiff', 'sinter', 'sunion'], TRUE)) {

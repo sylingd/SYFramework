@@ -10,6 +10,7 @@
 
 * 打开config.php，修改`console`为以下格式：
 
+
 	//原代码
 	'console' => ['文件名', '初始化函数'],
 	//例如；
@@ -24,6 +25,7 @@
 		'default' => ['Worker.php', 'Worker::init'],
 		'mailer' => ['Worker.php', 'Worker::mailer']
 	],
+
 
 * 使用`php worker.php default`或`php worker.php`则会启动default，使用`php worker.php mailer`则会启动mailer
 

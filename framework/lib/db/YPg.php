@@ -17,7 +17,7 @@ use \PDO;
 use \sy\base\YPdo;
 use \sy\lib\YHtml;
 use \sy\base\SYException;
-use \sy\base\SYDBException;
+use \sy\base\SYDException;
 
 class YPg extends YPdo {
 	protected $dbtype = 'PostgreSQL';
@@ -46,7 +46,7 @@ class YPg extends YPdo {
 			$this->link[$id]->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
 			$this->result[$id] = [];
 		} catch (PDOException $e) {
-			throw new SYDBException(YHtml::encode($e->getMessage), $this->dbtype, $dsn);
+			throw new SYDException(YHtml::encode($e->getMessage), $this->dbtype, $dsn);
 		}
 	}
 	/**

@@ -16,7 +16,7 @@ use \Sy;
 use \mysqli;
 use \sy\lib\YHtml;
 use \sy\base\SYException;
-use \sy\base\SYDBException;
+use \sy\base\SYDException;
 
 class YMysqli {
 	protected $dbtype = 'MySQL';
@@ -64,7 +64,7 @@ class YMysqli {
 		$config = $this->dbInfo[$id];
 		$this->link[$id] = new mysqli($config['host'], $config['user'], $config['password'], $config['name'], $config['port']);
 		if ($this->link[$id]->connect_error) {
-			throw new SYDBException(YHtml::encode($this->link[$id]->connect_error), $this->dbtype, 'NULL');
+			throw new SYDException(YHtml::encode($this->link[$id]->connect_error), $this->dbtype, 'NULL');
 		}
 		$this->link[$id]->set_charset(strtolower(str_replace('-', '', Sy::$app['charset'])));
 	}
@@ -106,7 +106,7 @@ class YMysqli {
 		$rs = $this->link[$id]->query($sql);
 		//执行失败
 		if ($rs === FALSE) {
-			throw new SYDBException(YHtml::encode($this->link[$id]->error), $this->dbtype, YHtml::encode($sql));
+			throw new SYDException(YHtml::encode($this->link[$id]->error), $this->dbtype, YHtml::encode($sql));
 		}
 		if (is_object($rs)) {
 			$r = $rs->fetch_all(MYSQLI_ASSOC);

@@ -17,7 +17,7 @@ use \PDO;
 use \sy\base\YPdo;
 use \sy\lib\YHtml;
 use \sy\base\SYException;
-use \sy\base\SYDBException;
+use \sy\base\SYDException;
 
 class YSqlite extends YPdo {
 	protected $dbtype = 'SQLite';
@@ -48,7 +48,7 @@ class YSqlite extends YPdo {
 			$this->link[$id] = new PDO($dsn);
 			$this->result[$id] = [];
 		} catch (PDOException $e) {
-			throw new SYDBException(YHtml::encode($e->getMessage), $this->dbtype, $dsn);
+			throw new SYDException(YHtml::encode($e->getMessage), $this->dbtype, $dsn);
 		}
 	}
 	/**
