@@ -93,7 +93,7 @@ class YRedis {
 			foreach ($args as $k => $v) {
 				$args[$k] = $this->setQuery($v);
 			}
-		} elseif (!in_array($name_lower, ['mset', 'msetnx', 'migrate', 'sdiffstore', 'sinterstore', 'smove', 'rename', 'renamekey', 'renamenx'], TRUE)) { //不属于特殊处理的
+		} elseif (!in_array($name_lower, ['get', 'set', 'mset', 'msetnx', 'migrate', 'sdiffstore', 'sinterstore', 'smove', 'rename', 'renamekey', 'renamenx'], TRUE)) { //不属于特殊处理的
 			$args[0] = $this->setQuery($args[0]);
 		} else { //特殊处理
 			switch ($name_lower) {

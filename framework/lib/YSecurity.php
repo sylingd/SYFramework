@@ -76,7 +76,7 @@ class YSecurity {
 	 * @param int $expire 过期时间，单位：秒。0为不过期
 	 * @return string
 	 */
-	public static function secueityCode($string, $operation = 'ENCODE', $key = '', $expire = 0) {
+	public static function securityCode($string, $operation = 'ENCODE', $key = '', $expire = 0) {
 		$ckey_length = 4;
 		$key = md5($key ? $key : Sy::$app['cookieKey']);
 		$keya = md5(substr($key, 0, 16));
