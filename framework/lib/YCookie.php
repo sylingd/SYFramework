@@ -79,7 +79,7 @@ class YCookie {
 	 * 安全的设置Cookie（防止篡改）
 	 * @param int $type 类型
 	 *  1.签名方式，仅防止篡改，不防止任意读取
-	 *  2.secueityCode方式，防止篡改与读取，还用于保证数据完整性
+	 *  2.securityCode方式，防止篡改与读取，还用于保证数据完整性
 	 * @param array $cookie
 	 */
 	public static function sSet($type, $cookie) {
@@ -90,7 +90,8 @@ class YCookie {
 			$cookie['value'] = $sign;
 			self::set($cookie);
 		} else {
-			$cookie['value'] = YSecurity::secueityCode($cookie['value'], 'ENCODE');
+			$cookie['value'] = YSecurity::securityCode($cookie['value'], 'ENCODE');
+			self::set($cookie);
 		}
 	}
 	/**
@@ -112,7 +113,7 @@ class YCookie {
 			}
 		}
 		if ($type === 2 || $type === 0) {
-			$vv = YSecurity::secueityCode($v, 'DECODE');
+			$vv = YSecurity::securityCode($v, 'DECODE');
 			if (is_string($vv)) {
 				return $vv;
 			}
