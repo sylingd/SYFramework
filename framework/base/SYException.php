@@ -25,7 +25,7 @@ class SYException extends \Exception {
 		}
 	}
 	public function __toString() {
-		return $this->getText();
+		return Sy::$isCli ? $this->getText() : $this->getHtml;
 	}
 	/**
 	 * 获取文本错误信息
@@ -36,8 +36,7 @@ class SYException extends \Exception {
 		if (!isset(Sy::$debug) || !Sy::$debug) {
 			return $this->getTextNotDebug();
 		}
-		$r = 'SY Framework:';
-		$r .= '[' . $this->getCode() . ']' . $this->getMessage();
+		$r = '[' . $this->getCode() . ']' . $this->getMessage() . '[File: ' . $this->file . '. Line: ' .$this->line;
 		return $r;
 	}
 	/**

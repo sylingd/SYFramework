@@ -20,7 +20,7 @@ set_exception_handler(function ($e) {
 	if (!($e instanceof SYException)) {
 		$e = new SYException($e->getMessage(), '10000', [$e->getFile(), $e->getLine()]);
 	}
-	echo $e->getHtml();
+	echo strval($e);
 	exit;
 });
 
