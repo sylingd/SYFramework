@@ -40,6 +40,18 @@
 
 # ChangeLog
 
+## 1.4
+
+* Fix.securityCode的命名错误
+
+* Fix.CLI模式下的报错信息显示不正常
+
+* Fix.关于SYDBException未找到的BUG
+
+* Fix.YRedis::set和YRedis::get不会处理key的BUG
+
+[详细](update1.md#1-4)
+
 ## 1.3
 
 * Add.PostgreSQL支持
