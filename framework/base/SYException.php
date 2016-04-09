@@ -25,7 +25,7 @@ class SYException extends \Exception {
 		}
 	}
 	public function __toString() {
-		return Sy::$isCli ? $this->getText() : $this->getHtml;
+		return Sy::$isCli ? $this->getText() : $this->getHtml();
 	}
 	/**
 	 * 获取文本错误信息

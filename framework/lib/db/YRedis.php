@@ -23,7 +23,7 @@ class YRedis {
 	protected $dbInfo = [];
 	protected $transaction = [];
 	protected $result = [];
-	protected $current = 'default';
+	protected $current = '';
 	static protected $_instance = NULL;
 	static public function i($id = 'default') {
 		if (static::$_instance === NULL) {
@@ -32,6 +32,18 @@ class YRedis {
 			static::$_instance->setCurrent($id);
 		}
 		return static::$_instance;
+	}
+	/**
+	 * 设置当前Server
+	 * @param string $current
+	 */
+	public function setCurrent($current) {
+		if ($this->current === $current) {
+			return;
+		}
+		$this->current = $current;
+		$this->currentDB[$current] = NULL;
+		$this->currentCollection[$current] = NULL;
 	}
 	/**
 	 * 构造函数，自动连接

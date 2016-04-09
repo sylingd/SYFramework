@@ -52,6 +52,9 @@ class YMongoDB {
 	 * @param string $current
 	 */
 	public function setCurrent($current) {
+		if ($this->current === $current) {
+			return;
+		}
 		$this->current = $current;
 		$this->currentDB[$current] = NULL;
 		$this->currentCollection[$current] = NULL;
@@ -195,7 +198,7 @@ class YMongoDB {
 	 * @param array $filter
 	 * @return array
 	 */
-	public function get($filter, $option) {
+	public function get($filter, $option = []) {
 		$id = $this->current;
 		try {
 			$query = new \MongoDB\Driver\Query($filter, $option);
@@ -205,7 +208,7 @@ class YMongoDB {
 			$this->setError($e->getMessage(), 'GET', [$filter, $option]);
 			return FALSE;
 		}
-		return $cursor;
+		return $cursor->toArray();
 	}
 	public function getOne($filter, $option = []) {
 		$option['limit'] = 1;

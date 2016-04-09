@@ -54,6 +54,9 @@ class YMongo {
 	 * @param string $current
 	 */
 	public function setCurrent($current) {
+		if ($this->current === $current) {
+			return;
+		}
 		$this->current = $current;
 		$this->dbObject[$id] = NULL;
 		$this->collectionObject[$id] = NULL;
