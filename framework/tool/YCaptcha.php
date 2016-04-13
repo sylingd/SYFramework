@@ -24,7 +24,7 @@ class YCaptcha {
 	protected $chineseWord = NULL;
 	protected $bgcolor;
 	static $_instance = NULL;
-	static public function i() {
+	public static function i() {
 		if (self::$_instance === NULL) {
 			self::$_instance = new self;
 		}

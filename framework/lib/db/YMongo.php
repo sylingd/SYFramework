@@ -40,8 +40,8 @@ class YMongo {
 	public $collectionObject = [];
 	public $lastError = [];
 	protected $current;
-	static protected $_instance = NULL;
-	static public function i($id = 'default') {
+	protected static $_instance = NULL;
+	public static function i($id = 'default') {
 		if (static::$_instance === NULL) {
 			static::$_instance = new static($id);
 		} else {

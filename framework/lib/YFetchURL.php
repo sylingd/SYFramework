@@ -31,7 +31,7 @@ class YFetchURL {
 	];
 	protected $opt = [];
 	protected $header = [];
-	static public function i($opt = []) {
+	public static function i($opt = []) {
 		return new self($opt);
 	}
 	public function __construct($opt, $execute = TRUE) {

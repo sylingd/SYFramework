@@ -18,8 +18,8 @@ use \Sy;
 class YMemcached {
 	protected $dbtype = 'Memcached';
 	protected $link = NULL;
-	static protected $_instance = NULL;
-	static public function i() {
+	protected static $_instance = NULL;
+	public static function i() {
 		if (static::$_instance === NULL) {
 			static::$_instance = new static;
 		}

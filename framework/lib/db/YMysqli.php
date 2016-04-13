@@ -23,9 +23,9 @@ class YMysqli {
 	protected $link = [];
 	protected $dbInfo = [];
 	protected $result = [];
-	static protected $_instance = NULL;
-	static protected $current = 'default';
-	static public function i($id = 'default') {
+	protected static $_instance = NULL;
+	protected static $current = 'default';
+	public static function i($id = 'default') {
 		if (static::$_instance === NULL) {
 			static::$_instance = new static;
 		}
