@@ -42,8 +42,6 @@ class YRedis {
 			return;
 		}
 		$this->current = $current;
-		$this->currentDB[$current] = NULL;
-		$this->currentCollection[$current] = NULL;
 	}
 	/**
 	 * 构造函数，自动连接

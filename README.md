@@ -2,7 +2,7 @@
 
 此框架是原为泷涯自用，现面向大众开源
 
-目前最新版本为`1.3`
+目前最新版本为`1.5`
 
 此项目基于[Apache License 2.0](http://opensource.org/licenses/Apache-2.0)开源
 
@@ -39,6 +39,14 @@
 * 本框架自带一示例应用，内容是文档
 
 # ChangeLog
+
+## 1.5
+
+* Fix.报错信息异常的BUG
+
+* Fix.YMongo、YMongoDB、YRedis初始化异常的BUG
+
+[详细](update1.md#1-5)
 
 ## 1.4
 
