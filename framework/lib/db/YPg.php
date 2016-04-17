@@ -58,8 +58,8 @@ class YPg extends YPdo {
 	 * @return array
 	 */
 	public function getOne($sql, $data = NULL) {
-		if (!preg_match('/limit ([0-9,]+)$/i', $sql)) {
-			$sql .= ' LIMIT 0,1';
+		if (!preg_match('/limit ([0-9,]+) offset ([0-9,]+)$/i', $sql)) {
+			$sql .= ' LIMIT 1 OFFSET 0';
 		}
 		$r = $this->query($sql, $data);
 		return current($r);
