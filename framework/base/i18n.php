@@ -76,6 +76,7 @@ class i18n {
 		if (!empty($accept_first)) {
 			array_unshift($accept_arr, $accept_first);
 		}
+		return $accept_arr;
 	}
 	/**
 	 * 获取默认语言
