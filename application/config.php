@@ -62,6 +62,20 @@ return [
 		'default' => ['worker.php', 'Worker::init'],
 		'test' => ['worker.php', 'Worker::test']
 	],
+	//HttpServer
+	//通过swoole实现
+	'httpServer' => [
+		'ip' => '0.0.0.0', //监听IP，仅监听本地为127.0.0.1，监听所有地址为0.0.0.0
+		'port' => '80', //监听端口
+		'ssl' => [
+			'enable' => FALSE, //HTTPS开关
+			'key' => 'ssl.key',
+			'cert' => 'ssl.cert'
+		],
+		'http2' => FALSE, //HTTP2协议支持，如果开启HTTP2，则HTTPS也必须开启
+		'worker_num' => 4, //守护进程数，详情见http://wiki.swoole.com/wiki/page/275.html
+		'global' => FALSE, //自动注册超全局变量，用于保障兼容性，推荐关闭
+	],
 	//Cookie相关
 	'cookie' => [
 		'prefix' => '',

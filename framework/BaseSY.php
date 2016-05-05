@@ -41,6 +41,10 @@ class BaseSY {
 	public static $debug = TRUE;
 	//CLI模式
 	public static $isCli = FALSE;
+	//HttpServer模式运行时，为swoole进程
+	public static $httpServer = NULL;
+	public static $httpRequest;
+	public static $httpResponse;
 	//当前Controller
 	public static $controller = NULL;
 	/**
@@ -129,37 +133,88 @@ class BaseSY {
 		}
 	}
 	/**
-	 * 报错：HTTP状态
+	 * 初始化：创建HttpApplication（需要swoole）
+	 * 建议使用Nginx等软件作为前端
+	 * 
+	 * @access public
+	 * @param mixed $config设置
+	 */
+	public static function createHttpApplication($config = NULL) {
+		//swoole检查
+		if (!extension_loaded('swoole')) {
+			throw new SYException('Must run at CLI mode', '10006');
+		}
+		static::createApplicationInit($config);
+		//网站根目录
+		static::$webrootDir = static::$rootDir;
+		if (!static::$isCli) {
+			throw new SYException('Must run at CLI mode', '10005');
+		}
+		//变量初始化
+		static::$httpRequest = [];
+		static::$httpResponse = [];
+		//初始化Swoole
+		$serv = new swoole_http_server(static::$app['httpServer']['ip'], static::$app['httpServer']['port']);
+		$serv->set([
+			'worker_num' => static::$app['httpServer']['worker_num'],
+			'daemonize' => TRUE
+		]);
+		if (static::$app['httpServer']['global']) {
+			$serv->setGlobal();
+		}
+		$serv->on('request', function($req, $response) {
+			//生成唯一请求ID
+			$remoteIp = ($req->server['remote_addr'] === '127.0.0.1' && isset($req->server['http_x_forwarded_for'])) ? $req->server['http_x_forwarded_for'] : $req->server['remote_addr']; //获取真实IP
+			$requestId = md5(uniqid($remoteIp, TRUE));
+			//设置请求信息
+			static::$httpRequest[$requestId] = $req;
+			static::$httpResponse[$requestId] = $response;
+			//根据设置，分配重写规则
+			if (static::$app['rewrite']) {
+				$url = parse_url($req->server['request_uri']);
+				//目前暂不支持自定义规则
+				$route = ltrim(preg_replace('/\.(\w+)$/', '', $url['path']), '/'); //去掉末尾的扩展名和开头的“/”符号
+				empty($route) && $route = NULL;
+				static::router($route, $requestId);
+			} else {
+				$route = empty($req->get[static::$routeParam]) ? $req->get[static::$routeParam] : NULL;
+				static::router($route, $requestId);
+			}
+			//请求结束，进行清理工作
+			try {
+				$response->end();
+				unset(static::$httpRequest[$requestId], static::$httpResponse[$requestId], $requestId);
+			} catch (\Exception $e) {
+			}
+			return;
+		});
+		$serv->start();
+	}
+	/**
+	 * 获取HTTP状态文字
 	 * @access public
 	 * @param string $status 状态码
-	 * @param boolean $end 是否自动结束当前请求
 	 */
-	public static function httpStatus($status, $end = FALSE) {
+	public static function getHttpStatus($status) {
 		if (static::$httpStatus === NULL) {
 			static::$httpStatus = require(static::$frameworkDir . 'data/httpStatus.php');
 		}
 		$version = ((isset($_SERVER['SERVER_PROTOCOL']) && $_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.0') ? '1.0' : '1.1');
 		if (isset(static::$httpStatus[$status])) {
 			$statusText = static::$httpStatus[$status];
-			@header("HTTP/$version $status $statusText");
+			return "HTTP/$version $status $statusText";
 		} else {
-			@header("HTTP/$version $status");
-		}
-		if (is_object(static::$controller) && method_exists(static::$controller, '_handle_http_' . $status)) {
-			call_user_func([static::$controller, '_handle_http_' . $status]);
-		} else {
-			if ($end) {
-				echo isset($statusText) ? $statusText : $status . ' error';
-				exit;
-			}
+			return "HTTP/$version $status";
 		}
 	}
 	/**
 	 * 简单Router
 	 * @access public
 	 */
-	public static function router() {
-		$r = trim($_GET[static::$routeParam]);
+	public static function router($r = NULL, $requestId = NULL) {
+		if ($r === NULL) {
+			$r = trim($_GET[static::$routeParam]);
+		}
 		if (empty($r)) {
 			$r = static::$app['defaultRouter'];
 		}
@@ -201,13 +256,18 @@ class BaseSY {
 		if (!class_exists($className, FALSE)) {
 			require($fileName);
 		}
-		static::$controller = new $className;
+		$controller = new $className;
 		//执行动作
 		$actionName = 'action' . ucfirst($actionName);
-		if (!method_exists(static::$controller, $actionName)) {
+		if (!method_exists($controller, $actionName)) {
 			static::httpStatus('404', TRUE);
 		}
-		call_user_func([static::$controller, $actionName]);
+		static::$controller = $controller;
+		if ($requestId !== NULL) {
+			call_user_func([$controller, $actionName], $requestId);
+		} else {
+			call_user_func([$controller, $actionName]);
+		}
 	}
 	/**
 	 * 自动加载类

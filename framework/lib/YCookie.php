@@ -27,6 +27,7 @@ class YCookie {
 	 * @param string $param[domain] 若不传递，则从config读取
 	 * @param boolean $param[https] 是否仅https传递，默认根据当前URL设置
 	 * @param boolean $param[httponly] 是否为httponly
+	 * @param string $param[requestId] 请求ID，仅当运行于HttpServer模式时需要
 	 */
 	public static function set($param) {
 		$name = Sy::$app['cookie']['prefix'] . $param['name'];
@@ -53,27 +54,41 @@ class YCookie {
 			}
 		}
 		//设置
-		setcookie($name, $param['value'], $expire, $param['path'], $param['domain'], $param['https'], $param['httponly']);
+		if (isset($param['requestId'])) {
+			Sy::$httpResponse->cookie($name, $param['value'], $expire, $param['path'], $param['domain'], $param['https'], $param['httponly']);
+		} else {
+			setcookie($name, $param['value'], $expire, $param['path'], $param['domain'], $param['https'], $param['httponly']);
+		}
 	}
 	/**
 	 * 获取Cookie
 	 * @access public
 	 * @param string $name
+	 * @param string $requestId 请求ID，仅当运行于HttpServer模式时需要
 	 * @return string
 	 */
-	public static function get($name) {
+	public static function get($name, $requestId = NULL) {
 		$name = Sy::$app['cookie']['prefix'] . $name;
-		return isset($_COOKIE[$name]) ? $_COOKIE[$name] : NULL;
+		if ($requestId === NULL) {
+			return isset($_COOKIE[$name]) ? $_COOKIE[$name] : NULL;
+		} else {
+			return isset(Sy::$httpRequest[$requestId][$name]) ? Sy::$httpRequest[$requestId][$name] : NULL;
+		}
 	}
 	/**
 	 * Cookie是否存在
 	 * @access public
 	 * @param string $name
+	 * @param string $requestId 请求ID，仅当运行于HttpServer模式时需要
 	 * @return string
 	 */
-	public static function exists($name) {
+	public static function exists($name, $requestId = NULL) {
 		$name = Sy::$app['cookie']['prefix'] . $name;
-		return isset($_COOKIE[$name]);
+		if ($requestId === NULL) {
+			return isset($_COOKIE[$name]);
+		} else {
+			return isset(Sy::$httpRequest[$requestId][$name]);
+		}
 	}
 	/**
 	 * 安全的设置Cookie（防止篡改）
