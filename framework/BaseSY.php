@@ -16,12 +16,16 @@ use \sy\base\SYException;
 
 //将系统异常封装为自有异常
 set_exception_handler(function ($e) {
-	@header('Content-Type:text/html; charset=utf-8');
+	if (isset(\Sy::$httpServer) && \Sy::$httpServer !== NULL) {
+		\Sy::setMimeType('Content-Type:text/html; charset=utf-8');
+	}
 	if (!($e instanceof SYException)) {
 		$e = new SYException($e->getMessage(), '10000', [$e->getFile(), $e->getLine()]);
 	}
 	echo strval($e);
-	exit;
+	if (isset(\Sy::$httpServer) && \Sy::$httpServer !== NULL) {
+		exit;
+	}
 });
 
 class BaseSY {
@@ -169,7 +173,12 @@ class BaseSY {
 			//设置请求信息
 			static::$httpRequest[$requestId] = $req;
 			static::$httpResponse[$requestId] = $response;
+			//是否启用CSRF验证
+			if (isset(static::$app['csrf']) && static::$app['csrf']) {
+				\sy\lib\YSecurity::csrfSetCookie($requestId);
+			}
 			//根据设置，分配重写规则
+			ob_start();
 			if (static::$app['rewrite']) {
 				$url = parse_url($req->server['request_uri']);
 				//目前暂不支持自定义规则
@@ -182,7 +191,7 @@ class BaseSY {
 			}
 			//请求结束，进行清理工作
 			try {
-				$response->end();
+				$response->end(ob_get_clean());
 				unset(static::$httpRequest[$requestId], static::$httpResponse[$requestId], $requestId);
 			} catch (\Exception $e) {
 			}
@@ -219,7 +228,13 @@ class BaseSY {
 			$r = static::$app['defaultRouter'];
 		}
 		if (strpos($r, '.') !== FALSE || strpos($r, '/') === FALSE) {
-			static::httpStatus('404', TRUE);
+			if (NULL === $requestId) {
+				header(static::getHttpStatus('404'));
+				exit;
+			} else {
+				static::$httpResponse[$requestId]->status(404);
+				return;
+			}
 		}
 		//多级路由支持
 		$last = strrpos($r, '/');
@@ -232,7 +247,13 @@ class BaseSY {
 		$isPath = strpos($controllerName, '/');
 		//controller列表
 		if (!in_array($controllerName, static::$app['controller'], TRUE)) {
-			static::httpStatus('404', TRUE);
+			if (NULL === $requestId) {
+				header(static::getHttpStatus('404'));
+				exit;
+			} else {
+				static::$httpResponse[$requestId]->status(404);
+				return;
+			}
 		}
 		//多级路由时，引入顶级路由（如果存在）
 		if ($isPath !== FALSE) {
@@ -260,7 +281,13 @@ class BaseSY {
 		//执行动作
 		$actionName = 'action' . ucfirst($actionName);
 		if (!method_exists($controller, $actionName)) {
-			static::httpStatus('404', TRUE);
+			if (NULL === $requestId) {
+				header(static::getHttpStatus('404'));
+				exit;
+			} else {
+				static::$httpResponse[$requestId]->status(404);
+				return;
+			}
 		}
 		static::$controller = $controller;
 		if ($requestId !== NULL) {
@@ -363,16 +390,20 @@ class BaseSY {
 	 * @access public
 	 * @param string $type 可为文件扩展名，或者Content-type的值
 	 */
-	public static function setMimeType($type) {
+	public static function setMimeType($type, $requestId = NULL) {
 		$mimeType = static::getMimeType($type);
 		if ($mimeType === NULL) {
 			$mimeType = $type;
 		}
-		$header = 'Content-type:' . $mimeType . ';';
+		$header = $mimeType . ';';
 		if (in_array($type, ['js', 'json', 'atom', 'rss', 'xhtml'], TRUE) || substr($mimeType, 0, 5) === 'text/') {
 			$header .= ' charset=' . static::$app['charset'];
 		}
-		@header($header);
+		if (NULL === $requestId) {
+			@header('Content-type:' . $header);
+		} else {
+			static::$httpResponse[$requestId]->header('Content-Type', $header);
+		}
 	}
 	/**
 	 * 获取扩展名对应的mimeType

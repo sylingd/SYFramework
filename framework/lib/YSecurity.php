@@ -13,7 +13,7 @@
  */
 
 namespace sy\lib;
-use Sy;
+use \Sy;
 use \sy\lib\YCookie;
 use \sy\base\SYException;
 
@@ -25,25 +25,44 @@ class YSecurity {
 	 * @param boolean $show_error 验证不通过时，是否直接报错
 	 * @return boolean
 	 */
-	public static function csrfVerify($show_error = TRUE) {
+	public static function csrfVerify($show_error = TRUE, $requestId = NULL) {
 		//仅POST需要验证csrf
 		if (strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
-			static::csrfSetCookie();
+			static::csrfSetCookie($requestId);
 			return TRUE;
 		}
-		if (!isset($_POST[static::$csrf_config['tokenName']]) || YCookie::get(static::$csrf_config['cookieName']) === NULL || ($_POST[static::$csrf_config['tokenName']] !== YCookie::get(static::$csrf_config['cookieName']))) {
-			if ($show_error) {
-				Sy::httpStatus('403', TRUE);
-			} else {
-				return FALSE;
+		if (NULL === $requestId) {
+			if (!isset(Sy::$httpRequest[$requestId]->post[static::$csrf_config['tokenName']]) || YCookie::get(static::$csrf_config['cookieName'], $requestId) === NULL || (Sy::$httpRequest[$requestId]->post[static::$csrf_config['tokenName']] !== YCookie::get(static::$csrf_config['cookieName'], $requestId))) {
+				if ($show_error) {
+					Sy::$httpResponse[$requestId]->status(403);
+					Sy::$httpResponse[$requestId]->end();
+					return;
+				} else {
+					return FALSE;
+				}
 			}
+			unset(Sy::$httpRequest[$requestId]->post[static::$csrf_config['tokenName']]);
+			//每次有POST提交都重新生成csrf_hash
+			unset(Sy::$httpRequest[$requestId]->cookie[static::$csrf_config['cookieName']]);
+			static::$csrf_hash = NULL;
+			static::csrfGetHash();
+			static::csrfSetCookie($requestId);
+		} else {
+			if (!isset($_POST[static::$csrf_config['tokenName']]) || YCookie::get(static::$csrf_config['cookieName']) === NULL || ($_POST[static::$csrf_config['tokenName']] !== YCookie::get(static::$csrf_config['cookieName']))) {
+				if ($show_error) {
+					header(Sy::getHttpStatus('403'));
+					exit;
+				} else {
+					return FALSE;
+				}
+			}
+			unset($_POST[static::$csrf_config['tokenName']]);
+			//每次有POST提交都重新生成csrf_hash
+			unset($_COOKIE[static::$csrf_config['cookieName']]);
+			static::$csrf_hash = NULL;
+			static::csrfGetHash();
+			static::csrfSetCookie();
 		}
-		unset($_POST[static::$csrf_config['tokenName']]);
-		//每次有POST提交都重新生成csrf_hash
-		unset($_COOKIE[static::$csrf_config['cookieName']]);
-		static::$csrf_hash = NULL;
-		static::csrfGetHash();
-		static::csrfSetCookie();
 		return TRUE;
 	}
 	/**
@@ -64,8 +83,12 @@ class YSecurity {
 	 * 设置CSRF-Cookie
 	 * @access public
 	 */
-	public static function csrfSetCookie() {
-		YCookie::set(['name' => static::$csrf_config['cookieName'], 'value' => static::csrfGetHash(), 'httponly' => TRUE]);
+	public static function csrfSetCookie($requestId = NULL) {
+		$param = ['name' => static::$csrf_config['cookieName'], 'value' => static::csrfGetHash(), 'httponly' => TRUE];
+		if ($requestId !== NULL) {
+			$param['requestId'] = $requestId;
+		}
+		YCookie::set($param);
 	}
 	/**
 	 * 进行可逆加密
