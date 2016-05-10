@@ -1,24 +1,24 @@
 <?php
 
 /**
- * MySQLi支持类
+ * 异步MySQL支持类（需要Swoole和MySQLi）
  * 
  * @author ShuangYa
  * @package SYFramework
  * @category Library
  * @link http://www.sylingd.com/
- * @copyright Copyright (c) 2015 ShuangYa
+ * @copyright Copyright (c) 2015-2016 ShuangYa
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
-namespace sy\lib\db;
+namespace sy\lib\async;
 use \Sy;
 use \mysqli;
 use \sy\lib\YHtml;
 use \sy\base\SYException;
 use \sy\base\SYDException;
 
-class YMysqli {
+class YMysql {
 	protected $dbtype = 'MySQL';
 	protected $link = [];
 	protected $dbInfo = [];
@@ -39,6 +39,9 @@ class YMysqli {
 	public function __construct() {
 		if (!class_exists('mysqli', FALSE)) {
 			throw new SYException('Class "MySQLi" is required', '10020');
+		}
+		if (!extension_loaded('swoole')) {
+			throw new SYException('Extension "Swoole" is required', '10027');
 		}
 		if (isset(Sy::$app['mysql']) && $this->current === 'default') {
 			$this->setParam(Sy::$app['mysql']);
@@ -79,22 +82,14 @@ class YMysqli {
 		return str_replace('#@__', $this->dbInfo[$id]['prefix'], $sql);
 	}
 	/**
-	 * 获取最后产生的ID
-	 * @access public
-	 * @return int
-	 */
-	public function getLastId() {
-		$id = $this->current;
-		return intval($this->link[$id]->insert_id);
-	}
-	/**
 	 * 执行查询
 	 * @access public
 	 * @param string $key
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
+	 * @param callable $callback 回调参数
 	 */
-	public function query($key, $sql, $data = NULL) {
+	public function query($key, $sql, $data = NULL, $callback = NULL) {
 		$id = $this->current;
 		$sql = $this->setQuery($sql);
 		if (is_array($data)) {
@@ -104,66 +99,10 @@ class YMysqli {
 				$sql = str_replace($k, "'$v'", $sql, 1);
 			}
 		}
-		$rs = $this->link[$id]->query($sql);
-		//执行失败
-		if ($rs === FALSE) {
-			throw new SYDException(YHtml::encode($this->link[$id]->error), $this->dbtype, YHtml::encode($sql));
+		if ($callback === NULL) {
+			$callback = function($db, $r) {};
 		}
-		if (is_object($rs)) {
-			$r = $rs->fetch_all(MYSQLI_ASSOC);
-			$rs->free();
-			return $r;
-		} else {
-			return NULL;
-		}
-	}
-	/**
-	 * 查询并返回一条结果
-	 * @access public
-	 * @param string $sql SQL语句
-	 * @param array $data 参数
-	 * @return array
-	 */
-	public function getOne($sql, $data = NULL) {
-		if (!preg_match('/limit ([0-9,]+)$/', strtolower($sql))) {
-			$sql .= ' LIMIT 0,1';
-		}
-		$r = $this->query($sql, $data);
-		return current($r);
-	}
-	/**
-	 * 事务：开始
-	 * @access public
-	 */
-	public function beginTransaction() {
-		$id = $this->current;
-		$this->link[$id]->autocommit(FALSE);
-	}
-	/**
-	 * 事务：添加一句
-	 * @access public
-	 * @param string $sql
-	 */
-	public function addOne($sql) {
-		$id = $this->current;
-		$this->link[$id]->query($this->setQuery($sql, $id));
-	}
-	/**
-	 * 事务：提交
-	 * @access public
-	 */
-	public function commit() {
-		$id = $this->current;
-		$this->link[$id]->commit();
-	}
-
-	/**
-	 * 事务：回滚
-	 * @access public
-	 */
-	public function rollback() {
-		$id = $this->current;
-		$this->link[$id]->rollback();
+		swoole_mysql_query($this->link[$id], $sql, $callback);
 	}
 	/**
 	 * 析构函数，自动关闭

@@ -16,7 +16,7 @@
 
 * 10011 使用了i18n类，但无法找到语言文件 base/i18n.php
 
-* 10020 需要MySQLi扩展 lib/db/YMysqli.php
+* 10020 需要MySQLi扩展 lib/db/YMysqli.php lib/async/YMysql.php
 
 * 10021 需要PDO扩展 base/YPdo.php
 
@@ -29,6 +29,8 @@
 * 10025 需要Memcached扩展 lib/cache/YMemcached.php
 
 * 10026 需要MongoDB扩展 lib/db/YMongoDB.php
+
+* 10027 需要Swoole扩展 BaseSY.php lib/async/YMysql.php
 
 * 10040 无法连接到FTP服务器 tool/YFtp.php
 

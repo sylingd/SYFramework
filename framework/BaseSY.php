@@ -73,7 +73,7 @@ class BaseSY {
 		} elseif (!is_array($config)) {
 			throw new SYException('Config can not be recognised', '10003');
 		}
-		//框架所在的绝对路径
+		//程序所在的绝对路径
 		static::$rootDir = str_replace('\\', '/', realpath(static::$frameworkDir . '../')) . '/';
 		//程序相对网站根目录所在
 		$now = $_SERVER['PHP_SELF'];
@@ -146,7 +146,7 @@ class BaseSY {
 	public static function createHttpApplication($config = NULL) {
 		//swoole检查
 		if (!extension_loaded('swoole')) {
-			throw new SYException('Must run at CLI mode', '10006');
+			throw new SYException('Extension "Swoole" is required', '10027');
 		}
 		static::createApplicationInit($config);
 		//网站根目录
@@ -218,9 +218,9 @@ class BaseSY {
 	}
 	/**
 	 * 简单Router
-	 * @access public
+	 * @access protected
 	 */
-	public static function router($r = NULL, $requestId = NULL) {
+	protected static function router($r = NULL, $requestId = NULL) {
 		if ($r === NULL) {
 			$r = trim($_GET[static::$routeParam]);
 		}
