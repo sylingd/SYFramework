@@ -370,7 +370,11 @@ class BaseSY {
 				unset($param[$k]);
 			}
 		} elseif (static::$app['rewrite']) {
-			$url .= static::$siteDir . $controllerName . '/' . $actionName . '.' . ($ext === NULL ? static::$app['rewriteExt'] : $ext);
+			if ($ext === NULL && empty(static::$app['rewriteExt'])) {
+				$url .= static::$siteDir . $controllerName . '/' . $actionName;
+			} else {
+				$url .= static::$siteDir . $controllerName . '/' . $actionName . '.' . ($ext === NULL ? static::$app['rewriteExt'] : $ext);
+			}
 		} else {
 			$url .= static::$siteDir . 'index.php?r=' . $controllerName . '/' . $actionName;
 		}

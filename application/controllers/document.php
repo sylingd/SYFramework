@@ -38,11 +38,16 @@ class Document extends Controller {
 	 */
 	public function actionClass() {
 		Sy::setMimeType('html');
-		$path = Sy::$appDir . 'data/class/' . $_GET['f'] . '.txt';
+		$f = $_GET['f'];
+		if (strpos($f, '.') !== FALSE) {
+			exit;
+		}
+		$path = Sy::$appDir . 'data/class/' . $f . '.json';
 		if (!is_file($path)) {
 			exit;
 		}
-		// Sy::view('document/class', ['class' => file_get_contents(Sy::$appDir . 'data/class/' . $f . '.txt'), 'file' => $_GET['f']]);
+		$class = json_decode(file_get_contents($path), 1);
+		Sy::view('document/class', ['class' => $class, 'file' => $f]);
 	}
 	/**
 	 * 测试：验证码

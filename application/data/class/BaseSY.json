@@ -1,0 +1,196 @@
+{
+	"name": "BaseSY",
+	"namespace": "sy",
+	"description": "请直接通过\\Sy调用",
+	"var": {
+		"app": "应用配置",
+		"appDir": "应用所在绝对路径",
+		"siteDir": "本网站相对于网站根目录的路径",
+		"frameworkDir": "框架所在绝对路径",
+		"rootDir": "主程序所在的绝对路径",
+		"webrootDir": "本网站所在的绝对路径",
+		"mimeTypes": "mimeType列表，从data目录读取",
+		"httpStatus": "HTTP状态码对应的描述，从data目录读取",
+		"routeParam": "路由参数名称，默认为r",
+		"debug": "调试模式开关，从配置文件中读取，默认开启",
+		"isCli": "是否为CLI模式",
+		"httpServer": "HttpServer模式运行时，为swoole进程",
+		"httpRequest": "HttpServer模式运行时，为HTTP请求",
+		"httpResponse": "HttpServer模式运行时，为HTTP响应"
+	},
+	"method": {
+		"createApplicationInit": {
+			"name": "初始化：创建Application（通用）",
+			"description": "创建Application，此函数供内部调用，不适用于外部调用",
+			"access": "protected",
+			"param": {
+				"config": {
+					"type": "mixed",
+					"description": "配置文件绝对路径（String）或配置内容（Array）"
+				}
+			}
+		},
+		"createApplication": {
+			"name": "初始化：创建WebApplication",
+			"description": "创建WebApplication，即普通的网站应用",
+			"access": "public",
+			"param": {
+				"config": {
+					"type": "mixed",
+					"description": "配置文件绝对路径（String）或配置内容（Array）"
+				}
+			}
+		},
+		"createConsoleApplication": {
+			"name": "初始化：创建ConsoleApplication",
+			"description": "创建ConsoleApplication，即运行于CLI模式下的应用",
+			"access": "public",
+			"param": {
+				"config": {
+					"type": "mixed",
+					"description": "配置文件绝对路径（String）或配置内容（Array）"
+				}
+			}
+		},
+		"createHttpApplication": {
+			"name": "初始化：创建HttpApplication（需要swoole）",
+			"description": "创建HttpApplication，此时不需要Apahce/nginx，php即为服务器端程序。但推荐使用nginx作为前端代理。详情请参考使用HttpApplication章节",
+			"access": "public",
+			"param": {
+				"config": {
+					"type": "mixed",
+					"description": "配置文件绝对路径（String）或配置内容（Array）"
+				}
+			}
+		},
+		"getHttpStatus": {
+			"name": "获取HTTP状态文字",
+			"description": "获取类似“HTTP/1.0 404 Not Found”这样的文字，用于header函数",
+			"access": "public",
+			"param": {
+				"status": {
+					"type": "int",
+					"description": "HTTP状态码，如404"
+				}
+			},
+			"return": {
+				"type": "string",
+				"description": "HTTP状态文字"
+			}
+		},
+		"router": {
+			"name": "简单的路由分发函数",
+			"description": "仅供内部调用",
+			"access": "protected",
+			"param": {
+				"r": {
+					"type": "string",
+					"description": "路由信息，不传递则从GET参数中获取"
+				},
+				"requestId": {
+					"type": "string",
+					"description": "使用HttpApplication时，针对不同请求生成的唯一临时ID"
+				}
+			}
+		},
+		"autoload": {
+			"name": "自动加载",
+			"description": "注册至spl的自动加载函数",
+			"access": "public"
+		},
+		"createUrl": {
+			"name": "创建URL",
+			"description": "创建HttpApplication，此时不需要Apahce",
+			"access": "public",
+			"param": {
+				"param": {
+					"type": "array",
+					"description": "URL参数，其中，$param[0]恒为router名。若无URL参数可直接传递string。若为空，则返回本程序主页的URL"
+				},
+				"ext": {
+					"type": "string",
+					"description": "后缀名，不传递则从config.php中获取"
+				}
+			},
+			"return": {
+				"type": "string",
+				"description": "完整URL"
+			}
+		},
+		"setMimeType": {
+			"name": "发送Content-type的header（即mimeType）",
+			"description": "发送Content-type的header（即mimeType）",
+			"access": "public",
+			"param": {
+				"type": {
+					"type": "string",
+					"description": "可为文件扩展名，或者Content-type的值"
+				},
+				"requestId": {
+					"type": "string",
+					"description": "请求ID，仅HttpApplication必须传递"
+				}
+			}
+		},
+		"getMimeType": {
+			"name": "获取扩展名对应的mimeType",
+			"description": "获取扩展名对应的mimeType",
+			"access": "public",
+			"param": {
+				"ext": {
+					"type": "string",
+					"description": "文件扩展名。若无对应结果则返回NULL"
+				}
+			},
+			"return": {
+				"type": "string",
+				"description": "mimeType，如<code>text/html</code>"
+			}
+		},
+		"viewPath": {
+			"name": "获取模板路径",
+			"description": "获取单个模板文件的绝对路径",
+			"access": "public",
+			"param": {
+				"tpl": {
+					"type": "string",
+					"description": "模板名称"
+				}
+			},
+			"return": {
+				"type": "string",
+				"description": "模板绝对路径，如<code>/var/www/application/views/a.php</code>"
+			}
+		},
+		"view": {
+			"name": "引入模板",
+			"description": "如模板为<code>views/admin/login.php</code>，则对应的名称为<code>admin/login</code>，以此类推",
+			"access": "public",
+			"param": {
+				"__tpl": {
+					"type": "string",
+					"description": "模板名称"
+				},
+				"_param": {
+					"type": "array",
+					"description": "参数，将会被extract出来，模板中可直接读取。如<code>['text' => '文字']</code>，模板中可以通过<code>$text</code>调用"
+				}
+			}
+		},
+		"model": {
+			"name": "获取Model操作类",
+			"description": "Model的namespace需为<code>应用的namespace/model</code>，命名为首字母大写的类名，存放于<code>应用目录/model</code>下",
+			"access": "public",
+			"param": {
+				"modelName": {
+					"type": "string",
+					"description": "Model名称"
+				}
+			},
+			"return": {
+				"type": "object",
+				"description": "Model操作类"
+			}
+		}
+	}
+}
