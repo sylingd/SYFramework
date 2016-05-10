@@ -77,15 +77,11 @@ Class CustomService {
 	 * 客服帐号管理 - 获取所有客服账号
 	 * 请注意，必须先在公众平台官网为公众号设置微信号后才能使用该能力。
 	 *
-	 * @param $kfAccount String 完整客服账号，格式为：账号前缀@公众号微信号
-	 * @param $nickname String 昵称
-	 * @param $password String 密码
-	 *
 	 * @return array( "kf_list"=>array(
 		   array("kf_account": "test1@test", "kf_nick": "ntest1", "kf_id": "1001", "kf_headimgurl": " http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0"),
 	 * ))
 	 */
-	public function getAccountList($kfAccount, $nickname, $password) {
+	public function getAccountList() {
 		$queryUrl = Common::URL . 'cgi-bin/customservice/getkflist?access_token=' . AccessToken::getAccessToken();
 		return Common::FetchURL(['url' => $queryUrl]);
 	}

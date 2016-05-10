@@ -439,10 +439,10 @@ class BaseSY {
 	public static function view($__tpl, $_param = NULL) {
 		//是否启用CSRF验证
 		if (static::$app['csrf']) {
-			$_csrf_token = \sy\lib\YSecurity::csrfGetHash();
+			$_param['_csrf_token'] = \sy\lib\YSecurity::csrfGetHash();
 		}
 		if (is_array($_param)) {
-			unset($_param['__tpl'], $_param['__viewPath'], $_param['_csrf_token'], $_param['_GET'], $_param['_POST'], $_param['_REQUEST'], $_param['_ENV'], $_param['_COOKIE'], $_param['_SESSION'], $_param['GLOBALS'], $_param['argc'], $_param['argv'], $_param['_SERVER']);
+			unset($_param['__tpl'], $_param['__viewPath'], $_param['_GET'], $_param['_POST'], $_param['_REQUEST'], $_param['_ENV'], $_param['_COOKIE'], $_param['_SESSION'], $_param['GLOBALS'], $_param['argc'], $_param['argv'], $_param['_SERVER']);
 			extract($_param);
 		}
 		$__viewPath = static::viewPath($__tpl);

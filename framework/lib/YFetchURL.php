@@ -170,7 +170,6 @@ class YFetchURL {
 					$urlInfo['host'] = 'ssl://' . $urlInfo['host'];
 					$urlInfo['port'] = ($urlInfo['port'] != 0) ? $urlInfo['port'] : 443;
 				} else {
-					$urlInfo['host'] = $urlInfo['host'];
 					$urlInfo['port'] = ($urlInfo['port'] != 0) ? $urlInfo['port'] : 80;
 				}
 				$urlInfo['path'] = (isset($urlInfo['path']) ? $urlInfo['path'] : '/') . (isset($urlInfo['query']) ? '?' . $urlInfo['query'] : '');

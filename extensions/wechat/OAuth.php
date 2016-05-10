@@ -81,7 +81,7 @@ class OAuth {
 		);
 	 */
 	public static function getUserInfo($accessToken, $openId, $lang='zh_CN') {
-		$queryUrl = Common::URL . 'sns/userinfo?access_token='. $accessToken . '&openid='. $openId .'&lang=zh_CN';
+		$queryUrl = Common::URL . 'sns/userinfo?access_token='. $accessToken . '&openid='. $openId .'&lang=' . $lang;
 		return Common::FetchURL(['url' => $queryUrl]);
 	}
 	/**

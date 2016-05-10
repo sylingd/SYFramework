@@ -262,7 +262,7 @@ class YMongo {
 			$this->setError($e->getMessage(), 'DELETE', $filter);
 			return FALSE;
 		}
-		return $result;
+		return TRUE;
 	}
 	/**
 	 * 更新记录
@@ -291,12 +291,12 @@ class YMongo {
 	 * 增加记录
 	 * @access public
 	 * @param array $data
-	 * @return array
+	 * @return string
 	 */
 	public function insert($data) {
 		$id = $this->current;
 		try {
-			$oid = $this->collectionObject[$id]->insert($data, [
+			$this->collectionObject[$id]->insert($data, [
 				'safe' => $this->option[$id]['safe'],
 				'timeout' => $this->option[$id]['timeout']
 			]);
@@ -307,7 +307,7 @@ class YMongo {
 			$this->setError($e->getMessage(), 'INSERT', $data);
 			return FALSE;
 		}
-		return [strval($oid), $result];
+		return strval($oid);
 	}
 	/**
 	 * 魔术方法调用

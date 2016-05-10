@@ -29,7 +29,7 @@ class YMysql {
 		if (static::$_instance === NULL) {
 			static::$_instance = new static;
 		}
-		$this->current = $id;
+		static::$_instance->current = $id;
 		return static::$_instance;
 	}
 	/**
@@ -89,7 +89,7 @@ class YMysql {
 	 * @param array $data 参数
 	 * @param callable $callback 回调参数
 	 */
-	public function query($key, $sql, $data = NULL, $callback = NULL) {
+	public function query($sql, $data = NULL, $callback = NULL) {
 		$id = $this->current;
 		$sql = $this->setQuery($sql);
 		if (is_array($data)) {

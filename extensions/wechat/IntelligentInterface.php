@@ -30,10 +30,18 @@ class IntelligentInterface {
 		$template['category'] = $category;
 		$template['appid'] = Common::$APPID;
 		$template['uid'] = $openId;
-		if (!empty($latitude)) $template['latitude'] = $latitude;
-		if (!empty($longitude)) $template['longitude'] = $longitude;
-		if (!empty($region)) $template['region'] = $region;
-		if (!empty($city)) $template['city'] = $city;
+		if (!empty($latitude)) {
+			$template['latitude'] = $latitude;
+		}
+		if (!empty($longitude)) {
+			$template['longitude'] = $longitude;
+		}
+		if (!empty($region)) {
+			$template['region'] = $region;
+		}
+		if (!empty($city)) {
+			$template['city'] = $city;
+		}
 		$template = json_encode($template);
 		return Common::FetchURL(['url' => $queryUrl, 'postfields' => $template], FALSE);
 	}

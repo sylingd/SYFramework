@@ -29,7 +29,7 @@ class YMysqli {
 		if (static::$_instance === NULL) {
 			static::$_instance = new static;
 		}
-		$this->current = $id;
+		static::$_instance->current = $id;
 		return static::$_instance;
 	}
 	/**
@@ -94,7 +94,7 @@ class YMysqli {
 	 * @param string $sql SQL语句
 	 * @param array $data 参数
 	 */
-	public function query($key, $sql, $data = NULL) {
+	public function query($sql, $data = NULL) {
 		$id = $this->current;
 		$sql = $this->setQuery($sql);
 		if (is_array($data)) {

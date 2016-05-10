@@ -58,7 +58,7 @@ class YForm {
 	}
 	public static function isIpv6($ip) {
 		$collapsed = FALSE;
-		$chunks = array_filter(preg_split('/(:{1,2})/', $str, NULL, PREG_SPLIT_DELIM_CAPTURE));
+		$chunks = array_filter(preg_split('/(:{1,2})/', $ip, NULL, PREG_SPLIT_DELIM_CAPTURE));
 		if (current($chunks) == ':' || end($chunks) == ':') {
 			return FALSE;
 		}

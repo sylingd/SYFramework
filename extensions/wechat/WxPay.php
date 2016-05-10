@@ -309,7 +309,7 @@ class WxPay {
 		$inputObj->sign();
 		$xml = $inputObj->ToXml();
 		
-		$startTimeStamp = self::getMillisecond();//请求开始时间
+		// $startTimeStamp = self::getMillisecond(); //请求开始时间
 		$response = self::postXmlCurl($xml, $url, false, $timeOut);
 		return $response;
 	}
@@ -318,10 +318,9 @@ class WxPay {
 	 * 生成二维码规则,模式一生成支付二维码
 	 * appid、mchid、spbill_create_ip、nonce_str不需要填入
 	 * @param array $input
-	 * @param int $timeOut
 	 * @return 成功时返回，其他抛异常
 	 */
-	public static function bizpayurl($input, $timeOut = 6) {
+	public static function bizpayurl($input) {
 		if(!isset($input['Product_id'])){
 			Msg::returnErrMsg(Common::ERROR_PAY_NO_PRODUCTID, "生成二维码，缺少必填参数product_id！");
 		}
@@ -393,7 +392,7 @@ class WxPay {
 			return;
 		} 
 		//如果仅失败上报
-		if (Common::PAY_REPORT == 1 && isset($data['return_code']) && $data["return_code"] == "SUCCESS" && isset($data['result_code']) && $data["result_code"] == "SUCCESS") {
+		if (Common::PAY_REPORT == 1 && $data["return_code"] === "SUCCESS" && $data["result_code"] === "SUCCESS") {
 		 	return;
 		}
 		//上报逻辑
@@ -555,7 +554,7 @@ class WxPayData {
 	**/
 	public function ToXml() {
 		if (!is_array($this->values) || count($this->values) <= 0) {
-			throw new \Exception("数组数据异常！");
+			throw new \SYException("数组数据异常！", '20000');
 		}
 		$xml = '<xml>';
 		foreach ($this->values as $k => $v) {
@@ -574,8 +573,8 @@ class WxPayData {
 	 * @throws \Exception
 	 */
 	public function FromXml($xml) {	
-		if(!$xml){
-			throw new \Exception("xml数据异常！");
+		if (!$xml){
+			throw new \SYException('xml数据异常！', '20000');
 		}
 		//将XML转为array
 		//禁止引用外部xml实体
@@ -617,13 +616,13 @@ class WxPayData {
 	 */
 	public function CheckSign() {
 		if(!isset($this->values['sign'])){
-			throw new \Exception("签名错误！");
+			throw new \SYException("签名错误！", '20000');
 		}
 		$sign = $this->MakeSign();
 		if($this->values['sign'] == $sign){
 			return true;
 		}
-		throw new \Exception("签名错误！");
+		throw new \SYException("签名错误！", '20000');
 	}
 	/**
 	 * 设置参数

@@ -51,11 +51,13 @@ class Menu {
 				$menuList[$key]['url'] = $menu['code'];
 				//处理URL。因为URL不能在转换JSON时被转为UNICODE
 				$menuList[$key]['url'] = urlencode($menuList[$key]['url']);
-			}else if (@$menu['type'] == 'click') {
+			}elseif (@$menu['type'] == 'click') {
 				$menuList[$key]['key'] = $menu['code'];
-			}else if (@!empty($menu['type'])) {
+			}elseif (@!empty($menu['type'])) {
 				$menuList[$key]['key'] = $menu['code'];
-				if (!isset($menu['sub_button'])) $menuList[$key]['sub_button'] = [];
+				if (!isset($menu['sub_button'])) {
+					$menuList[$key]['sub_button'] = [];
+				}
 			}
 			unset($menuList[$key]['code']);
 			//处理PID和ID
@@ -71,7 +73,7 @@ class Menu {
 					if ($son['type'] == 'view') {
 						$menuList[$key]['sub_button'][$k]['url'] = $son['code'];
 						$menuList[$key]['sub_button'][$k]['url'] = urlencode($menuList[$key]['sub_button'][$k]['url']);
-					}else if ($son['type'] == 'click') {
+					}elseif ($son['type'] == 'click') {
 						$menuList[$key]['sub_button'][$k]['key'] = $son['code'];
 					} else {
 						$menuList[$key]['sub_button'][$k]['key'] = $son['code'];

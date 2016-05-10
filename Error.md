@@ -45,3 +45,7 @@
 * 10053 socket连接失败 lib/YFetchURL.php
 
 * 10054 socket连接超时 lib/YFetchURL.php
+
+# 扩展错误
+
+* 20000 微信扩展相关错误
