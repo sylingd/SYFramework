@@ -240,10 +240,6 @@ class BaseSY {
 		$last = strrpos($r, '/');
 		$controllerName = substr($r, 0, $last);
 		$actionName = substr($r, $last + 1);
-		//Alias路由表
-		if (isset(static::$app['alias'][$controllerName])) {
-			$controllerName = static::$app['alias'][$controllerName];
-		}
 		$isPath = strpos($controllerName, '/');
 		//controller列表
 		if (!in_array($controllerName, static::$app['controller'], TRUE)) {
@@ -353,10 +349,6 @@ class BaseSY {
 		$last = strrpos($router, '/');
 		$controllerName = substr($router, 0, $last);
 		$actionName = substr($router, $last + 1);
-		//Alias路由表
-		if (in_array($controllerName, static::$app['alias'], TRUE)) {
-			$controllerName = array_search($controllerName, static::$app['alias']);
-		}
 		//是否启用了Rewrite
 		if (static::$app['rewrite'] && isset(static::$app['rewriteRule'][$router])) {
 			$url .= str_replace('@root/', static::$siteDir, static::$app['rewriteRule'][$router]);
