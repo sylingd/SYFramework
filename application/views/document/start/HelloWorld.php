@@ -2,10 +2,10 @@
 use \sy\lib\YHtml;
 ?>
 <!DOCTYPE html>
+<html>
 <head>
 	<title>Hello World</title>
-	<?=YHtml::meta()?>
-	<?=YHtml::css('@root/public/css/bootstrap.min.css')?>
+	<?php Sy::view('common/header'); ?>
 </head>
 <body>
 	<div class="container">
@@ -153,4 +153,6 @@ class Home extends Controller {
 			</div>
 		</div>
 	</div>
+	<?php Sy::view('common/footer'); ?>
 </body>
+</html>

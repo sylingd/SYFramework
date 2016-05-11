@@ -15,7 +15,7 @@ namespace sy\base;
 use Sy;
 use \sy\base\SYException;
 
-class Controller {
+abstract class Controller {
 	protected $_framework_m = [];
 	/**
 	 * 加载Model
@@ -28,6 +28,7 @@ class Controller {
 		if (in_array($modelName, $this->_framework_m, TRUE)) {
 			return;
 		}
-		$this->$loadAs = Sy::model($modelName);
+		$this->_framework_m[] = $modelName;
+		$this->{$loadAs} = Sy::model($modelName);
 	}
 }

@@ -2,10 +2,10 @@
 use \sy\lib\YHtml;
 ?>
 <!DOCTYPE html>
+<html>
 <head>
 	<title><?=$class['name']?>类</title>
-	<?=YHtml::meta()?>
-	<?=YHtml::css('@root/public/css/bootstrap.min.css')?>
+	<?php Sy::view('common/header'); ?>
 </head>
 <body>
 	<div class="container">
@@ -19,6 +19,23 @@ use \sy\lib\YHtml;
 					<li>文件：<?=$file?>.php</li>
 					<li>命名空间：<?=$class['namespace']?></li>
 				</ul>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">变量</h3>
+			</div>
+			<div class="panel-body">
+				<table class="table table-border">
+					<thead><tr><th>名称</th><th>描述</th></tr></thead>
+					<tbody>
+					<?php
+					foreach ($class['var'] as $k => $v) {
+						echo '<tr><td>', $k, '</td><td>', $v, '</td></tr>';
+					}
+					?>
+					</tbody>
+				</table>
 			</div>
 		</div>
 		<div class="panel panel-default">
@@ -51,7 +68,7 @@ use \sy\lib\YHtml;
 				?>
 				<p><b>参数</b></p>
 				<table class="table table-border">
-					<thead><tr><td>名称</td><td>类型</td><td>描述</td></tr></thead>
+					<thead><tr><th>名称</th><th>类型</th><th>描述</th></tr></thead>
 					<tbody>
 				<?php
 					foreach ($method['param'] as $paramName => $paramContent) {
@@ -76,4 +93,6 @@ use \sy\lib\YHtml;
 		}
 		?>
 	</div>
+	<?php Sy::view('common/footer'); ?>
 </body>
+</html>

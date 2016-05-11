@@ -2,10 +2,10 @@
 use \sy\lib\YHtml;
 ?>
 <!DOCTYPE html>
+<html>
 <head>
 	<title>基本构架</title>
-	<?=YHtml::meta()?>
-	<?=YHtml::css('@root/public/css/bootstrap.min.css')?>
+	<?php Sy::view('common/header'); ?>
 </head>
 <body>
 	<div class="container">
@@ -57,13 +57,23 @@ use \sy\lib\YHtml;
 				</ul>
 			</div>
 		</div><!-- /.panel -->
-		
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"></h3>
+				<h3 class="panel-title">应用目录</h3>
 			</div>
 			<div class="panel-body">
+				<p>应用目录应当存在于<code>framework</code>目录的同级目录，名字可随意更改</p>
+				<ul>
+					<li>config.php 应用基本配置，可任意更名</li>
+					<li>common.php 可以在这里放一些基本函数、初始化函数等</li>
+					<li>controllers Controller目录</li>
+					<li>models Model目录</li>
+					<li>views 模板目录</li>
+					<li>workers Console应用基本文件所在目录目录</li>
+				</ul>
 			</div>
 		</div><!-- /.panel -->
 	</div>
+	<?php Sy::view('common/footer'); ?>
 </body>
+</html>

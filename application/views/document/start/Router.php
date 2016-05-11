@@ -2,10 +2,10 @@
 use \sy\lib\YHtml;
 ?>
 <!DOCTYPE html>
+<html>
 <head>
 	<title>路由（Router）</title>
-	<?=YHtml::meta()?>
-	<?=YHtml::css('@root/public/css/bootstrap.min.css')?>
+	<?php Sy::view('common/header'); ?>
 </head>
 <body>
 	<div class="container">
@@ -19,7 +19,6 @@ use \sy\lib\YHtml;
 				<p>以<code>home/hello/world</code>为例，程序将会进行下面的操作</p>
 				<ul>
 					<li>将其解析为<code>home/hello</code>和<code>world</code></li>
-					<li>查找虚拟路由表（后面解释），将home解释为真实路由（如果使用了虚拟路由表）</li>
 					<li>检查Controller列表，查看是否存在此Controller</li>
 					<li>检查此Controller的根目录（controllers/home），查看是否存在基本类（_base.php）如存在则自动引入</li>
 					<li>从应用目录引入Controller（controllers/home/hello.php）并实例化</li>
@@ -27,12 +26,7 @@ use \sy\lib\YHtml;
 				</ul>
 			</div>
 		</div><!-- /.panel -->
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title"></h3>
-			</div>
-			<div class="panel-body">
-			</div>
-		</div><!-- /.panel -->
 	</div>
+	<?php Sy::view('common/footer'); ?>
 </body>
+</html>
