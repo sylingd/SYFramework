@@ -21,8 +21,8 @@ class Document extends Controller {
 	 * Hello页面
 	 */
 	public function actionHello() {
-		$this->loadModel('test', 't');
-		$url_to_css = $this->t->foo('@root/public/style.css');
+		// $this->loadModel('test', 't');
+		// $url_to_css = $this->t->foo('@root/public/style.css');
 		Sy::setMimeType('html');
 		Sy::view('document/hello', ['url' => $url_to_css]);
 	}

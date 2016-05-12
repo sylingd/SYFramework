@@ -28,15 +28,17 @@ return [
 	//是否默认开启CSRF验证
 	'csrf' => FALSE,
 	//是否启用URL重写
-	'rewrite' => FALSE,
+	'rewrite' => TRUE,
 	//URL后缀，仅rewrite启用时有效
 	'rewriteExt' => 'html',
 	//自定义重写规则
 	//此处@root作用与YHtml::css中@root作用相同
 	'rewriteRule' => [
-		'article/view' => '@root/article/view/{{id}}.html',
-		'article/list' => '@root/article/list/{{id}}-{{page}}.html',
-		'user/view' => 'member/view-{{id}}.html'
+		// 'article/view' => '@root/article/view/{{id}}.html',
+		// 'article/list' => '@root/article/list/{{id}}-{{page}}.html',
+		// 'user/view' => '/member/view-{{id}}.html'
+		'document/start' => '@root/start/{{title}}.html',
+		'document/class' => '@root/class/{{f}}.html',
 	],
 	//Controller列表
 	'controller' => [
