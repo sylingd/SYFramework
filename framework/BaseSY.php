@@ -33,6 +33,7 @@ class BaseSY {
 	public static $app;
 	public static $appDir;
 	public static $siteDir;
+	public static $sitePath;
 	public static $frameworkDir;
 	//会从data下的相应文件读取
 	public static $mimeTypes = NULL;
@@ -95,9 +96,12 @@ class BaseSY {
 	 * @param mixed $config设置
 	 */
 	public static function createApplication($siteDir, $config = NULL) {
-		static::createApplicationInit($config);
-		//网站根目录
-		static::$webrootDir = substr(static::$rootDir, 0, strlen(static::$rootDir) - strlen(static::$siteDir)) . '/';
+		static::createApplicationInit($siteDir, $config);
+		//网站目录
+		$now = $_SERVER['PHP_SELF'];
+		$dir = str_replace('\\', '/', dirname($now));
+		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
+		static::$sitePath = $dir;
 		//是否启用CSRF验证
 		if (isset(static::$app['csrf']) && static::$app['csrf']) {
 			\sy\lib\YSecurity::csrfSetCookie();
@@ -112,9 +116,9 @@ class BaseSY {
 	 */
 	public static function createConsoleApplication($siteDir, $config = NULL) {
 		global $argv;
-		static::createApplicationInit($config);
-		//网站根目录
-		static::$webrootDir = static::$rootDir;
+		static::createApplicationInit(__DIR__, $config);
+		//网站目录
+		static::$sitePath = '/';
 		if (!static::$isCli) {
 			throw new SYException('Must run at CLI mode', '10005');
 		}
@@ -143,8 +147,8 @@ class BaseSY {
 			throw new SYException('Extension "Swoole" is required', '10027');
 		}
 		static::createApplicationInit($config);
-		//网站根目录
-		static::$webrootDir = static::$rootDir;
+		//网站目录
+		static::$sitePath = '/';
 		if (!static::$isCli) {
 			throw new SYException('Must run at CLI mode', '10005');
 		}
@@ -336,7 +340,7 @@ class BaseSY {
 		//基本URL
 		$url = ($_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
 		if (empty($router)) {
-			return $url . static::$siteDir;
+			return $url . static::$sitePath;
 		}
 		unset($param[0]);
 		//多级路由支持
