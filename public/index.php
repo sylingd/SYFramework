@@ -11,8 +11,8 @@
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
-require (__DIR__ . '/framework/sy.php');
+require (__DIR__ . '/../framework/sy.php');
 
-$config = __DIR__ . '/application/config.php';
+$config = __DIR__ . '/../application/config.php';
 
-Sy::createApplication($config);
+Sy::createApplication(__DIR__, $config);

@@ -10,8 +10,8 @@
  * @copyright Copyright (c) 2015 ShuangYa
  */
 
-require (__DIR__ . '/framework/sy.php');
+require (__DIR__ . '/../framework/sy.php');
 
-$config = __DIR__ . '/application/config.php';
+$config = __DIR__ . '/../application/config.php';
 
-Sy::createConsoleApplication($config);
+Sy::createConsoleApplication(__DIR__, $config);

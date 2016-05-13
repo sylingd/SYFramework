@@ -34,8 +34,6 @@ class BaseSY {
 	public static $appDir;
 	public static $siteDir;
 	public static $frameworkDir;
-	public static $rootDir;
-	public static $webrootDir;
 	//会从data下的相应文件读取
 	public static $mimeTypes = NULL;
 	public static $httpStatus = NULL;
@@ -56,7 +54,7 @@ class BaseSY {
 	 * @access protected
 	 * @param mixed $config设置
 	 */
-	protected static function createApplicationInit($config = NULL) {
+	protected static function createApplicationInit($siteDir, $config = NULL) {
 		static::$frameworkDir =  str_replace('\\', '/', __DIR__ ) . '/';
 		//PHP运行模式
 		if (PHP_SAPI === 'cli') {
@@ -73,18 +71,14 @@ class BaseSY {
 		} elseif (!is_array($config)) {
 			throw new SYException('Config can not be recognised', '10003');
 		}
-		//程序所在的绝对路径
-		static::$rootDir = str_replace('\\', '/', realpath(static::$frameworkDir . '../')) . '/';
-		//程序相对网站根目录所在
-		$now = $_SERVER['PHP_SELF'];
-		$dir = str_replace('\\', '/', dirname($now));
-		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
-		static::$siteDir = $dir;
+		//路径相关
+		static::$siteDir = str_replace('\\', '/', $siteDir) . '/';
+		static::$frameworkDir = str_replace('\\', '/', __DIR__) . '/';
 		//基本信息
 		$config['cookie']['path'] = str_replace('@app/', $dir, $config['cookie']['path']);
 		static::$app = $config;
 		//应用的绝对路径
-		static::$appDir = str_replace('\\', '/', realpath(static::$frameworkDir . $config['dir'])) . '/';
+		static::$appDir = str_replace('\\', '/', $config['dir']) . '/';
 		if (isset($config['debug'])) {
 			static::$debug = $config['debug'];
 		}
@@ -100,7 +94,7 @@ class BaseSY {
 	 * @access public
 	 * @param mixed $config设置
 	 */
-	public static function createApplication($config = NULL) {
+	public static function createApplication($siteDir, $config = NULL) {
 		static::createApplicationInit($config);
 		//网站根目录
 		static::$webrootDir = substr(static::$rootDir, 0, strlen(static::$rootDir) - strlen(static::$siteDir)) . '/';
@@ -116,7 +110,7 @@ class BaseSY {
 	 * @access public
 	 * @param mixed $config设置
 	 */
-	public static function createConsoleApplication($config = NULL) {
+	public static function createConsoleApplication($siteDir, $config = NULL) {
 		global $argv;
 		static::createApplicationInit($config);
 		//网站根目录
@@ -143,7 +137,7 @@ class BaseSY {
 	 * @access public
 	 * @param mixed $config设置
 	 */
-	public static function createHttpApplication($config = NULL) {
+	public static function createHttpApplication($siteDir, $config = NULL) {
 		//swoole检查
 		if (!extension_loaded('swoole')) {
 			throw new SYException('Extension "Swoole" is required', '10027');

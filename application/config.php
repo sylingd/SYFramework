@@ -14,8 +14,8 @@ return [
 	'appNamespace' => 'demo',
 	//调试模式
 	'debug' => TRUE,
-	//App根目录，相对于framework目录
-	'dir' => '../application/',
+	//App根目录
+	'dir' => __DIR__,
 	//编码
 	'charset' => 'utf-8',
 	//默认语言
