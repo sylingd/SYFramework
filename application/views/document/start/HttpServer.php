@@ -4,7 +4,7 @@ use \sy\lib\YHtml;
 <!DOCTYPE html>
 <html>
 <head>
-	<title>使用HttpServer</title>
+	<title>使用HttpServer - SYFramework</title>
 	<?php Sy::view('common/header'); ?>
 </head>
 <body>

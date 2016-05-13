@@ -4,13 +4,23 @@ use \sy\lib\YHtml;
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Hello</title>
+	<title>SYFramework</title>
 	<?php Sy::view('common/header'); ?>
 </head>
 <body>
 	<div class="container">
-		<h1>Hello</h1>
-		<p>欢迎来到SYFramework</p>
+		<h1>Hello, SYFramework</h1>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Hello, SYFramework</h3>
+			</div>
+			<div class="panel-body">
+				<p>欢迎来到SYFramework</p>
+				<p>SYFramework是一款轻量级、灵活的php框架</p>
+				<p>此项目基于<a href="https://opensource.org/licenses/Apache-2.0" target="_blank" rel="nofollow">Apache License 2.0</a>开源</p>
+				<p><a href="https://github.com/sylingd/SYFramework" target="_blank" rel="nofollow">GitHub</a>&nbsp;<a href="https://git.oschina.net/sy/SYFramework" target="_blank" rel="nofollow">Git@OSC</a></p>
+			</div>
+		</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">目录</h3>

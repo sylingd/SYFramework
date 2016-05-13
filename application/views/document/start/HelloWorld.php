@@ -4,7 +4,7 @@ use \sy\lib\YHtml;
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Hello World</title>
+	<title>Hello World - SYFramework</title>
 	<?php Sy::view('common/header'); ?>
 </head>
 <body>

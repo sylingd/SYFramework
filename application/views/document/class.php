@@ -4,7 +4,7 @@ use \sy\lib\YHtml;
 <!DOCTYPE html>
 <html>
 <head>
-	<title><?=$class['name']?>类</title>
+	<title><?=$class['name']?>类 - SYFramework</title>
 	<?php Sy::view('common/header'); ?>
 </head>
 <body>

@@ -4,7 +4,7 @@ use \sy\lib\YHtml;
 <!DOCTYPE html>
 <html>
 <head>
-	<title>编写Controller</title>
+	<title>编写Controller - SYFramework</title>
 	<?php Sy::view('common/header'); ?>
 </head>
 <body>

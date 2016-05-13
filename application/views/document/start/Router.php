@@ -4,7 +4,7 @@ use \sy\lib\YHtml;
 <!DOCTYPE html>
 <html>
 <head>
-	<title>路由（Router）</title>
+	<title>路由（Router） - SYFramework</title>
 	<?php Sy::view('common/header'); ?>
 </head>
 <body>
