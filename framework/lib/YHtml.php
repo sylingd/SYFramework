@@ -7,7 +7,7 @@
  * @package SYFramework
  * @category Library
  * @link http://www.sylingd.com/
- * @copyright Copyright (c) 2015 ShuangYa
+ * @copyright Copyright (c) 2015-2016 ShuangYa
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
@@ -59,9 +59,9 @@ class YHtml {
 	 * @return string
 	 */
 	public static function getWebPath($url) {
-		$url = str_replace('@root/', Sy::$siteDir, $url);
+		$url = str_replace('@root/', Sy::$sitePath, $url);
 		// TODO: 增加@app支持
-		$url = str_replace('@app/', Sy::$siteDir, $url);
+		$url = str_replace('@app/', Sy::$sitePath, $url);
 		return $url;
 	}
 	/**
@@ -71,7 +71,7 @@ class YHtml {
 	 * @return string
 	 */
 	public static function css($url) {
-		if (strpos($url, '://') === FALSE) {
+		if (strpos($url, '//') === FALSE) {
 			$url = static::getWebPath($url);
 		}
 		return '<link rel="stylesheet" href="' . $url . '"/>';
@@ -83,7 +83,7 @@ class YHtml {
 	 * @return string
 	 */
 	public static function js($url) {
-		if (strpos($url, '://') === FALSE) {
+		if (strpos($url, '//') === FALSE) {
 			$url = static::getWebPath($url);
 		}
 		return '<script type="text/javascript" src="' . $url . '"></script>';

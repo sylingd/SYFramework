@@ -178,10 +178,34 @@ class BaseSY {
 			//根据设置，分配重写规则
 			ob_start();
 			if (static::$app['rewrite']) {
-				$url = parse_url($req->server['request_uri']);
-				//目前暂不支持自定义规则
-				$route = ltrim(preg_replace('/\.(\w+)$/', '', $url['path']), '/'); //去掉末尾的扩展名和开头的“/”符号
-				empty($route) && $route = NULL;
+				//自定义规则
+				$matches = NULL;
+				foreach (static::$app['rewriteParseRule'] as $oneRule) {
+					if (preg_match($oneRule[0], $req->server['request_uri'], $matches)) {
+						$route = $oneRule[1];
+						$paramName = array_slice($oneRule, 2);
+						$param = [];
+						foreach ($paramName as $k => $v) {
+							$param[$v] = isset($matches[$k + 1]) ? $matches[$k + 1] : '';
+						}
+						//写入相关的环境变量
+						//合并至GET参数
+						$req->get = array_merge($param, $req->get);
+						$req->server['query_string'] = http_build_query($param);
+						$req->server['request_uri'] = $req->server['php_self'] . '?' . $req->server['query_string'];
+						if (static::$app['httpServer']['global']) {
+							$_GET = $req->get;
+							$_SERVER = $req->server;
+						}
+						break;
+					}
+				}
+				//没有匹配的重写规则
+				if (!isset($route)) {
+					$url = parse_url($req->server['request_uri']);
+					$route = ltrim(preg_replace('/\.(\w+)$/', '', $url['path']), '/'); //去掉末尾的扩展名和开头的“/”符号
+					empty($route) && $route = NULL;
+				}
 				static::router($route, $requestId);
 			} else {
 				$route = empty($req->get[static::$routeParam]) ? $req->get[static::$routeParam] : NULL;
@@ -349,7 +373,7 @@ class BaseSY {
 		$actionName = substr($router, $last + 1);
 		//是否启用了Rewrite
 		if (static::$app['rewrite'] && isset(static::$app['rewriteRule'][$router])) {
-			$url .= str_replace('@root/', static::$siteDir, static::$app['rewriteRule'][$router]);
+			$url .= str_replace('@root/', static::$sitePath, static::$app['rewriteRule'][$router]);
 			foreach ($param as $k => $v) {
 				$k_tpl = '{{' . $k . '}}';
 				if (strpos($url, $k_tpl) === FALSE) {
@@ -361,12 +385,12 @@ class BaseSY {
 			}
 		} elseif (static::$app['rewrite']) {
 			if ($ext === NULL && empty(static::$app['rewriteExt'])) {
-				$url .= static::$siteDir . $controllerName . '/' . $actionName;
+				$url .= static::$sitePath . $controllerName . '/' . $actionName;
 			} else {
-				$url .= static::$siteDir . $controllerName . '/' . $actionName . '.' . ($ext === NULL ? static::$app['rewriteExt'] : $ext);
+				$url .= static::$sitePath . $controllerName . '/' . $actionName . '.' . ($ext === NULL ? static::$app['rewriteExt'] : $ext);
 			}
 		} else {
-			$url .= static::$siteDir . 'index.php?r=' . $controllerName . '/' . $actionName;
+			$url .= static::$sitePath . 'index.php?r=' . $controllerName . '/' . $actionName;
 		}
 		if (count($param) > 0) {
 			if (strpos($url, '?') === FALSE) {

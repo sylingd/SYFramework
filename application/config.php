@@ -40,6 +40,14 @@ return [
 		'document/start' => '@root/start/{{title}}.html',
 		'document/class' => '@root/class/{{f}}.html',
 	],
+	//反向解析规则，仅HttpServer需要
+	'rewriteParseRule' => [
+		[
+			'#^/class/(.*?).html$#', //匹配规则
+			'document/class', //Controller名称
+			'f' //参数，与$1、$2等相对
+		]
+	],
 	//Controller列表
 	'controller' => [
 		'document',
