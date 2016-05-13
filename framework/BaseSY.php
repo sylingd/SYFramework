@@ -179,25 +179,27 @@ class BaseSY {
 			ob_start();
 			if (static::$app['rewrite']) {
 				//自定义规则
-				$matches = NULL;
-				foreach (static::$app['rewriteParseRule'] as $oneRule) {
-					if (preg_match($oneRule[0], $req->server['request_uri'], $matches)) {
-						$route = $oneRule[1];
-						$paramName = array_slice($oneRule, 2);
-						$param = [];
-						foreach ($paramName as $k => $v) {
-							$param[$v] = isset($matches[$k + 1]) ? $matches[$k + 1] : '';
+				if (is_array(static::$app['rewriteParseRule'])) {
+					$matches = NULL;
+					foreach (static::$app['rewriteParseRule'] as $oneRule) {
+						if (preg_match($oneRule[0], $req->server['request_uri'], $matches)) {
+							$route = $oneRule[1];
+							$paramName = array_slice($oneRule, 2);
+							$param = [];
+							foreach ($paramName as $k => $v) {
+								$param[$v] = isset($matches[$k + 1]) ? $matches[$k + 1] : '';
+							}
+							//写入相关的环境变量
+							//合并至GET参数
+							$req->get = array_merge($param, $req->get);
+							$req->server['query_string'] = http_build_query($param);
+							$req->server['request_uri'] = $req->server['php_self'] . '?' . $req->server['query_string'];
+							if (static::$app['httpServer']['global']) {
+								$_GET = $req->get;
+								$_SERVER = $req->server;
+							}
+							break;
 						}
-						//写入相关的环境变量
-						//合并至GET参数
-						$req->get = array_merge($param, $req->get);
-						$req->server['query_string'] = http_build_query($param);
-						$req->server['request_uri'] = $req->server['php_self'] . '?' . $req->server['query_string'];
-						if (static::$app['httpServer']['global']) {
-							$_GET = $req->get;
-							$_SERVER = $req->server;
-						}
-						break;
 					}
 				}
 				//没有匹配的重写规则
@@ -481,5 +483,15 @@ class BaseSY {
 			require ($fileName);
 		}
 		return $modelClass::i();
+	}
+	/**
+	 * 日志记录函数
+	 * 仅用于HttpServer模式，且为异步写入
+	 * 请注意：日志文件将保持打开状态，请勿直接删除日志文件
+	 * @access public
+	 * @param string $message
+	 */
+	public function writeLog($message) {
+		
 	}
 }

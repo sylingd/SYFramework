@@ -1,10 +1,12 @@
 # SYFramework
 
-此框架是原为泷涯自用，现面向大众开源
+此框架是原为泷涯自用，现开源
 
-目前最新稳定版本为`1.5`，最新测试版本为`2.0 Beta`
+目前最新稳定版本为`1.5`，最新测试版本为`2.0.2 Beta`
 
 此项目基于[Apache License 2.0](http://opensource.org/licenses/Apache-2.0)开源
+
+[查看文档](http://framework.sylibs.com)
 
 **extensions为特别定制功能（例如微信），根据需求拷贝相应目录到`framework/tool`下即可使用（部分开源协议可能有所不同，使用时请注意）**
 
@@ -32,13 +34,39 @@
 
 # 其他
 
-* 查看更多帮助文档请点击Wiki
-
 * Bug反馈/建议/问题咨询请提交issue
 
-* 本框架自带一示例应用，内容是文档
+* 本框架自带一示例应用
 
 # ChangeLog
+
+## 2.0.2 Beta
+
+* Add.异步MySQL
+
+* Add.HttpServer可以自定义Rewrite规则（但推荐通过nginx实现）
+
+* Fix.自动csrf没有通过常规方式加入模板
+
+* Fix.生成URL时错误的urlencode
+
+* Fix.ipv6验证函数不工作
+
+* Fix.YMongo在一些情况下返回错误
+
+* Fix.YMysqli移除多余参数$key
+
+* Fix.微信扩展的几个BUG
+
+* Del.Alias路由
+
+**此版本暂不稳定，不推荐用于生产环境。更新指南将于正式版发布时一同发布**
+
+## 2.0.1 Beta
+
+* Fix.部分header/Cookie相关函数在HttpServer下的工作
+
+**此版本暂不稳定，不推荐用于生产环境。更新指南将于正式版发布时一同发布**
 
 ## 2.0 Beta
 
