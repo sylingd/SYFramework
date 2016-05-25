@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Worker入口文件
+ * Worker鍏ュ彛鏂囦欢
  * 
  * @author ShuangYa
- * @package Forum
+ * @package SYFramework
  * @category Base
  * @link http://www.sylingd.com/
- * @copyright Copyright (c) 2015 ShuangYa
+ * @copyright Copyright (c) 2015-2016 ShuangYa
  */
 
 require (__DIR__ . '/../framework/sy.php');

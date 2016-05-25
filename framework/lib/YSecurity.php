@@ -31,7 +31,7 @@ class YSecurity {
 			static::csrfSetCookie($requestId);
 			return TRUE;
 		}
-		if (NULL === $requestId) {
+		if (NULL !== $requestId) {
 			if (!isset(Sy::$httpRequest[$requestId]->post[static::$csrf_config['tokenName']]) || YCookie::get(static::$csrf_config['cookieName'], $requestId) === NULL || (Sy::$httpRequest[$requestId]->post[static::$csrf_config['tokenName']] !== YCookie::get(static::$csrf_config['cookieName'], $requestId))) {
 				if ($show_error) {
 					Sy::$httpResponse[$requestId]->status(403);
