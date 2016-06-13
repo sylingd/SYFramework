@@ -123,7 +123,13 @@ class BaseSY {
 			throw new SYException('Must run at CLI mode', '10005');
 		}
 		//根据参数决定运行Worker
-		$run = $argv[1];
+		$opt = getopt('p:');
+		if (isset($opt['p'])) {
+			//以参数方式运行
+			$run = $opt['p'];
+		} else {
+			$run = $argv[1];
+		}
 		if (!empty($run) && isset(static::$app['console'][$run])) {
 			list($fileName, $callback) = static::$app['console'][$run];
 		} else {
