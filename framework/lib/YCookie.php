@@ -39,7 +39,7 @@ class YCookie {
 		} elseif ($param['expire'] === 0) {
 			$expire = 0;
 		} else {
-			$expire = time() + $expire;
+			$expire = time() + $param['expire'];
 		}
 		//其他参数的处理
 		!isset($param['path']) && $param['path'] = Sy::$app['cookie']['path'];
