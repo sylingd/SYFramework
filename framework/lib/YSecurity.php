@@ -42,11 +42,6 @@ class YSecurity {
 				}
 			}
 			unset(Sy::$httpRequest[$requestId]->post[static::$csrf_config['tokenName']]);
-			//每次有POST提交都重新生成csrf_hash
-			unset(Sy::$httpRequest[$requestId]->cookie[static::$csrf_config['cookieName']]);
-			static::$csrf_hash = NULL;
-			static::csrfGetHash();
-			static::csrfSetCookie($requestId);
 		} else {
 			if (!isset($_POST[static::$csrf_config['tokenName']]) || YCookie::get(static::$csrf_config['cookieName']) === NULL || ($_POST[static::$csrf_config['tokenName']] !== YCookie::get(static::$csrf_config['cookieName']))) {
 				if ($show_error) {
@@ -57,11 +52,6 @@ class YSecurity {
 				}
 			}
 			unset($_POST[static::$csrf_config['tokenName']]);
-			//每次有POST提交都重新生成csrf_hash
-			unset($_COOKIE[static::$csrf_config['cookieName']]);
-			static::$csrf_hash = NULL;
-			static::csrfGetHash();
-			static::csrfSetCookie();
 		}
 		return TRUE;
 	}
