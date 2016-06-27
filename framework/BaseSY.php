@@ -482,7 +482,7 @@ class BaseSY {
 		//Model名称
 		$modelClass = '\\' . static::$app['appNamespace'] . '\\model\\' . ucfirst($modelName);
 		if (!class_exists($modelClass)) {
-			$fileName = static::$appDir . 'models/' . $modelName . '.php';
+			$fileName = static::$appDir . 'models/' . lcfirst($modelName) . '.php';
 			if (!is_file($fileName)) {
 				throw new SYException('Model ' . $fileName . ' not exists', '10010');
 			}
