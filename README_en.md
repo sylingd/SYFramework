@@ -42,6 +42,18 @@ Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0
 
 # ChangeLog
 
+## 2.0.3 Beta
+
+* Add.Run ConsoleApp with param way
+
+* Fix.Error judgment with YSecurity
+
+* Fix.Fail to set Coookie when the expire time is not default(YCookie)
+
+* Fix.Every request are no longer regenerate csrf_token
+
+**This version is not stable, Please do not using in product environment. The release notes will come with the stable version**
+
 ## 2.0.2 Beta
 
 * Add.Async MySQL Client

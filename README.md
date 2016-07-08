@@ -42,6 +42,18 @@
 
 # ChangeLog
 
+## 2.0.3 Beta
+
+* Add.参数方式运行ConsoleApp
+
+* Fix.YSecurity判断错误
+
+* Fix.YCookie的失效时间不为默认时设置失败
+
+* Fix.不再每次请求均重新生成csrf_token
+
+**此版本暂不稳定，不推荐用于生产环境。更新指南将于正式版发布时一同发布**
+
 ## 2.0.2 Beta
 
 * Add.异步MySQL
