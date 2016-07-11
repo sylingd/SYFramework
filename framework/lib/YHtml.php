@@ -60,8 +60,6 @@ class YHtml {
 	 */
 	public static function getWebPath($url) {
 		$url = str_replace('@root/', Sy::$sitePath, $url);
-		// TODO: 增加@app支持
-		$url = str_replace('@app/', Sy::$sitePath, $url);
 		return $url;
 	}
 	/**
