@@ -116,7 +116,7 @@ class BaseSY {
 	 */
 	public static function createConsoleApplication($siteDir, $config = NULL) {
 		global $argv;
-		static::createApplicationInit(__DIR__, $config);
+		static::createApplicationInit($siteDir, $config);
 		//网站目录
 		static::$sitePath = '/';
 		if (!static::$isCli) {
@@ -152,7 +152,7 @@ class BaseSY {
 		if (!extension_loaded('swoole')) {
 			throw new SYException('Extension "Swoole" is required', '10027');
 		}
-		static::createApplicationInit($config);
+		static::createApplicationInit($siteDir, $config);
 		//网站目录
 		static::$sitePath = '/';
 		if (!static::$isCli) {
@@ -162,17 +162,14 @@ class BaseSY {
 		static::$httpRequest = [];
 		static::$httpResponse = [];
 		//初始化Swoole
-		$serv = new swoole_http_server(static::$app['httpServer']['ip'], static::$app['httpServer']['port']);
+		$serv = new \swoole_http_server(static::$app['httpServer']['ip'], static::$app['httpServer']['port']);
 		$serv->set([
 			'worker_num' => static::$app['httpServer']['worker_num'],
 			'daemonize' => TRUE
 		]);
-		if (static::$app['httpServer']['global']) {
-			$serv->setGlobal();
-		}
 		$serv->on('request', function($req, $response) {
 			//生成唯一请求ID
-			$remoteIp = ($req->server['remote_addr'] === '127.0.0.1' && isset($req->server['http_x_forwarded_for'])) ? $req->server['http_x_forwarded_for'] : $req->server['remote_addr']; //获取真实IP
+			$remoteIp = (static::$httpRequest[$requestId]->server['remote_addr'] === '127.0.0.1' && isset(static::$httpRequest[$requestId]->server['http_x_forwarded_for'])) ? static::$httpRequest[$requestId]->server['http_x_forwarded_for'] : static::$httpRequest[$requestId]->server['remote_addr']; //获取真实IP
 			$requestId = md5(uniqid($remoteIp, TRUE));
 			//设置请求信息
 			static::$httpRequest[$requestId] = $req;
@@ -188,7 +185,7 @@ class BaseSY {
 				if (is_array(static::$app['rewriteParseRule'])) {
 					$matches = NULL;
 					foreach (static::$app['rewriteParseRule'] as $oneRule) {
-						if (preg_match($oneRule[0], $req->server['request_uri'], $matches)) {
+						if (preg_match($oneRule[0], static::$httpRequest[$requestId]->server['request_uri'], $matches)) {
 							$route = $oneRule[1];
 							$paramName = array_slice($oneRule, 2);
 							$param = [];
@@ -197,31 +194,32 @@ class BaseSY {
 							}
 							//写入相关的环境变量
 							//合并至GET参数
-							$req->get = array_merge($param, $req->get);
-							$req->server['query_string'] = http_build_query($param);
-							$req->server['request_uri'] = $req->server['php_self'] . '?' . $req->server['query_string'];
-							if (static::$app['httpServer']['global']) {
-								$_GET = $req->get;
-								$_SERVER = $req->server;
-							}
+							static::$httpRequest[$requestId]->get = array_merge($param, (array)static::$httpRequest[$requestId]->get);
+							static::$httpRequest[$requestId]->server['query_string'] = http_build_query(static::$httpRequest[$requestId]->get);
+							static::$httpRequest[$requestId]->server['request_uri'] = static::$httpRequest[$requestId]->server['php_self'] . '?' . static::$httpRequest[$requestId]->server['query_string'];
 							break;
 						}
 					}
 				}
 				//没有匹配的重写规则
 				if (!isset($route)) {
-					$url = parse_url($req->server['request_uri']);
+					$url = parse_url(static::$httpRequest[$requestId]->server['request_uri']);
 					$route = ltrim(preg_replace('/\.(\w+)$/', '', $url['path']), '/'); //去掉末尾的扩展名和开头的“/”符号
 					empty($route) && $route = NULL;
 				}
 				static::router($route, $requestId);
 			} else {
-				$route = empty($req->get[static::$routeParam]) ? $req->get[static::$routeParam] : NULL;
+				$route = empty(static::$httpRequest[$requestId]->get[static::$routeParam]) ? static::$httpRequest[$requestId]->get[static::$routeParam] : NULL;
 				static::router($route, $requestId);
 			}
 			//请求结束，进行清理工作
 			try {
-				$response->end(ob_get_clean());
+				$output = ob_get_clean();
+				if (empty($output)) {
+					static::$httpResponse[$requestId]->end();
+				} else {
+					static::$httpResponse[$requestId]->end(ob_get_clean());
+				}
 				unset(static::$httpRequest[$requestId], static::$httpResponse[$requestId], $requestId);
 			} catch (\Exception $e) {
 			}
