@@ -84,7 +84,9 @@ class BaseSY {
 			static::$debug = $config['debug'];
 		}
 		//编码相关
-		mb_internal_encoding($config['charset']);
+		if (function_exists('mb_internal_encoding')) {
+			mb_internal_encoding($config['charset']);
+		}
 		//加载App的基本函数
 		if (is_file(static::$appDir . 'common.php')) {
 			require(static::$appDir . 'common.php');
@@ -169,7 +171,7 @@ class BaseSY {
 		]);
 		$serv->on('request', function($req, $response) {
 			//生成唯一请求ID
-			$remoteIp = (static::$httpRequest[$requestId]->server['remote_addr'] === '127.0.0.1' && isset(static::$httpRequest[$requestId]->server['http_x_forwarded_for'])) ? static::$httpRequest[$requestId]->server['http_x_forwarded_for'] : static::$httpRequest[$requestId]->server['remote_addr']; //获取真实IP
+			$remoteIp = ($req->server['remote_addr'] === '127.0.0.1' && isset($req->server['http_x_forwarded_for'])) ? $req->server['http_x_forwarded_for'] : $req->server['remote_addr']; //获取真实IP
 			$requestId = md5(uniqid($remoteIp, TRUE));
 			//设置请求信息
 			static::$httpRequest[$requestId] = $req;
@@ -313,7 +315,6 @@ class BaseSY {
 				return;
 			}
 		}
-		static::$controller = $controller;
 		if ($requestId !== NULL) {
 			call_user_func([$controller, $actionName], $requestId);
 		} else {
@@ -489,7 +490,7 @@ class BaseSY {
 		return $modelClass::i();
 	}
 	/**
-	 * 日志记录函数
+	 * TODO: 日志记录函数
 	 * 仅用于HttpServer模式，且为异步写入
 	 * 请注意：日志文件将保持打开状态，请勿直接删除日志文件
 	 * @access public
