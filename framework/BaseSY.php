@@ -7,7 +7,7 @@
  * @package SYFramework
  * @category Base
  * @link http://www.sylingd.com/
- * @copyright Copyright (c) 2015 ShuangYa
+ * @copyright Copyright (c) 2015-2016 ShuangYa
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
@@ -48,6 +48,9 @@ class BaseSY {
 	public static $httpServer = NULL;
 	public static $httpRequest;
 	public static $httpResponse;
+	//Hook列表
+	public static $hookList = [];
+	public static $hookListObj = [];
 	//当前Controller
 	public static $controller = NULL;
 	/**
@@ -266,13 +269,13 @@ class BaseSY {
 				return;
 			}
 		}
-		//多级路由支持
+		//解析controller名称和action名称
 		$last = strrpos($r, '/');
 		$controllerName = substr($r, 0, $last);
 		$actionName = substr($r, $last + 1);
-		$isPath = strpos($controllerName, '/');
-		//controller列表
-		if (!in_array($controllerName, static::$app['controller'], TRUE)) {
+		//获取操作类
+		$controller = static::controller($controllerName);
+		if (NULL === $controller) {
 			if (NULL === $requestId) {
 				header(static::getHttpStatus('404'));
 				exit;
@@ -281,29 +284,6 @@ class BaseSY {
 				return;
 			}
 		}
-		//多级路由时，引入顶级路由（如果存在）
-		if ($isPath !== FALSE) {
-			$topController = substr($controllerName, 0, $isPath);
-			$topControllerFile = static::$appDir . 'controllers/' . $topController . '/_base.php';
-			if (is_file($topControllerFile)) {
-				require($topControllerFile);
-			}
-		}
-		//初始化Controller
-		$fileName = static::$appDir . 'controllers/' . $controllerName . '.php';
-		if ($isPath !== FALSE) {
-			$className = substr($controllerName, strrpos($controllerName, '/') + 1);
-		} else {
-			$className = $controllerName;
-		}
-		$className = '\\' . static::$app['appNamespace'] . '\\controller\\' . ucfirst($className);
-		if (!is_file($fileName)) {
-			throw new SYException('Controller ' . $controllerName . ' not exists', '10004');
-		}
-		if (!class_exists($className, FALSE)) {
-			require($fileName);
-		}
-		$controller = new $className;
 		//执行动作
 		$actionName = 'action' . ucfirst($actionName);
 		if (!method_exists($controller, $actionName)) {
@@ -361,12 +341,10 @@ class BaseSY {
 		$router = $param[0];
 		$anchor = isset($param['#']) ? '#' . $param['#'] : '';
 		unset($param[static::$routeParam], $param['#']);
-		//Handle
-		if (method_exists(static::$controller, '_handle_url') && !empty($router)) {
-			$handle = call_user_func([static::$controller, '_handle_url'], $router, $anchor, $param, $ext);
-			if (is_string($handle)) {
-				return $handle;
-			}
+		//Hook
+		$hookResult = static::triggerHook('sy_createUrl', [$router, $anchor, $param, $ext]);
+		if (is_string($hookResult)) {
+			return $hookResult;
 		}
 		//基本URL
 		$url = ($_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
@@ -488,6 +466,82 @@ class BaseSY {
 			require ($fileName);
 		}
 		return $modelClass::i();
+	}
+	/**
+	 * 获取Controller操作类
+	 * @access public
+	 * @param string $controllerName
+	 * @return object
+	 */
+	public static function controller($controllerName) {
+		//多级路由支持
+		$isPath = strpos($controllerName, '/');
+		//controller列表
+		if (!in_array($controllerName, static::$app['controller'], TRUE)) {
+			return NULL;
+		}
+		//多级路由时，引入顶级路由（如果存在）
+		if ($isPath !== FALSE) {
+			$topController = substr($controllerName, 0, $isPath);
+			$topControllerFile = static::$appDir . 'controllers/' . $topController . '/_base.php';
+			if (is_file($topControllerFile)) {
+				require($topControllerFile);
+			}
+		}
+		//初始化Controller
+		$fileName = static::$appDir . 'controllers/' . $controllerName . '.php';
+		if ($isPath !== FALSE) {
+			$className = substr($controllerName, strrpos($controllerName, '/') + 1);
+		} else {
+			$className = $controllerName;
+		}
+		$className = '\\' . static::$app['appNamespace'] . '\\controller\\' . ucfirst($className);
+		if (!is_file($fileName)) {
+			throw new SYException('Controller ' . $controllerName . ' not exists', '10004');
+		}
+		if (!class_exists($className, FALSE)) {
+			require($fileName);
+		}
+		$controller = new $className;
+		return $controller;
+	}
+	/**
+	 * 添加钩子，用于自定义一些操作（例如对404的处理）
+	 * 重复添加将会有任何影响，也不会有任何效果
+	 * @access public
+	 * @param object $obj 必须为实现hook的类
+	 */
+	public function addHook($obj) {
+		if (!($obj instanceof \sy\interface\hook)) {
+			return;
+		}
+		if (!is_array(static::$hookList[$obj->type])) {
+			static::$hookList[$obj->type] = [];
+		}
+		if (!is_array(static::$hookListObj[$obj->type])) {
+			static::$hookListObj[$obj->type] = [];
+		}
+		if (in_array($obj->name, static::$hookList[$obj->type], TRUE) {
+			return;
+		}
+		static::$hookList[$obj->type][] = $obj->name;
+		static::$hookList[$obj->type][] = $obj;
+	}
+	/**
+	 * 触发一个钩子
+	 * 将会按照顺序调用每个钩子
+	 * @access public
+	 * @param string $hookName
+	 * @param array $data 数据
+	 */
+	public function triggerHook($type, $data = []) {
+		if (!is_array(static::$hookListObj[$type])) {
+			return $data;
+		}
+		foreach (static::$hookListObj[$type] as $hook) {
+			$data = call_user_func_array($type, (array)$data);
+		}
+		return $data;
 	}
 	/**
 	 * TODO: 日志记录函数
