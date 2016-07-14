@@ -20,6 +20,14 @@ use \Sy;
 
 class server {
 	/**
+	 * 获取Swoole版本
+	 * @access public
+	 * @return string
+	 */
+	public static function getVersion() {
+		return \SWOOLE_VERSION;
+	}
+	/**
 	 * 推送任务到SwooleTask进程
 	 */
 	public static function addTask($task, $callback = NULL) {

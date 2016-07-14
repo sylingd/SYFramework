@@ -168,10 +168,24 @@ class BaseSY {
 		static::$httpResponse = [];
 		//初始化Swoole
 		$serv = new \swoole_http_server(static::$app['httpServer']['ip'], static::$app['httpServer']['port']);
-		$serv->set([
+		$config = [
 			'worker_num' => static::$app['httpServer']['worker_num'],
-			'daemonize' => TRUE
-		]);
+			'daemonize' => TRUE,
+			'task_ipc_mode' => 3,
+			'task_worker_num' => static::$app['httpServer']['task_worker_num'],
+			'dispatch_mode' => 3
+		];
+		if (static::$app['httpServer']['ssl']['enable']) {
+			$config['ssl_cert_file'] = static::$app['httpServer']['ssl']['cert'];
+			$config['ssl_key_file'] = static::$app['httpServer']['ssl']['key'];
+		}
+		if (static::$app['httpServer']['ssl']['http2']) {
+			if (!isset($config['ssl_cert_file'])) {
+				throw new SYException('Certfile not found', '10006');
+			}
+			$config['open_http2_protocol'] = TRUE;
+		}
+		$serv->set($config);
 		$serv->on('request', ['\sy\swoole\serverEventHandle', 'onRequest']);
 		$serv->on('workerStart', ['\sy\swoole\serverEventHandle', 'onWorkerStart']);
 		$serv->on('task', ['\sy\swoole\serverEventHandle', 'onTask']);

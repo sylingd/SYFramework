@@ -12,6 +12,8 @@
 
 * 10005 使用Sy::createConsoleApplication，但环境不是CLI模式 BaseSY.php
 
+* 10006 使用HTTP2但是没有合适的证书文件 BaseSY.php
+
 * 10010 无法找到Model文件，此异常由应用引起 base/Controller.php
 
 * 10011 使用了i18n类，但无法找到语言文件 base/i18n.php

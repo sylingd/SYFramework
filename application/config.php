@@ -71,14 +71,18 @@ return [
 	'httpServer' => [
 		'ip' => '0.0.0.0', //监听IP，仅监听本地为127.0.0.1，监听所有地址为0.0.0.0
 		'port' => '80', //监听端口
+		'task_worker_num' => 1, //Task进程数，详情见http://wiki.swoole.com/wiki/page/276.html
 		'ssl' => [
 			'enable' => FALSE, //HTTPS开关
 			'key' => 'ssl.key',
-			'cert' => 'ssl.cert'
+			'cert' => 'ssl.crt'
 		],
 		'http2' => FALSE, //HTTP2协议支持，如果开启HTTP2，则HTTPS也必须开启
 		'worker_num' => 4, //守护进程数，详情见http://wiki.swoole.com/wiki/page/275.html
-		'log' => '/data/logs/www/' //日志路径
+		'log' => '/data/logs/www/', //日志路径
+		'event' => [
+			'workerStart' => 'onWorkerStart'
+		]
 	],
 	//Cookie相关
 	'cookie' => [

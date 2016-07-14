@@ -81,7 +81,9 @@ final class serverEventHandle {
 	}
 	//普通事件：启动一个进程
 	public function onWorkerStart($serv, $worker_id) {
-		
+		if (isset(Sy::$app['httpServer']['event']['workerStart']) && is_callable(Sy::$app['httpServer']['event']['workerStart'])) {
+			call_user_func(Sy::$app['httpServer']['event']['workerStart'], $serv, $worker_id);
+		}
 	}
 	//普通事件：接收到task
 	public function onTask($serv, $task_id, $from_id, $taskObj) {
