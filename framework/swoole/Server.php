@@ -31,7 +31,7 @@ class Server {
 	 * 推送任务到SwooleTask进程
 	 */
 	public static function addTask($task, $callback = NULL) {
-		if (!($task instanceof \sy\swoole\task)) {
+		if (!($task instanceof \sy\swoole\Task)) {
 			return FALSE;
 		}
 		$param = [$task];

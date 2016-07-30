@@ -11,14 +11,14 @@
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
-namespace sy\lib\async;
+namespace sy\swoole;
 use \Sy;
 use \mysqli;
 use \sy\lib\YHtml;
 use \sy\base\SYException;
 use \sy\base\SYDException;
 
-class YMysql {
+class Mysql {
 	protected $dbtype = 'MySQL';
 	protected $link = [];
 	protected $dbInfo = [];
@@ -37,11 +37,11 @@ class YMysql {
 	 * @access public
 	 */
 	public function __construct() {
-		if (!class_exists('mysqli', FALSE)) {
-			throw new SYException('Class "MySQLi" is required', '10020');
-		}
 		if (!extension_loaded('swoole')) {
 			throw new SYException('Extension "Swoole" is required', '10027');
+		}
+		if (version_compare(Server::getVersion(), '1.8.6') < 0) {
+			throw new SYException('Swoole needs 1.8.6 or higher', '10027');
 		}
 		if (isset(Sy::$app['mysql']) && $this->current === 'default') {
 			$this->setParam(Sy::$app['mysql']);
@@ -65,11 +65,21 @@ class YMysql {
 	protected function connect() {
 		$id = $this->current;
 		$config = $this->dbInfo[$id];
-		$this->link[$id] = new mysqli($config['host'], $config['user'], $config['password'], $config['name'], $config['port']);
-		if ($this->link[$id]->connect_error) {
-			throw new SYDException(YHtml::encode($this->link[$id]->connect_error), $this->dbtype, 'NULL');
-		}
-		$this->link[$id]->set_charset(strtolower(str_replace('-', '', Sy::$app['charset'])));
+		$this->link[$id] = new swoole_mysql();
+		$server = [
+			'host' => $config['host'] . ':' . $config['port'],
+			'user' => $config['user'],
+			'password' => $config['password'],
+			'database' => $config['name']
+		];
+		$this->link[$id]->connect($server, function($db, $r) {
+			if ($r === false) {
+				throw new SYDException(YHtml::encode($db->connect_error), 'MySQL', 'NULL');
+			}
+			$sql = 'set charset = ' . strtolower(str_replace('-', '', Sy::$app['charset']));
+			$db->query($sql, function(swoole_mysql $db, $r) {
+			});
+		});
 	}
 	/**
 	 * 处理Key
@@ -102,7 +112,7 @@ class YMysql {
 		if ($callback === NULL) {
 			$callback = function($db, $r) {};
 		}
-		swoole_mysql_query($this->link[$id], $sql, $callback);
+		$this->link[$id]->query($sql, $callback);
 	}
 	/**
 	 * 析构函数，自动关闭
