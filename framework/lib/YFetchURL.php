@@ -43,7 +43,7 @@ class YFetchURL {
 			throw new SYException('Extension "curl" or "fsockopen" is required', '10050');
 		}
 		$this->init();
-		$this->setheader($this->defaultHeader);
+		$this->setHeader($this->defaultHeader);
 		$this->setopt(array_merge($this->defaultOpt, array_change_key_case($opt, CASE_LOWER)));
 		$this->strExec = $execute;
 	}
@@ -59,7 +59,7 @@ class YFetchURL {
 	 */
 	public function setopt($opt) {
 		if (isset($opt['httpheader'])) {
-			$this->setheader($this->headerImport($opt['httpheader']));
+			$this->setHeader($this->headerImport($opt['httpheader']));
 			unset($opt['httpheader']);
 		}
 		$this->opt = array_merge($this->opt, array_change_key_case($opt, CASE_LOWER));
@@ -90,7 +90,7 @@ class YFetchURL {
 	 * @access public
 	 * @param array $header
 	 */
-	public function setheader($header) {
+	public function setHeader($header) {
 		unset($header['Host'], $header['User-Agent']);
 		$this->header = array_merge($this->header, $header);
 		return $this;
@@ -220,6 +220,7 @@ class YFetchURL {
 			$request  = $this->opt['customrequest'] . ' ' . $urlInfo['path'] . ' HTTP/1.1' . "\r\n";
 			$request .= 'Host: ' . $urlInfo['host'] . "\r\n";
 			$request .= 'User-Agent: ' . $this->opt['useragent'] . "\r\n";
+			//处理POST数据
 			if ($this->opt['customrequest'] === 'POST') {
 				$queryString = '';
 				$isFile = FALSE;
@@ -282,6 +283,25 @@ class YFetchURL {
 				return $response;
 			}
 		}
+	}
+	/**
+	 * Swoole方式抓取
+	 * @return string
+	 */
+	protected function _fetchSwoole() {
+		$urlInfo = parse_url($this->opt['url']);
+		if ($urlInfo === FALSE) {
+			throw new SYException('Invalid URL', '10052');
+		}
+		if ($urlInfo['scheme'] == 'https') {
+			$urlInfo['port'] = ($urlInfo['port'] != 0) ? $urlInfo['port'] : 443;
+		} else {
+			$urlInfo['port'] = ($urlInfo['port'] != 0) ? $urlInfo['port'] : 80;
+		}
+		$urlInfo['path'] = (isset($urlInfo['path']) ? $urlInfo['path'] : '/') . (isset($urlInfo['query']) ? '?' . $urlInfo['query'] : '');
+		$client = new \swoole_http_client($urlInfo['host'], $urlInfo['port']);
+		$client->setHeaders($this->header);
+		$client->get($urlInfo['path'], $this->fetchCallback);
 	}
 	/**
 	 * 解析回复数据，将head和body分开
