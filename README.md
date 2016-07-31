@@ -4,7 +4,7 @@
 
 此框架是原为泷涯自用，现开源
 
-目前最新稳定版本为`1.5`，最新测试版本为`2.0.2 Beta`
+目前最新稳定版本为`1.5`，最新测试版本为`2.0.4 Beta`
 
 此项目基于[Apache License 2.0](http://opensource.org/licenses/Apache-2.0)开源
 
@@ -41,6 +41,24 @@
 * 本框架自带一示例应用
 
 # ChangeLog
+
+## 2.0.4 Beta
+
+* Add.框架层的简单Hook
+
+* Add.异步任务支持(Swoole)
+
+* Add.完善SSL和HTTP2的支持(HttpServer)
+
+* Add.WorkerStart事件回调支持(HttpServer)
+
+* Fix.GET为空时无法正常处理URL的BUG(HttpServer)
+
+* Mod.请求协议不为HTTP时强制使用CURL(YFetchURL)
+
+* Del.一些老旧特性
+
+**此版本暂不稳定，不推荐用于生产环境。更新指南将于正式版发布时一同发布**
 
 ## 2.0.3 Beta
 

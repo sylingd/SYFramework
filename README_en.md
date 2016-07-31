@@ -4,7 +4,7 @@
 
 The framework was creating for ShuangYa. Now it is an open source project
 
-The latest stable version is `1.5`, The latest beta version is `2.0.2 Beta`
+The latest stable version is `1.5`, The latest beta version is `2.0.4 Beta`
 
 Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0)
 
@@ -41,6 +41,24 @@ Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0
 * This framework comes with a sample application 
 
 # ChangeLog
+
+## 2.0.4 Beta
+
+* Add.A simple Hook in framework
+
+* Add.Aysnc task support(Swoole)
+
+* Add.Perfect support for SSL and HTTP2(HttpServer)
+
+* Add.WorkerStart event callback support(HttpServer)
+
+* Fix.Can not properly handle URL when GET is empty(HttpServer)
+
+* Mod.Mandatory use curl when URL is not a http protocol link(YFetchURL)
+
+* Del.Some old features
+
+**This version is not stable, Please do not using in product environment. The release notes will come with the stable version**
 
 ## 2.0.3 Beta
 
