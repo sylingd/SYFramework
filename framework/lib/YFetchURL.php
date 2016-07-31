@@ -105,6 +105,10 @@ class YFetchURL {
 		if (isset($this->opt['postfields']) && !isset($this->opt['customrequest'])) {
 			$this->opt['customrequest'] = 'POST';
 		}
+		//非HTTP协议强制使用curl
+		if (substr($this->opt['url'], 0, 4) !== 'http') {
+			$this->connectMethod = 'curl';
+		}
 		if ($this->connectMethod === 'curl') {
 			$response = $this->_fetchCurl();
 			//将header和body分开
@@ -173,7 +177,7 @@ class YFetchURL {
 		return $response;
 	}
 	/**
-	 * fsocket方式抓取
+	 * Socket方式抓取
 	 * @access protected
 	 * @return array
 	 */

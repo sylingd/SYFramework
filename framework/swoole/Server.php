@@ -50,6 +50,6 @@ class Server {
 	 * @param callable $callback
 	 */
 	public static function addTaskHandle(string $type, callable $callback) {
-		\sy\swoole\serverEventHandle::$taskHandle[$type] = $callback;
+		\sy\swoole\ServerEventHandle::$taskHandle[$type] = $callback;
 	}
 }
