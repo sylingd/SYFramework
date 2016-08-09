@@ -166,4 +166,4 @@
 
 * YCaptcha参考了项目[ImageVerifyCode](https://git.oschina.net/reevy/ImageVerifyCode)的代码
 
-* YMail参考了[PHPMailer](https://github.com/PHPMailer/PHPMailer)的部分代码（尚未实现）
+* DoraRPC回调部分多数代码是直接copy原项目的，特别感谢~

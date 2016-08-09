@@ -18,7 +18,7 @@ namespace sy\swoole;
 
 use \Sy;
 
-class Server {
+class HttpServer {
 	/**
 	 * 获取Swoole版本
 	 * @access public
@@ -39,7 +39,7 @@ class Server {
 		if (NULL !== $callback && is_callable($callback)) {
 			$param[] = $callback;
 		}
-		call_user_func_array([Sy::$httpServer, 'task'], $param);
+		call_user_func_array([Sy::$swServer, 'task'], $param);
 	}
 	/**
 	 * 添加task响应函数
@@ -50,6 +50,6 @@ class Server {
 	 * @param callable $callback
 	 */
 	public static function addTaskHandle(string $type, callable $callback) {
-		\sy\swoole\ServerEventHandle::$taskHandle[$type] = $callback;
+		\sy\swoole\HttpServerEventHandle::$taskHandle[$type] = $callback;
 	}
 }

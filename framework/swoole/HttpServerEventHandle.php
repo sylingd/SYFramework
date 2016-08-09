@@ -17,7 +17,7 @@ namespace sy\swoole;
 
 use \Sy;
 
-final class ServerEventHandle {
+final class HttpServerEventHandle {
 	//事件回调
 	public static $taskHandle = [];
 	//HTTP事件：收到请求
@@ -79,14 +79,31 @@ final class ServerEventHandle {
 		}
 		return;
 	}
+	//普通事件：启动master进程
+	public static function onStart($serv) {
+		swoole_set_process_name('SY: ' . Sy::$app['name'] . ' master');
+        $pidPath = rtrim(Sy::$app['httpServer']['advanced'], '/') . '/';
+        file_put_contents($pidPath . Sy::$app['name'] . '_master.pid', $serv->master_pid);
+        file_put_contents($pidPath . Sy::$app['name'] . '_manager.pid', $serv->manager_pid);
+	}
+	//普通事件：启动manager进程
+    public static function onManagerStart($serv) {
+        swoole_set_process_name('SY: ' . Sy::$app['name'] . ' manager');
+    }
 	//普通事件：启动一个进程
-	public function onWorkerStart($serv, $worker_id) {
+	public static function onWorkerStart($serv, $worker_id) {
+		//根据类型，设置不同的进程名
+		if ($serv->taskworker) {
+			swoole_set_process_name('SY: ' . Sy::$app['name'] . ' task');
+		} else {
+			swoole_set_process_name('SY: ' . Sy::$app['name'] . ' worker');
+		}
 		if (isset(Sy::$app['httpServer']['event']['workerStart']) && is_callable(Sy::$app['httpServer']['event']['workerStart'])) {
 			call_user_func(Sy::$app['httpServer']['event']['workerStart'], $serv, $worker_id);
 		}
 	}
 	//普通事件：接收到task
-	public function onTask($serv, $task_id, $from_id, $taskObj) {
+	public static function onTask($serv, $task_id, $from_id, $taskObj) {
 		$type = $taskObj->getType();
 		if (!isset(self::$taskHandle[$type])) {
 			return '';

@@ -14,6 +14,11 @@
 namespace sy;
 use \sy\base\SYException;
 
+//载入依赖库
+if (trait_exists('App', FALSE)) {
+	require(__DIR__ . '/App.php');
+}
+
 //将系统异常封装为自有异常
 set_exception_handler(function ($e) {
 	if (isset(\Sy::$httpServer) && \Sy::$httpServer !== NULL) {
@@ -29,12 +34,7 @@ set_exception_handler(function ($e) {
 });
 
 class BaseSY {
-	//应用相关设置
-	public static $app;
-	public static $appDir;
-	public static $siteDir;
-	public static $sitePath;
-	public static $frameworkDir;
+	use App;
 	//会从data下的相应文件读取
 	public static $mimeTypes = NULL;
 	public static $httpStatus = NULL;
@@ -44,153 +44,9 @@ class BaseSY {
 	public static $debug = TRUE;
 	//CLI模式
 	public static $isCli = FALSE;
-	//HttpServer模式运行时，为swoole进程
-	public static $httpServer = NULL;
-	public static $httpRequest;
-	public static $httpResponse;
 	//Hook列表
 	public static $hookList = [];
 	public static $hookListObj = [];
-	//当前Controller
-	public static $controller = NULL;
-	/**
-	 * 初始化：创建Application（通用）
-	 * @access protected
-	 * @param mixed $config设置
-	 */
-	protected static function createApplicationInit($siteDir, $config = NULL) {
-		static::$frameworkDir =  str_replace('\\', '/', __DIR__ ) . '/';
-		//PHP运行模式
-		if (PHP_SAPI === 'cli') {
-			static::$isCli = TRUE;
-		}
-		if ($config === NULL) {
-			throw new SYException('Configuration is required', '10001');
-		} elseif (is_string($config)) {
-			if (is_file($config)) {
-				$config = require($config);
-			} else {
-				throw new SYException('Config file ' . $config . ' not exists', '10002');
-			}
-		} elseif (!is_array($config)) {
-			throw new SYException('Config can not be recognised', '10003');
-		}
-		//路径相关
-		static::$siteDir = str_replace('\\', '/', $siteDir) . '/';
-		static::$frameworkDir = str_replace('\\', '/', __DIR__) . '/';
-		//基本信息
-		$config['cookie']['path'] = str_replace('@app/', $dir, $config['cookie']['path']);
-		static::$app = $config;
-		//应用的绝对路径
-		static::$appDir = str_replace('\\', '/', $config['dir']) . '/';
-		if (isset($config['debug'])) {
-			static::$debug = $config['debug'];
-		}
-		//编码相关
-		if (function_exists('mb_internal_encoding')) {
-			mb_internal_encoding($config['charset']);
-		}
-		//加载App的基本函数
-		if (is_file(static::$appDir . 'common.php')) {
-			require(static::$appDir . 'common.php');
-		}
-	}
-	/**
-	 * 初始化：创建WebApplication
-	 * @access public
-	 * @param mixed $config设置
-	 */
-	public static function createApplication($siteDir, $config = NULL) {
-		static::createApplicationInit($siteDir, $config);
-		//网站目录
-		$now = $_SERVER['PHP_SELF'];
-		$dir = str_replace('\\', '/', dirname($now));
-		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
-		static::$sitePath = $dir;
-		//是否启用CSRF验证
-		if (isset(static::$app['csrf']) && static::$app['csrf']) {
-			\sy\lib\YSecurity::csrfSetCookie();
-		}
-		//开始路由分发
-		static::router();
-	}
-	/**
-	 * 初始化：创建ConsoleApplication
-	 * @access public
-	 * @param mixed $config设置
-	 */
-	public static function createConsoleApplication($siteDir, $config = NULL) {
-		global $argv;
-		static::createApplicationInit($siteDir, $config);
-		//网站目录
-		static::$sitePath = '/';
-		if (!static::$isCli) {
-			throw new SYException('Must run at CLI mode', '10005');
-		}
-		//根据参数决定运行Worker
-		$opt = getopt('p:');
-		if (isset($opt['p'])) {
-			//以参数方式运行
-			$run = $opt['p'];
-		} else {
-			$run = $argv[1];
-		}
-		if (!empty($run) && isset(static::$app['console'][$run])) {
-			list($fileName, $callback) = static::$app['console'][$run];
-		} else {
-			list($fileName, $callback) = static::$app['console']['default'];
-		}
-		require(static::$appDir . '/workers/' . $fileName);
-		if (is_callable($callback)) {
-			call_user_func($callback);
-		}
-	}
-	/**
-	 * 初始化：创建HttpApplication（需要swoole）
-	 * 建议使用Nginx等软件作为前端
-	 * 
-	 * @access public
-	 * @param mixed $config设置
-	 */
-	public static function createHttpApplication($siteDir, $config = NULL) {
-		//swoole检查
-		if (!extension_loaded('swoole')) {
-			throw new SYException('Extension "Swoole" is required', '10027');
-		}
-		static::createApplicationInit($siteDir, $config);
-		//网站目录
-		static::$sitePath = '/';
-		if (!static::$isCli) {
-			throw new SYException('Must run at CLI mode', '10005');
-		}
-		//变量初始化
-		static::$httpRequest = [];
-		static::$httpResponse = [];
-		//初始化Swoole
-		$serv = new \swoole_http_server(static::$app['httpServer']['ip'], static::$app['httpServer']['port']);
-		$config = [
-			'worker_num' => static::$app['httpServer']['worker_num'],
-			'daemonize' => TRUE,
-			'task_ipc_mode' => 3,
-			'task_worker_num' => static::$app['httpServer']['task_worker_num'],
-			'dispatch_mode' => 3
-		];
-		if (static::$app['httpServer']['ssl']['enable']) {
-			$config['ssl_cert_file'] = static::$app['httpServer']['ssl']['cert'];
-			$config['ssl_key_file'] = static::$app['httpServer']['ssl']['key'];
-		}
-		if (static::$app['httpServer']['ssl']['http2']) {
-			if (!isset($config['ssl_cert_file'])) {
-				throw new SYException('Certfile not found', '10006');
-			}
-			$config['open_http2_protocol'] = TRUE;
-		}
-		$serv->set($config);
-		$serv->on('request', ['\sy\swoole\serverEventHandle', 'onRequest']);
-		$serv->on('workerStart', ['\sy\swoole\serverEventHandle', 'onWorkerStart']);
-		$serv->on('task', ['\sy\swoole\serverEventHandle', 'onTask']);
-		$serv->start();
-	}
 	/**
 	 * 获取HTTP状态文字
 	 * @access public
@@ -466,7 +322,7 @@ class BaseSY {
 	}
 	/**
 	 * 添加钩子，用于自定义一些操作（例如对404的处理）
-	 * 重复添加将会有任何影响，也不会有任何效果
+	 * 重复添加将不会有任何影响，也不会有任何效果
 	 * @access public
 	 * @param object $obj 必须为实现hook的类
 	 */
