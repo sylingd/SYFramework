@@ -408,14 +408,5 @@ final class RpcServerEventHandle {
 			$data["result"] = Packet::packFormat($e->getMessage(), $e->getCode());
 		}
 		return $data;
-		
-		$type = $taskObj->getType();
-		if (!isset(self::$taskHandle[$type])) {
-			return '';
-		}
-		$data = $taskObj->getData();
-		$swooleData = ['serv' => $serv, 'task_id' => $task_id, 'from_id' => $from_id];
-		$result = call_user_func(self::$taskHandle[$type], $swooleData, $data);
-		return is_string($result) ? $result : strval($result);
 	}
 }
