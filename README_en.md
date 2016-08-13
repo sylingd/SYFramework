@@ -42,6 +42,12 @@ Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0
 
 # ChangeLog
 
+## 2.0.5 Beta
+
+* Add.DoraRPC
+
+**This version is not stable, Please do not using in product environment. The release notes will come with the stable version**
+
 ## 2.0.4 Beta
 
 * Add.A simple Hook in framework
