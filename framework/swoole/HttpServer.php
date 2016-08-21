@@ -18,38 +18,67 @@ namespace sy\swoole;
 
 use \Sy;
 
-class HttpServer {
-	/**
-	 * 获取Swoole版本
-	 * @access public
-	 * @return string
-	 */
-	public static function getVersion() {
-		return \SWOOLE_VERSION;
-	}
-	/**
-	 * 推送任务到SwooleTask进程
-	 */
-	public static function addTask($task, $callback = NULL) {
-		if (!($task instanceof \sy\swoole\Task)) {
-			return FALSE;
+final class HttpServer extends Server {
+	//事件回调
+	public static $taskHandle = [];
+	//HTTP事件：收到请求
+	public static function eventRequest($req, $response) {
+		//生成唯一请求ID
+		$remoteIp = ($req->server['remote_addr'] === '127.0.0.1' && isset($req->server['http_x_forwarded_for'])) ? $req->server['http_x_forwarded_for'] : $req->server['remote_addr']; //获取真实IP
+		$requestId = md5(uniqid($remoteIp, TRUE));
+		//设置请求信息
+		Sy::$httpRequest[$requestId] = $req;
+		Sy::$httpResponse[$requestId] = $response;
+		//是否启用CSRF验证
+		if (isset(Sy::$app['csrf']) && Sy::$app['csrf']) {
+			\sy\lib\YSecurity::csrfSetCookie($requestId);
 		}
-		$param = [$task];
-		$param[] = -1;
-		if (NULL !== $callback && is_callable($callback)) {
-			$param[] = $callback;
+		//根据设置，分配重写规则
+		ob_start();
+		if (Sy::$app['rewrite']) {
+			//自定义规则
+			if (is_array(Sy::$app['rewriteParseRule'])) {
+				$matches = NULL;
+				foreach (Sy::$app['rewriteParseRule'] as $oneRule) {
+					if (preg_match($oneRule[0], Sy::$httpRequest[$requestId]->server['request_uri'], $matches)) {
+						$route = $oneRule[1];
+						$paramName = array_slice($oneRule, 2);
+						$param = [];
+						foreach ($paramName as $k => $v) {
+							$param[$v] = isset($matches[$k + 1]) ? $matches[$k + 1] : '';
+						}
+						//写入相关的环境变量
+						//合并至GET参数
+						Sy::$httpRequest[$requestId]->get = array_merge($param, (array)Sy::$httpRequest[$requestId]->get);
+						Sy::$httpRequest[$requestId]->server['query_string'] = http_build_query(Sy::$httpRequest[$requestId]->get);
+						Sy::$httpRequest[$requestId]->server['request_uri'] = Sy::$httpRequest[$requestId]->server['php_self'] . '?' . Sy::$httpRequest[$requestId]->server['query_string'];
+						break;
+					}
+				}
+			}
+			//没有匹配的重写规则
+			if (!isset($route)) {
+				$url = parse_url(Sy::$httpRequest[$requestId]->server['request_uri']);
+				$route = ltrim(preg_replace('/\.(\w+)$/', '', $url['path']), '/'); //去掉末尾的扩展名和开头的“/”符号
+				empty($route) && $route = NULL;
+			}
+			Sy::router($route, $requestId);
+		} else {
+			$route = empty(Sy::$httpRequest[$requestId]->get[Sy::$routeParam]) ? Sy::$httpRequest[$requestId]->get[Sy::$routeParam] : NULL;
+			Sy::router($route, $requestId);
 		}
-		call_user_func_array([Sy::$swServer, 'task'], $param);
-	}
-	/**
-	 * 添加task响应函数
-	 * 建议在workerStart时添加
-	 * 如果已存在相同type的响应函数，则会被替换
-	 * @access public
-	 * @param string $type Task类型
-	 * @param callable $callback
-	 */
-	public static function addTaskHandle(string $type, callable $callback) {
-		\sy\swoole\HttpServerEventHandle::$taskHandle[$type] = $callback;
+		//请求结束，进行清理工作
+		try {
+			$output = ob_get_clean();
+			if (empty($output)) {
+				Sy::$httpResponse[$requestId]->end();
+			} else {
+				Sy::$httpResponse[$requestId]->end(ob_get_clean());
+			}
+		} catch (\Exception $e) {
+		} final {
+			unset(Sy::$httpRequest[$requestId], Sy::$httpResponse[$requestId], $requestId);
+		}
+		return;
 	}
 }

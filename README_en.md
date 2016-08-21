@@ -14,7 +14,7 @@ Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0
 
 # Requirement
 
-* php 5.4 +
+* php 5.5 +
 
 **In the following list, You must install the follow extension only when you need to use the functions**
 

@@ -23,7 +23,8 @@ trait App {
 	public static $frameworkDir;
 	//HttpServer模式或RPC模式运行时，为swoole进程
 	public static $swServer = NULL;
-	public static $swTcpServer; //RPC模式特有
+	public static $swServerInited = FALSE;
+	public static $swService = [];
 	public static $httpRequest;
 	public static $httpResponse;
 	/**
@@ -100,14 +101,10 @@ trait App {
 		if (!static::$isCli) {
 			throw new SYException('Must run at CLI mode', '10005');
 		}
-		//根据参数决定运行Worker
+		//仅支持参数方式运行
 		$opt = getopt('p:');
-		if (isset($opt['p'])) {
-			//以参数方式运行
-			$run = $opt['p'];
-		} else {
-			$run = $argv[1];
-		}
+		//以参数方式运行
+		$run = $opt['p'];
 		if (!empty($run) && isset(static::$app['console'][$run])) {
 			list($fileName, $callback) = static::$app['console'][$run];
 		} else {
@@ -119,13 +116,13 @@ trait App {
 		}
 	}
 	/**
-	 * 初始化：创建HttpApplication（需要swoole）
+	 * 初始化：创建SwooleApplication（需要swoole）
 	 * 建议使用Nginx等软件作为前端
 	 * 
 	 * @access public
 	 * @param mixed $config设置
 	 */
-	public static function createHttpApplication($siteDir, $config = NULL) {
+	public static function createSwooleApplication($siteDir, $config = NULL) {
 		//swoole检查
 		if (!extension_loaded('swoole')) {
 			throw new SYException('Extension "Swoole" is required', '10027');
@@ -140,78 +137,12 @@ trait App {
 		static::$httpRequest = [];
 		static::$httpResponse = [];
 		//初始化Swoole
-		static::$swServer = new \swoole_http_server(static::$app['httpServer']['ip'], static::$app['httpServer']['port']);
-		//处理高级选项
-		$config = static::$app['httpServer']['advanced'];
-		if (static::$app['httpServer']['ssl']['enable']) {
-			$config['ssl_cert_file'] = static::$app['httpServer']['ssl']['cert'];
-			$config['ssl_key_file'] = static::$app['httpServer']['ssl']['key'];
-		}
-		if (static::$app['httpServer']['ssl']['http2']) {
-			if (!isset($config['ssl_cert_file'])) {
-				throw new SYException('Certfile not found', '10006');
-			}
-			$config['open_http2_protocol'] = TRUE;
-		}
-		if (!is_array($config['response_header'])) {
-			$config['response_header'] = [];
-		}
-		if (!isset($config['response_header']['Content_Type'])) {
-			$config['response_header']['Content_Type'] = 'application/html; charset=' . static::$app['charset'];
-		}
-		static::$swServer->set($config);
-		//定义进程名称
-		//事件绑定
-		static::$swServer->on('Request', ['\sy\swoole\HttpServerEventHandle', 'onRequest']);
-		static::$swServer->on('Start', ['\sy\swoole\HttpServerEventHandle', 'onStart']);
-		static::$swServer->on('WorkerStart', ['\sy\swoole\HttpServerEventHandle', 'onWorkerStart']);
-		static::$swServer->on('ManagerStart', ['\sy\swoole\HttpServerEventHandle', 'onManagerStart']);
-		static::$swServer->on('Task', ['\sy\swoole\HttpServerEventHandle', 'onTask']);
-		static::$swServer->start();
-	}
-	/**
-	 * 初始化：创建RPC应用（依赖于Swoole）
-	 * RPC协议与Dora-RPC完全相同
-	 * @access public
-	 * @param string $siteDir
-	 * @param mixed $config设置
-	 */
-	public static function createRpcApplication($siteDir, $config) {
-		//swoole检查
-		if (!extension_loaded('swoole')) {
-			throw new SYException('Extension "Swoole" is required', '10027');
-		}
-		static::createApplicationInit($siteDir, $config);
-		//网站目录
-		static::$sitePath = '/';
-		if (!static::$isCli) {
-			throw new SYException('Must run at CLI mode', '10005');
-		}
-		//变量初始化
-		static::$httpRequest = [];
-		static::$httpResponse = [];
-		//初始化Swoole
-		static::$swServer = new \swoole_http_server(static::$app['rpc']['ip'], static::$app['rpc']['http']['port']);
-		static::$swTcpServer = static::$swServer->addListener(static::$app['rpc']['ip'], static::$app['rpc']['tcp']['port'], \SWOOLE_TCP);
-		//处理高级选项
-		$httpConfig = static::$app['rpc']['http']['advanced'];
-		if (!is_array($httpConfig['response_header'])) {
-			$httpConfig['response_header'] = [];
-		}
-		if (!isset($httpConfig['response_header']['Content_Type'])) {
-			$httpConfig['response_header']['Content_Type'] = 'application/json; charset=' . static::$app['charset'];
-		}
-		static::$swServer->set($httpConfig);
-		$tcpConfig = static::$app['rpc']['tcp']['advanced'];
-		static::$swTcpServer->set($tcpConfig);
-		//事件绑定
-		static::$swTcpServer->on('Receive', ['\sy\swoole\RpcServerEventHandle', 'onTcpReceive']);
-		static::$swServer->on('Start', ['\sy\swoole\RpcServerEventHandle', 'onStart']);
-		static::$swServer->on('ManagerStart', ['\sy\swoole\RpcServerEventHandle', 'onManagerStart']);
-		static::$swServer->on('WorkerStart', ['\sy\swoole\RpcServerEventHandle', 'onWorkerStart']);
-		static::$swServer->on('WorkerError', ['\sy\swoole\RpcServerEventHandle', 'onWorkerError']);
-		static::$swServer->on('Finish', ['\sy\swoole\RpcServerEventHandle', 'onFinish']);
-		static::$swServer->on('Task', ['\sy\swoole\RpcServerEventHandle', 'onTask']);
-		static::$swServer->start();
+		static::$swServer = new \swoole_http_server(static::$app['swoole']['ip'], static::$app['swoole']['port']);
+		//基本事件
+		static::$swServer->on('Start', ['\sy\swoole\Server', 'eventStart']);
+		static::$swServer->on('ManagerStart', ['\sy\swoole\Server', 'eventManagerStart']);
+		static::$swServer->on('WorkerStart', ['\sy\swoole\Server', 'eventWorkerStart']);
+		static::$swServer->on('WorkerError', ['\sy\swoole\Server', 'eventWorkerError']);
+		static::$swServer->on('Finish', ['\sy\swoole\Server', 'eventFinish']);
 	}
 }

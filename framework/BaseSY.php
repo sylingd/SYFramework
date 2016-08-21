@@ -18,6 +18,9 @@ use \sy\base\SYException;
 if (trait_exists('App', FALSE)) {
 	require(__DIR__ . '/App.php');
 }
+if (trait_exists('Stratified', FALSE)) {
+	require(__DIR__ . '/Stratified.php');
+}
 
 //将系统异常封装为自有异常
 set_exception_handler(function ($e) {
@@ -35,6 +38,7 @@ set_exception_handler(function ($e) {
 
 class BaseSY {
 	use App;
+	use Stratified;
 	//会从data下的相应文件读取
 	public static $mimeTypes = NULL;
 	public static $httpStatus = NULL;
@@ -263,62 +267,6 @@ class BaseSY {
 		if (is_file($__viewPath)) {
 			include($__viewPath);
 		}
-	}
-	/**
-	 * 获取Model操作类
-	 * @access public
-	 * @param string $modelName
-	 * @return object
-	 */
-	public static function model($modelName) {
-		//Model名称
-		$modelClass = '\\' . static::$app['appNamespace'] . '\\model\\' . ucfirst($modelName);
-		if (!class_exists($modelClass)) {
-			$fileName = static::$appDir . 'models/' . lcfirst($modelName) . '.php';
-			if (!is_file($fileName)) {
-				throw new SYException('Model ' . $fileName . ' not exists', '10010');
-			}
-			require ($fileName);
-		}
-		return $modelClass::i();
-	}
-	/**
-	 * 获取Controller操作类
-	 * @access public
-	 * @param string $controllerName
-	 * @return object
-	 */
-	public static function controller($controllerName) {
-		//多级路由支持
-		$isPath = strpos($controllerName, '/');
-		//controller列表
-		if (!in_array($controllerName, static::$app['controller'], TRUE)) {
-			return NULL;
-		}
-		//多级路由时，引入顶级路由（如果存在）
-		if ($isPath !== FALSE) {
-			$topController = substr($controllerName, 0, $isPath);
-			$topControllerFile = static::$appDir . 'controllers/' . $topController . '/_base.php';
-			if (is_file($topControllerFile)) {
-				require($topControllerFile);
-			}
-		}
-		//初始化Controller
-		$fileName = static::$appDir . 'controllers/' . $controllerName . '.php';
-		if ($isPath !== FALSE) {
-			$className = substr($controllerName, strrpos($controllerName, '/') + 1);
-		} else {
-			$className = $controllerName;
-		}
-		$className = '\\' . static::$app['appNamespace'] . '\\controller\\' . ucfirst($className);
-		if (!is_file($fileName)) {
-			throw new SYException('Controller ' . $controllerName . ' not exists', '10004');
-		}
-		if (!class_exists($className, FALSE)) {
-			require($fileName);
-		}
-		$controller = new $className;
-		return $controller;
 	}
 	/**
 	 * 添加钩子，用于自定义一些操作（例如对404的处理）

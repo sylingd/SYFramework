@@ -43,7 +43,7 @@ class i18n {
 			return;
 		}
 		if (FALSE === ($path = static::getSupport($i))) {
-			throw new SYException('The language file not exists', '10011');
+			throw new SYException('The language file not exists', '10013');
 		}
 		static::$language = require ($path);
 	}
@@ -130,7 +130,7 @@ class i18n {
 				return;
 			}
 		}
-		throw new SYException('The language file not exists', '10011');
+		throw new SYException('The language file not exists', '10014');
 	}
 	/**
 	 * 获得文字

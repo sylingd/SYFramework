@@ -16,7 +16,7 @@ use Sy;
 use \sy\base\SYException;
 
 abstract class Controller {
-	protected $_framework_m = [];
+	protected $_sy_m = [];
 	/**
 	 * 加载Model
 	 * @access protected
@@ -25,10 +25,10 @@ abstract class Controller {
 	 */
 	protected function loadModel($modelName, $loadAs) {
 		//是否已经加载
-		if (in_array($modelName, $this->_framework_m, TRUE)) {
+		if (in_array($modelName, $this->_sy_m, TRUE)) {
 			return;
 		}
-		$this->_framework_m[] = $modelName;
+		$this->_sy_m[] = $modelName;
 		$this->{$loadAs} = Sy::model($modelName);
 	}
 }
