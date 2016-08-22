@@ -102,9 +102,9 @@ trait App {
 			throw new SYException('Must run at CLI mode', '10005');
 		}
 		//仅支持参数方式运行
-		$opt = getopt('p:');
+		$opt = getopt(static::$routeParam . ':');
 		//以参数方式运行
-		$run = $opt['p'];
+		$run = $opt[static::$routeParam];
 		if (!empty($run) && isset(static::$app['console'][$run])) {
 			list($fileName, $callback) = static::$app['console'][$run];
 		} else {
