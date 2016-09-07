@@ -260,8 +260,7 @@ class BaseSY {
 			$_param['_csrf_token'] = \sy\lib\YSecurity::csrfGetHash();
 		}
 		if (is_array($_param)) {
-			unset($_param['__tpl'], $_param['__viewPath'], $_param['_GET'], $_param['_POST'], $_param['_REQUEST'], $_param['_ENV'], $_param['_COOKIE'], $_param['_SESSION'], $_param['GLOBALS'], $_param['argc'], $_param['argv'], $_param['_SERVER']);
-			extract($_param);
+			extract($_param, EXTR_SKIP);
 		}
 		$__viewPath = static::viewPath($__tpl);
 		if (is_file($__viewPath)) {
@@ -305,15 +304,5 @@ class BaseSY {
 			$data = call_user_func_array($type, (array)$data);
 		}
 		return $data;
-	}
-	/**
-	 * TODO: 日志记录函数
-	 * 仅用于HttpServer模式，且为异步写入
-	 * 请注意：日志文件将保持打开状态，请勿直接删除日志文件
-	 * @access public
-	 * @param string $message
-	 */
-	public function writeLog($message) {
-		
 	}
 }

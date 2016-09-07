@@ -12,6 +12,7 @@
  */
 
 namespace sy\swoole;
+use \swoole_mysql;
 use \Sy;
 use \mysqli;
 use \sy\lib\YHtml;

@@ -72,7 +72,7 @@ class Server {
 	 * @param string $type 服务类型，可选：RPC，TCP，UDP，WS
 	 * @param mixed $config 配置，传入String则从config读取，也可以直接传入Array
 	 */
-	public static function addService($type, $config) {
+	public static function addService(string $type, $config) {
 		if (is_string($config)) {
 			$config = Sy::$app['swoole'][$config];
 		}
