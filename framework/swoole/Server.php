@@ -66,13 +66,13 @@ class Server {
 		return Sy::$app['swoole'][$config]['port'];
 	}
 	/**
-	 * 添加服务（也就是一个端口监听
+	 * 添加服务（也就是一个端口监听）
 	 * 注意：若服务类型为RPC，则会自动绑定Web事件
 	 * @access public
 	 * @param string $type 服务类型，可选：RPC，TCP，UDP，WS
 	 * @param mixed $config 配置，传入String则从config读取，也可以直接传入Array
 	 */
-	public static function addService(string $type, $config) {
+	public static function addListener(string $type, $config) {
 		if (is_string($config)) {
 			$config = Sy::$app['swoole'][$config];
 		}
