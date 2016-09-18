@@ -42,6 +42,28 @@
 
 # ChangeLog
 
+## 2.0.6 Beta
+
+* 修改构架
+
+1. 使用Service/DAO/Controller/View分层
+
+2. 所有swoole应用均基于HttpServer创建
+
+3. 用户可以监听不同的端口来提供不同的服务
+
+4. 移除taskObj限制
+
+* Fix.DoraRPC无法工作
+
+* Fix.在控制台程序中使用routeParam
+
+* Fix.一处潜在的安全隐患
+
+**WebSocket支持会在接下来的两个版本中添加**
+
+**此版本暂不稳定，不推荐用于生产环境。更新指南将于正式版发布时一同发布**
+
 ## 2.0.5 Beta
 
 * Add.DoraRPC组件

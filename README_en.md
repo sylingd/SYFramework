@@ -42,6 +42,28 @@ Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0
 
 # ChangeLog
 
+## 2.0.6 Beta
+
+* Adjustment frame
+
+1. Use Service/DAO/Controller/View to stratify the app
+
+2. All swoole application start with HttpServer
+
+3. User can listen different port to provide different service
+
+4. Remove taskObj limit
+
+* Fix.DoraRPC not work
+
+* Fix.Using routeParam in Console App
+
+* Fix.A security risk
+
+**WebSocket support will be added in the next 2 versions**
+
+**This version is not stable, Please do not using in product environment. The release notes will come with the stable version**
+
 ## 2.0.5 Beta
 
 * Add.DoraRPC
