@@ -109,12 +109,12 @@ class Server {
 			$udpPort = $config['port'];
 			Sy::$swService[$udpPort] = Sy::$swServer->addListener($udpIp, $udpPort, \SWOOLE_UDP);
 			Sy::$swService[$udpPort]->on('Receive', ['\sy\swoole\UdpServer', 'eventReceive']);
-		} elseif ('WS' === $type) {
+		}/* elseif ('WS' === $type) {
 			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
 			$tcpPort = $config['port'];
 			Sy::$swService[$tcpPort] = Sy::$swServer->addListener($tcpIp, $tcpPort, \SWOOLE_TCP);
 			Sy::$swService[$tcpPort]->on('Receive', ['\sy\swoole\WsServer', 'eventReceive']);
-		}
+		}*/
 	}
 	/**
 	 * 添加事件响应函数
