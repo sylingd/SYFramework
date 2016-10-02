@@ -15,10 +15,10 @@ namespace sy;
 use \sy\base\SYException;
 
 //载入依赖库
-if (trait_exists('App', FALSE)) {
+if (!trait_exists('sy\App', FALSE)) {
 	require(__DIR__ . '/App.php');
 }
-if (trait_exists('Stratified', FALSE)) {
+if (!trait_exists('sy\Stratified', FALSE)) {
 	require(__DIR__ . '/Stratified.php');
 }
 
@@ -273,8 +273,8 @@ class BaseSY {
 	 * @access public
 	 * @param object $obj 必须为实现hook的类
 	 */
-	public function addHook($obj) {
-		if (!($obj instanceof \sy\interface\hook)) {
+	public static function addHook($obj) {
+		if (!($obj instanceof \sy\interfaces\hook)) {
 			return;
 		}
 		if (!is_array(static::$hookList[$obj->type])) {
@@ -283,7 +283,7 @@ class BaseSY {
 		if (!is_array(static::$hookListObj[$obj->type])) {
 			static::$hookListObj[$obj->type] = [];
 		}
-		if (in_array($obj->name, static::$hookList[$obj->type], TRUE) {
+		if (in_array($obj->name, static::$hookList[$obj->type], TRUE)) {
 			return;
 		}
 		static::$hookList[$obj->type][] = $obj->name;
@@ -296,7 +296,7 @@ class BaseSY {
 	 * @param string $hookName
 	 * @param array $data 数据
 	 */
-	public function triggerHook($type, $data = []) {
+	public static function triggerHook($type, $data = []) {
 		if (!is_array(static::$hookListObj[$type])) {
 			return $data;
 		}

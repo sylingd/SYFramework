@@ -11,7 +11,7 @@
  * @license http://lab.sylingd.com/go.php?name=framework&type=license
  */
 
-namespace sy\interface;
+namespace sy\interfaces;
 
 interface hook {
 	//以字符串表示的Hook类型
