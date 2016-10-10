@@ -32,7 +32,6 @@ final class HttpServer extends Server {
 			\sy\lib\YSecurity::csrfSetCookie($requestId);
 		}
 		//根据设置，分配重写规则
-		ob_start();
 		if (Sy::$app['rewrite']) {
 			//自定义规则
 			if (is_array(Sy::$app['rewriteParseRule'])) {
@@ -67,12 +66,7 @@ final class HttpServer extends Server {
 		}
 		//请求结束，进行清理工作
 		try {
-			$output = ob_get_clean();
-			if (empty($output)) {
-				Sy::$httpResponse[$requestId]->end();
-			} else {
-				Sy::$httpResponse[$requestId]->end(ob_get_clean());
-			}
+			Sy::$httpResponse[$requestId]->end();
 		} catch (\Exception $e) {
 		} final {
 			unset(Sy::$httpRequest[$requestId], Sy::$httpResponse[$requestId], $requestId);

@@ -264,7 +264,14 @@ class BaseSY {
 		}
 		$__viewPath = static::viewPath($__tpl);
 		if (is_file($__viewPath)) {
+			//对Swoole应用封装
+			if (static::$swServer !== NULL) {
+				ob_start();
+			}
 			include($__viewPath);
+			if (static::$swServer !== NULL) {
+				return ob_get_clean();
+			}
 		}
 	}
 	/**
