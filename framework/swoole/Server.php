@@ -230,4 +230,7 @@ class Server {
 		}
 		return is_string($result) ? $result : strval($result);
 	}
+	public static function eventFinish($serv, int $task_id, string $data) {
+		
+	}
 }
