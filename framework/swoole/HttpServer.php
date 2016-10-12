@@ -58,7 +58,7 @@ final class HttpServer extends Server {
 			}
 			//没有匹配的重写规则
 			if (!isset($route)) {
-				$url = parse_url(Sy::$httpRequest[$requestId]->server['request_uri']);
+				$url = parse_url('http://www.sylingd.com/' . Sy::$httpRequest[$requestId]->server['request_uri']);
 				$route = ltrim(preg_replace('/\.(\w+)$/', '', $url['path']), '/'); //去掉末尾的扩展名和开头的“/”符号
 				empty($route) && $route = NULL;
 			}
