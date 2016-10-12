@@ -55,7 +55,7 @@ class YCookie {
 		}
 		//设置
 		if (isset($param['requestId'])) {
-			Sy::$httpResponse->cookie($name, $param['value'], $expire, $param['path'], $param['domain'], $param['https'], $param['httponly']);
+			Sy::$httpResponse[$param['requestId']]->cookie($name, $param['value'], $expire, $param['path'], $param['domain'], $param['https'], $param['httponly']);
 		} else {
 			setcookie($name, $param['value'], $expire, $param['path'], $param['domain'], $param['https'], $param['httponly']);
 		}
