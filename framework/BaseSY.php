@@ -70,9 +70,9 @@ class BaseSY {
 	}
 	/**
 	 * 简单Router
-	 * @access protected
+	 * @access public
 	 */
-	protected static function router($r = NULL, $requestId = NULL) {
+	public static function router($r = NULL, $requestId = NULL) {
 		if ($r === NULL) {
 			$r = trim($_GET[static::$routeParam]);
 		}
