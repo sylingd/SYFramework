@@ -19,7 +19,7 @@ use \Sy;
 use \sy\base\SYException;
 
 class UdpServer {
-	public function eventReceive($server, int $fd, int $from_id, string $data) {
+	public static function eventReceive($server, int $fd, int $from_id, string $data) {
 		$info = $server->connection_info($fd);
 		$port = $info['server_port'];
 		if (isset(Server::$eventHandle['Receive'][$port]) && is_callable(Server::$eventHandle['Receive'][$port])) {

@@ -68,7 +68,7 @@ final class HttpServer extends Server {
 		try {
 			Sy::$httpResponse[$requestId]->end();
 		} catch (\Exception $e) {
-		} final {
+		} finally {
 			unset(Sy::$httpRequest[$requestId], Sy::$httpResponse[$requestId], $requestId);
 		}
 		return;
