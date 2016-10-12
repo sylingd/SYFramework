@@ -32,6 +32,9 @@ final class HttpServer extends Server {
 			\sy\lib\YSecurity::csrfSetCookie($requestId);
 		}
 		//根据设置，分配重写规则
+		if (Sy::$debug && function_exists('xdebug_start_trace')) {
+			xdebug_start_trace();
+		}
 		if (Sy::$app['rewrite']) {
 			//自定义规则
 			if (is_array(Sy::$app['rewriteParseRule'])) {
@@ -63,6 +66,9 @@ final class HttpServer extends Server {
 		} else {
 			$route = empty(Sy::$httpRequest[$requestId]->get[Sy::$routeParam]) ? Sy::$httpRequest[$requestId]->get[Sy::$routeParam] : NULL;
 			Sy::router($route, $requestId);
+		}
+		if (Sy::$debug && function_exists('xdebug_stop_trace')) {
+			xdebug_stop_trace();
 		}
 		//请求结束，进行清理工作
 		try {
