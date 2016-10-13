@@ -308,7 +308,7 @@ class BaseSY {
 			return $data;
 		}
 		foreach (static::$hookListObj[$type] as $hook) {
-			$data = call_user_func_array($type, (array)$data);
+			$data = call_user_func_array($hook, (array)$data);
 		}
 		return $data;
 	}

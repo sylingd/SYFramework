@@ -94,7 +94,6 @@ trait App {
 	 * @param mixed $config设置
 	 */
 	public static function createConsoleApplication($siteDir, $config = NULL) {
-		global $argv;
 		static::createApplicationInit($siteDir, $config);
 		//网站目录
 		static::$sitePath = '/';

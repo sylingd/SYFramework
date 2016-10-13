@@ -93,7 +93,6 @@ class YMongoDB {
 		} else {
 			$dsn .= $authorize . $this->dbInfo[$id]['host'] . ':' . $this->dbInfo[$id]['port'];
 		}
-		$option = ['connect' => TRUE];
 		try {
 			$this->link[$id] = new \MongoDB\Driver\Manager($dsn);
 		} catch (\Exception $e) {

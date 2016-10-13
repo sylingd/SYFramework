@@ -18,8 +18,6 @@ namespace sy\swoole;
 use \Sy;
 
 class RpcServer extends Server {
-	//Task信息
-	private static $taskInfo;
 	//HTTP事件：收到请求
 	public static function eventRequest($req, $response) {
 		//JSON格式
