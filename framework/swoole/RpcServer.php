@@ -23,7 +23,7 @@ class RpcServer extends Server {
 	//HTTP事件：收到请求
 	public static function eventRequest($req, $response) {
 		//JSON格式
-		foreach ($this->httpConfig['response_header'] as $k => $v) {
+		foreach (self::httpConfig['response_header'] as $k => $v) {
 			$response->header($k, $v);
 		}
 		//状态必定为200
@@ -74,17 +74,17 @@ class RpcServer extends Server {
 			case 'server/cmd':
 				$task['type'] = DoraConst::SW_CONTROL_CMD;
 				if ($params['api']['cmd']['name'] == 'getStat') {
-					$pack = DoraPacket::packFormat('OK', 0, array('server' => $this->server->stats()));
-					$pack['guid'] = $task['guid'];
-					$response->end(json_encode($pack));
-					return;
+					// $pack = DoraPacket::packFormat('OK', 0, array('server' => $this->server->stats()));
+					// $pack['guid'] = $task['guid'];
+					// $response->end(json_encode($pack));
+					// return;
 				}
 				if ($params['api']['cmd']['name'] == 'reloadTask') {
-					$pack = DoraPacket::packFormat('OK', 0, array('server' => $this->server->stats()));
-					$this->server->reload(true);
-					$pack['guid'] = $task['guid'];
-					$response->end(json_encode($pack));
-					return;
+					// $pack = DoraPacket::packFormat('OK', 0, array('server' => $this->server->stats()));
+					// $this->server->reload(true);
+					// $pack['guid'] = $task['guid'];
+					// $response->end(json_encode($pack));
+					// return;
 				}
 				break;
 			default:
