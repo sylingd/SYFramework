@@ -166,9 +166,9 @@ class BaseSY {
 			return $hookResult;
 		}
 		//基本URL
-		$url = ($_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+		$url = '';
 		if (empty($router)) {
-			return $url . static::$sitePath;
+			return static::$sitePath;
 		}
 		unset($param[0]);
 		//多级路由支持
