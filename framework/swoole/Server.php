@@ -63,7 +63,7 @@ class Server {
 	 * @return int
 	 */
 	public static function getPort($name) {
-		return Sy::$app['swoole'][$config]['port'];
+		return Sy::$app['swoole'][$name]['port'];
 	}
 	/**
 	 * 添加服务（也就是一个端口监听）
@@ -93,6 +93,7 @@ class Server {
 			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
 			$tcpPort = $config['tcp']['port'];
 			Sy::$swService[$tcpPort] = Sy::$swServer->addListener($tcpIp, $config['tcp']['port'], \SWOOLE_TCP);
+			Sy::$swService[$tcpPort]->set($tcpConfig);
 			Sy::$swService[$tcpPort]->on('Receive', ['\sy\swoole\RpcServer', 'eventTcpReceive']);
 			if (!Sy::$swServerInited) {
 				Sy::$swServer->on('Task', ['\sy\swoole\RpcServer', 'eventTask']);
