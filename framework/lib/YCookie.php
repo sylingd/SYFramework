@@ -72,7 +72,7 @@ class YCookie {
 		if ($requestId === NULL) {
 			return isset($_COOKIE[$name]) ? $_COOKIE[$name] : NULL;
 		} else {
-			return isset(Sy::$httpRequest[$requestId][$name]) ? Sy::$httpRequest[$requestId][$name] : NULL;
+			return isset(Sy::$httpRequest[$requestId]->cookie[$name]) ? Sy::$httpRequest[$requestId]->cookie[$name] : NULL;
 		}
 	}
 	/**
@@ -87,7 +87,7 @@ class YCookie {
 		if ($requestId === NULL) {
 			return isset($_COOKIE[$name]);
 		} else {
-			return isset(Sy::$httpRequest[$requestId][$name]);
+			return isset(Sy::$httpRequest[$requestId]->cookie[$name]);
 		}
 	}
 	/**
