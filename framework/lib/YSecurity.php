@@ -27,7 +27,8 @@ class YSecurity {
 	 */
 	public static function csrfVerify($show_error = TRUE, $requestId = NULL) {
 		//仅POST需要验证csrf
-		if (strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
+		$REQUEST_METHOD = ($requestId === NULL ? $_SERVER['REQUEST_METHOD'] : Sy::$httpRequest[$requestId]->server['request_method']);
+		if (strtoupper($REQUEST_METHOD) !== 'POST') {
 			static::csrfSetCookie($requestId);
 			return TRUE;
 		}
@@ -59,13 +60,13 @@ class YSecurity {
 	 * 生成/获取csrf_hash
 	 * @return string
 	 */
-	public static function csrfGetHash() {
+	public static function csrfGetHash($requestId = NULL) {
 		if (static::$csrf_hash === NULL) {
-			$cookie_hash = YCookie::get(static::$csrf_config['cookieName']);
+			$cookie_hash = YCookie::get(static::$csrf_config['cookieName'], $requestId);
 			if ($cookie_hash !== NULL && preg_match('/^[0-9a-f]{32}$/iS', $cookie_hash)) {
 				return static::$csrf_hash = $cookie_hash;
 			}
-			static::$csrf_hash = md5(uniqid(mt_rand(), TRUE));
+			static::$csrf_hash = md5(uniqid(microtime(), TRUE));
 		}
 		return static::$csrf_hash;
 	}
@@ -74,7 +75,7 @@ class YSecurity {
 	 * @access public
 	 */
 	public static function csrfSetCookie($requestId = NULL) {
-		$param = ['name' => static::$csrf_config['cookieName'], 'value' => static::csrfGetHash(), 'httponly' => TRUE];
+		$param = ['name' => static::$csrf_config['cookieName'], 'value' => static::csrfGetHash($requestId), 'httponly' => TRUE];
 		if ($requestId !== NULL) {
 			$param['requestId'] = $requestId;
 		}
