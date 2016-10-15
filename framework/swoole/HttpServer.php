@@ -22,7 +22,7 @@ final class HttpServer extends Server {
 	//HTTP事件：收到请求
 	public static function eventRequest($req, $response) {
 		//生成唯一请求ID
-		$remoteIp = ($req->server['remote_addr'] === '127.0.0.1' && isset($req->server['http_x_forwarded_for'])) ? $req->server['http_x_forwarded_for'] : $req->server['remote_addr']; //获取真实IP
+		$remoteIp = ($req->server['remote_addr'] === '127.0.0.1' && isset($req->header['x-forwarded-for'])) ? $req->header['x-forwarded-for'] : $req->server['remote_addr']; //获取真实IP
 		$requestId = md5(uniqid($remoteIp, TRUE));
 		//设置请求信息
 		Sy::$httpRequest[$requestId] = $req;
