@@ -18,7 +18,7 @@ namespace sy\swoole;
 
 use \Sy;
 
-final class HttpServer extends Server {
+final class HttpServer {
 	//HTTP事件：收到请求
 	public static function eventRequest($req, $response) {
 		//生成唯一请求ID
