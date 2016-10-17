@@ -92,7 +92,7 @@ class Server {
 			$tcpConfig = $config['tcp']['advanced'];
 			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
 			$tcpPort = $config['tcp']['port'];
-			Sy::$swService[$tcpPort] = Sy::$swServer->addListener($tcpIp, $config['tcp']['port'], \SWOOLE_TCP);
+			Sy::$swService[$tcpPort] = Sy::$swServer->listen($tcpIp, $config['tcp']['port'], \SWOOLE_TCP);
 			Sy::$swService[$tcpPort]->set($tcpConfig);
 			Sy::$swService[$tcpPort]->on('Receive', ['\sy\swoole\RpcServer', 'eventTcpReceive']);
 			if (!Sy::$swServerInited) {
@@ -103,19 +103,22 @@ class Server {
 		} elseif ('TCP' === $type) {
 			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
 			$tcpPort = $config['port'];
-			Sy::$swService[$tcpPort] = Sy::$swServer->addListener($tcpIp, $tcpPort, \SWOOLE_TCP);
+			Sy::$swService[$tcpPort] = Sy::$swServer->listen($tcpIp, $tcpPort, \SWOOLE_TCP);
 			if (isset($config['advanced'])) {
 				Sy::$swService[$tcpPort]->set($config['advanced']);
 			}
 			Sy::$swService[$tcpPort]->on('Receive', ['\sy\swoole\TcpServer', 'eventReceive']);
+			Sy::$swService[$tcpPort]->on('Connect', ['\sy\swoole\TcpServer', 'eventConnect']);
+			Sy::$swService[$tcpPort]->on('Close', ['\sy\swoole\TcpServer', 'eventClose']);
 		} elseif ('UDP' === $type) {
 			$udpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
 			$udpPort = $config['port'];
-			Sy::$swService[$udpPort] = Sy::$swServer->addListener($udpIp, $udpPort, \SWOOLE_UDP);
+			Sy::$swService[$udpPort] = Sy::$swServer->listen($udpIp, $udpPort, \SWOOLE_UDP);
 			if (isset($config['advanced'])) {
 				Sy::$swService[$udpPort]->set($config['advanced']);
 			}
 			Sy::$swService[$udpPort]->on('Receive', ['\sy\swoole\UdpServer', 'eventReceive']);
+			Sy::$swService[$udpPort]->on('Packet', ['\sy\swoole\UdpServer', 'eventPacket']);
 		}/* elseif ('WS' === $type) {
 			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
 			$tcpPort = $config['port'];
