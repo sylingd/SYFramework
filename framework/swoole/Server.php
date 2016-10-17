@@ -104,11 +104,17 @@ class Server {
 			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
 			$tcpPort = $config['port'];
 			Sy::$swService[$tcpPort] = Sy::$swServer->addListener($tcpIp, $tcpPort, \SWOOLE_TCP);
+			if (isset($config['advanced'])) {
+				Sy::$swService[$tcpPort]->set($config['advanced']);
+			}
 			Sy::$swService[$tcpPort]->on('Receive', ['\sy\swoole\TcpServer', 'eventReceive']);
 		} elseif ('UDP' === $type) {
 			$udpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
 			$udpPort = $config['port'];
 			Sy::$swService[$udpPort] = Sy::$swServer->addListener($udpIp, $udpPort, \SWOOLE_UDP);
+			if (isset($config['advanced'])) {
+				Sy::$swService[$udpPort]->set($config['advanced']);
+			}
 			Sy::$swService[$udpPort]->on('Receive', ['\sy\swoole\UdpServer', 'eventReceive']);
 		}/* elseif ('WS' === $type) {
 			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
@@ -170,18 +176,18 @@ class Server {
 	 */
 	public static function eventStart($serv) {
 		swoole_set_process_name('SY ' . Sy::$app['name'] . ' master');
-        $pidPath = rtrim(Sy::$app['swoole']['pidPath'], '/') . '/';
-        file_put_contents($pidPath . Sy::$app['name'] . '_master.pid', $serv->master_pid);
-        file_put_contents($pidPath . Sy::$app['name'] . '_manager.pid', $serv->manager_pid);
+		$pidPath = rtrim(Sy::$app['swoole']['pidPath'], '/') . '/';
+		file_put_contents($pidPath . Sy::$app['name'] . '_master.pid', $serv->master_pid);
+		file_put_contents($pidPath . Sy::$app['name'] . '_manager.pid', $serv->manager_pid);
 	}
 	/**
 	 * 普通事件：启动Manager进程
 	 * @access public
 	 * @param object $serv
 	 */
-    public static function eventManagerStart($serv) {
-        swoole_set_process_name('SY ' . Sy::$app['name'] . ' manager');
-    }
+	public static function eventManagerStart($serv) {
+		swoole_set_process_name('SY ' . Sy::$app['name'] . ' manager');
+	}
 	/**
 	 * 普通事件：启动一个进程
 	 * @access public
