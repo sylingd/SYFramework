@@ -210,7 +210,7 @@ class Server {
 			swoole_set_process_name(Sy::$app['name'] . ' worker ' . $worker_id . ' (SY)');
 		}
 		//回调
-		triggerEventHandle('WorkerStart', 0, [$serv->taskworker, $worker_id]);
+		static::triggerEventHandle('WorkerStart', 0, [$serv->taskworker, $worker_id]);
 	}
 	/**
 	 * 普通事件：进程出错
