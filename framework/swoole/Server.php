@@ -140,8 +140,8 @@ class Server {
 		static::$eventHandle[$port][$event] = $callback;
 	}
 	public static function triggerEventHandle(string $event, int $port, array $param) {
-		if (isset(static::$eventHandle[$event][$port]) && is_callable(static::$eventHandle[$event][$port])) {
-			call_user_func_array(Server::$eventHandle[$event][$port], $param);
+		if (isset(static::$eventHandle[$port][$event]) && is_callable(static::$eventHandle[$port][$event])) {
+			call_user_func_array(Server::$eventHandle[$port][$event], $param);
 		}
 	}
 	/**
