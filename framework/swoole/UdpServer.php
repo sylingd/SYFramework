@@ -25,9 +25,7 @@ class UdpServer {
 		}
 		$info = $server->connection_info($fd);
 		$port = $info['server_port'];
-		if (isset(Server::$eventHandle['Receive'][$port]) && is_callable(Server::$eventHandle['Receive'][$port])) {
-			call_user_func(Server::$eventHandle['Receive'][$port], $serv, $fd, $from_id, $data);
-		}
+		Server::triggerEventHandle('Receive', $port, [$server, $fd, $from_id, $data]);
 		if (Sy::$debug && function_exists('xdebug_stop_trace')) {
 			xdebug_stop_trace();
 		}
@@ -35,8 +33,6 @@ class UdpServer {
 	public static function eventPacket($server, string $data, array $client_info) {
 		$info = $server->connection_info($fd);
 		$port = $info['server_port'];
-		if (isset(Server::$eventHandle['Packet'][$port]) && is_callable(Server::$eventHandle['Packet'][$port])) {
-			call_user_func(Server::$eventHandle['Packet'][$port], $data, $client_info);
-		}
+		Server::triggerEventHandle('Packet', $port, [$server, $data, $client_info]);
 	}
 }
