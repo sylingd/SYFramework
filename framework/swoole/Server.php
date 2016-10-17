@@ -205,14 +205,12 @@ class Server {
 	public static function eventWorkerStart($serv, $worker_id) {
 		//根据类型，设置不同的进程名
 		if ($serv->taskworker) {
-			swoole_set_process_name('SY ' . Sy::$app['name'] . ' task' . $worker_id);
+			swoole_set_process_name(Sy::$app['name'] . ' task ' . $worker_id . ' (SY)');
 		} else {
-			swoole_set_process_name('SY ' . Sy::$app['name'] . ' worker' . $worker_id);
+			swoole_set_process_name(Sy::$app['name'] . ' worker ' . $worker_id . ' (SY)');
 		}
 		//回调
-		if (isset(static::$eventHandle['WorkerStart'][0]) && is_callable(static::$eventHandle['WorkerStart'][0])) {
-			call_user_func(static::$eventHandle['WorkerStart'][0], $serv->taskworker, $worker_id);
-		}
+		triggerEventHandle('WorkerStart', 0, [$serv->taskworker, $worker_id]);
 	}
 	/**
 	 * 普通事件：进程出错
