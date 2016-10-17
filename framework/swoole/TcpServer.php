@@ -25,7 +25,7 @@ class TcpServer {
 		}
 		$info = $server->connection_info($fd);
 		$port = $info['server_port'];
-		Server::triggerEventHandle('Receive', [$server, $fd, $from_id, $data]);
+		Server::triggerEventHandle('Receive', $port, [$server, $fd, $from_id, $data]);
 		if (Sy::$debug && function_exists('xdebug_stop_trace')) {
 			xdebug_stop_trace();
 		}
@@ -33,11 +33,11 @@ class TcpServer {
 	public static function eventConnect($server, int $fd, int $from_id) {
 		$info = $server->connection_info($fd);
 		$port = $info['server_port'];
-		Server::triggerEventHandle('Connect', [$server, $fd, $from_id]);
+		Server::triggerEventHandle('Connect', $port, [$server, $fd, $from_id]);
 	}
 	public static function eventClose($server, int $fd, int $from_id) {
 		$info = $server->connection_info($fd);
 		$port = $info['server_port'];
-		Server::triggerEventHandle('Close', [$server, $fd, $from_id]);
+		Server::triggerEventHandle('Close', $port, [$server, $fd, $from_id]);
 	}
 }
