@@ -33,6 +33,10 @@ class UdpServer {
 		}
 	}
 	public static function eventPacket($server, string $data, array $client_info) {
-		
+		$info = $server->connection_info($fd);
+		$port = $info['server_port'];
+		if (isset(Server::$eventHandle['Packet'][$port]) && is_callable(Server::$eventHandle['Packet'][$port])) {
+			call_user_func(Server::$eventHandle['Packet'][$port], $data, $client_info);
+		}
 	}
 }

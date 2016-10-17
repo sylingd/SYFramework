@@ -33,9 +33,17 @@ class TcpServer {
 		}
 	}
 	public static function eventConnect($server, int $fd, int $from_id) {
-		
+		$info = $server->connection_info($fd);
+		$port = $info['server_port'];
+		if (isset(Server::$eventHandle['Connect'][$port]) && is_callable(Server::$eventHandle['Connect'][$port])) {
+			call_user_func(Server::$eventHandle['Connect'][$port], $serv, $fd, $from_id);
+		}
 	}
 	public static function eventClose($server, int $fd, int $from_id) {
-		
+		$info = $server->connection_info($fd);
+		$port = $info['server_port'];
+		if (isset(Server::$eventHandle['Close'][$port]) && is_callable(Server::$eventHandle['Close'][$port])) {
+			call_user_func(Server::$eventHandle['Close'][$port], $serv, $fd, $from_id);
+		}
 	}
 }
