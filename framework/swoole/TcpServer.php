@@ -23,6 +23,10 @@ class TcpServer {
 		if (Sy::$debug && function_exists('xdebug_start_trace')) {
 			xdebug_start_trace();
 		}
+		if ($data === 'heartbeat') {
+			//心跳包不触发任何事件
+			return;
+		}
 		$info = $server->connection_info($fd);
 		$port = $info['server_port'];
 		Server::triggerEventHandle('Receive', $port, [$server, $fd, $from_id, $data]);
