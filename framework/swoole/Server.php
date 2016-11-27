@@ -63,7 +63,7 @@ class Server {
 	 * @return int
 	 */
 	public static function getPort($name) {
-		return Sy::$app['swoole'][$name]['port'];
+		return Sy::$app->get('swoole.' . $name . '.port');
 	}
 	/**
 	 * 添加服务（也就是一个端口监听）
@@ -74,7 +74,7 @@ class Server {
 	 */
 	public static function addListener(string $type, $config) {
 		if (is_string($config)) {
-			$config = Sy::$app['swoole'][$config];
+			$config = Sy::$app->get('swoole.' . $config);
 		}
 		if (!isset($config['port'])) {
 			throw new SYException('Invalid config', '10062');
@@ -86,11 +86,11 @@ class Server {
 				$httpConfig['response_header'] = [];
 			}
 			if (!isset($httpConfig['response_header']['Content_Type'])) {
-				$httpConfig['response_header']['Content_Type'] = 'application/json; charset=' . Sy::$app['charset'];
+				$httpConfig['response_header']['Content_Type'] = 'application/json; charset=' . Sy::$app->get('charset');
 			}
 			Sy::$swServer->set($httpConfig);
 			$tcpConfig = $config['tcp']['advanced'];
-			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
+			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app->get('swoole.ip');
 			$tcpPort = $config['tcp']['port'];
 			Sy::$swService[$tcpPort] = Sy::$swServer->listen($tcpIp, $config['tcp']['port'], \SWOOLE_TCP);
 			Sy::$swService[$tcpPort]->set($tcpConfig);
@@ -101,7 +101,7 @@ class Server {
 				Sy::$swServerInited = TRUE;
 			}
 		} elseif ('TCP' === $type) {
-			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
+			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app->get('swoole.ip');
 			$tcpPort = $config['port'];
 			Sy::$swService[$tcpPort] = Sy::$swServer->listen($tcpIp, $tcpPort, \SWOOLE_TCP);
 			if (isset($config['advanced'])) {
@@ -111,7 +111,7 @@ class Server {
 			Sy::$swService[$tcpPort]->on('Connect', ['\sy\swoole\TcpServer', 'eventConnect']);
 			Sy::$swService[$tcpPort]->on('Close', ['\sy\swoole\TcpServer', 'eventClose']);
 		} elseif ('UDP' === $type) {
-			$udpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
+			$udpIp = isset($config['ip']) ? $config['ip'] : Sy::$app->get('swoole.ip');
 			$udpPort = $config['port'];
 			Sy::$swService[$udpPort] = Sy::$swServer->listen($udpIp, $udpPort, \SWOOLE_UDP);
 			if (isset($config['advanced'])) {
@@ -120,7 +120,7 @@ class Server {
 			Sy::$swService[$udpPort]->on('Receive', ['\sy\swoole\UdpServer', 'eventReceive']);
 			Sy::$swService[$udpPort]->on('Packet', ['\sy\swoole\UdpServer', 'eventPacket']);
 		}/* elseif ('WS' === $type) {
-			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app['swoole']['ip'];
+			$tcpIp = isset($config['ip']) ? $config['ip'] : Sy::$app->get('swoole.ip');
 			$tcpPort = $config['port'];
 			Sy::$swService[$tcpPort] = Sy::$swServer->addListener($tcpIp, $tcpPort, \SWOOLE_TCP);
 			Sy::$swService[$tcpPort]->on('Receive', ['\sy\swoole\WsServer', 'eventReceive']);
@@ -150,12 +150,13 @@ class Server {
 	 */
 	public static function start() {
 		if (!Sy::$swServerInited) {
-			$config = Sy::$app['swoole']['http']['advanced'];
-			if (Sy::$app['swoole']['http']['ssl']['enable']) {
-				$config['ssl_cert_file'] = Sy::$app['swoole']['http']['ssl']['cert'];
-				$config['ssl_key_file'] = Sy::$app['swoole']['http']['ssl']['key'];
+			$config = Sy::$app->get('swoole.http.advanced');
+			$ssl = Sy::$app->get('swoole.http.ssl');
+			if ($ssl['enable']) {
+				$config['ssl_cert_file'] = $ssl['cert'];
+				$config['ssl_key_file'] = $ssl['key'];
 			}
-			if (Sy::$app['swoole']['http']['ssl']['http2']) {
+			if (Sy::$app->get('swoole.http.http2')) {
 				if (!isset($config['ssl_cert_file'])) {
 					throw new SYException('Certfile not found', '10006');
 				}
@@ -165,7 +166,7 @@ class Server {
 				$config['response_header'] = [];
 			}
 			if (!isset($config['response_header']['Content_Type'])) {
-				$config['response_header']['Content_Type'] = 'application/html; charset=' . Sy::$app['charset'];
+				$config['response_header']['Content_Type'] = 'application/html; charset=' . Sy::$app->get('charset');
 			}
 			Sy::$swServer->set($config);
 			Sy::$swServer->on('Request', ['\sy\swoole\HttpServer', 'eventRequest']);
@@ -183,10 +184,10 @@ class Server {
 	 * @param object $serv
 	 */
 	public static function eventStart($serv) {
-		swoole_set_process_name('SY ' . Sy::$app['name'] . ' master');
-		$pidPath = rtrim(Sy::$app['swoole']['pidPath'], '/') . '/';
-		file_put_contents($pidPath . Sy::$app['name'] . '_master.pid', $serv->master_pid);
-		file_put_contents($pidPath . Sy::$app['name'] . '_manager.pid', $serv->manager_pid);
+		swoole_set_process_name('SY ' . Sy::$app->get('=.ip') . ' master');
+		$pidPath = rtrim(Sy::$app->get('swoole.pidPath'), '/') . '/';
+		file_put_contents($pidPath . Sy::$app->get('name') . '_master.pid', $serv->master_pid);
+		file_put_contents($pidPath . Sy::$app->get('name') . '_manager.pid', $serv->manager_pid);
 	}
 	/**
 	 * 普通事件：启动Manager进程
@@ -194,7 +195,7 @@ class Server {
 	 * @param object $serv
 	 */
 	public static function eventManagerStart($serv) {
-		swoole_set_process_name('SY ' . Sy::$app['name'] . ' manager');
+		swoole_set_process_name('SY ' . Sy::$app->get('name') . ' manager');
 	}
 	/**
 	 * 普通事件：启动一个进程
@@ -205,9 +206,9 @@ class Server {
 	public static function eventWorkerStart($serv, $worker_id) {
 		//根据类型，设置不同的进程名
 		if ($serv->taskworker) {
-			swoole_set_process_name(Sy::$app['name'] . ' task ' . $worker_id . ' (SY)');
+			swoole_set_process_name(Sy::$app->get('name') . ' task ' . $worker_id . ' (SY)');
 		} else {
-			swoole_set_process_name(Sy::$app['name'] . ' worker ' . $worker_id . ' (SY)');
+			swoole_set_process_name(Sy::$app->get('name') . ' worker ' . $worker_id . ' (SY)');
 		}
 		//回调
 		static::triggerEventHandle('WorkerStart', 0, [$serv->taskworker, $worker_id]);
