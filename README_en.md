@@ -42,6 +42,32 @@ Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0
 
 # ChangeLog
 
+**Notice: Beta  version is not stable, Please do not using in product environment.**
+
+**Notice:  The release notes only come with the stable version**
+
+## 2.0.7 Beta
+
+* Add. Support for Yaconf and QConf
+
+* Add. Auto switch on xdebug trace while debug mode
+
+* Add. More callback method for TCP&UDP
+
+* Add. A simple heartbeat checker
+
+* Fix. YCookie not work on Swoole
+
+* Fix. CSRF protection not work on Swoole
+
+* Fix. URL parser not work well in some special circumstances
+
+* Fix. Known syntax error
+
+* Mod. Swoole Application will not auto enable ob
+
+* Mod. Sy::createUrl will not return the full URL which is include domain, protocol and port
+
 ## 2.0.6 Beta
 
 * Adjustment frame
@@ -60,15 +86,9 @@ Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0
 
 * Fix.A security risk
 
-**WebSocket support will be added in the next 2 versions**
-
-**This version is not stable, Please do not using in product environment. The release notes will come with the stable version**
-
 ## 2.0.5 Beta
 
 * Add.DoraRPC
-
-**This version is not stable, Please do not using in product environment. The release notes will come with the stable version**
 
 ## 2.0.4 Beta
 
@@ -86,8 +106,6 @@ Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0
 
 * Del.Some old features
 
-**This version is not stable, Please do not using in product environment. The release notes will come with the stable version**
-
 ## 2.0.3 Beta
 
 * Add.Run ConsoleApp with param way
@@ -97,8 +115,6 @@ Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0
 * Fix.Fail to set Coookie when the expire time is not default(YCookie)
 
 * Fix.Every request are no longer regenerate csrf_token
-
-**This version is not stable, Please do not using in product environment. The release notes will come with the stable version**
 
 ## 2.0.2 Beta
 
@@ -122,19 +138,13 @@ Open source under [Apache License 2.0](http://opensource.org/licenses/Apache-2.0
 
 * Del.Alias route
 
-**This version is not stable, Please do not using in product environment. The release notes will come with the stable version**
-
 ## 2.0.1 Beta
 
 * Fix.部分header/Cookie相关函数在HttpServer下的工作
 
-**此版本暂不稳定，不推荐用于生产环境。更新指南将于正式版发布时一同发布**
-
 ## 2.0 Beta
 
 * Add.HttpServer支持（通过swoole实现）
-
-**此版本暂不稳定，不推荐用于生产环境。更新指南将于正式版发布时一同发布**
 
 ## 1.5
 
