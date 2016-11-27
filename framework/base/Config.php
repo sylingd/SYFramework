@@ -29,6 +29,7 @@ final class Config {
 	//替换掉已有的配置，最高优先级
 	protected $replaceConf = [];
 	public function __construct($conf, $appName = NULL) {
+		$this->appName = $appName;
 		if (is_array($conf)) {
 			$this->type = self::FILE;
 			$this->conf = $conf;
@@ -66,11 +67,17 @@ final class Config {
 		return NULL;
 	}
 	public function getByYaconf($key) {
-		return Yaconf::has($this->appName . '.' . $key) ? Yaconf::get($this->appName . '.' . $key) : NULL;
+		if (!empty($this->appName)) {
+			$key = $this->appName . '.' . $key;
+		}
+		return Yaconf::has($key) ? Yaconf::get($key) : NULL;
 	}
 	public function getByQconf($key) {
 		$key = str_replace('.', '/', $key);
-		return getConf('/' . $this->appName . '/' . $key);
+		if (!empty($this->appName)) {
+			$key = '/' . $this->appName . '/' . $key;
+		}
+		return getConf($key);
 	}
 	public function getByConf($key) {
 		$key = explode('.', $key);
