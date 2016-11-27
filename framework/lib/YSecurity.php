@@ -92,7 +92,7 @@ class YSecurity {
 	 */
 	public static function securityCode($string, $operation = 'ENCODE', $key = '', $expire = 0) {
 		$ckey_length = 4;
-		$key = md5($key ? $key : Sy::$app['cookieKey']);
+		$key = md5($key ? $key : Sy::$app->get('cookieKey'));
 		$keya = md5(substr($key, 0, 16));
 		$keyb = md5(substr($key, 16, 16));
 		$keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length) : substr(md5(microtime()), -$ckey_length)) : '';
@@ -141,7 +141,7 @@ class YSecurity {
 	 */
 	public static function password($password, $key = '') {
 		if (empty($key)) {
-			$key = Sy::$app['securityKey'];
+			$key = Sy::$app->get('securityKey');
 		}
 		return hash_hmac('md5', $password, $key);
 	}

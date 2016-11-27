@@ -26,8 +26,8 @@ class YSqlite extends YPdo {
 	 * @access protected
 	 */
 	protected function autoConnect() {
-		if (isset(Sy::$app['sqlite'])) {
-			$this->setParam(Sy::$app['sqlite']);
+		if (Sy::$app->has('sqlite')) {
+			$this->setParam(Sy::$app->get('sqlite'));
 		}
 	}
 	/**

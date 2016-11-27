@@ -28,18 +28,19 @@ final class HttpServer {
 		Sy::$httpRequest[$requestId] = $req;
 		Sy::$httpResponse[$requestId] = $response;
 		//是否启用CSRF验证
-		if (isset(Sy::$app['csrf']) && Sy::$app['csrf']) {
+		if (Sy::$app->get('csrf')) {
 			\sy\lib\YSecurity::csrfSetCookie($requestId);
 		}
 		//根据设置，分配重写规则
 		if (Sy::$debug && function_exists('xdebug_start_trace')) {
 			xdebug_start_trace();
 		}
-		if (Sy::$app['rewrite']) {
+		if (Sy::$app->has('rewrite')) {
 			//自定义规则
-			if (is_array(Sy::$app['rewriteParseRule'])) {
+			if (is_array(Sy::$app->get('rewriteParseRule'))) {
 				$matches = NULL;
-				foreach (Sy::$app['rewriteParseRule'] as $oneRule) {
+				$parseRule = Sy::$app->get('rewriteParseRule');
+				foreach ($parseRule as $oneRule) {
 					if (preg_match($oneRule[0], Sy::$httpRequest[$requestId]->server['request_uri'], $matches)) {
 						$route = $oneRule[1];
 						$paramName = array_slice($oneRule, 2);

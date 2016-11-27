@@ -26,8 +26,8 @@ class YPg extends YPdo {
 	 * @access public
 	 */
 	public function autoConnect() {
-		if (isset(Sy::$app['pg'])) {
-			$this->setParam(Sy::$app['pg']);
+		if (Sy::$app->has('pg')) {
+			$this->setParam(Sy::$app->get('pg'));
 		}
 	}
 	/**

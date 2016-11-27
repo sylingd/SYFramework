@@ -26,8 +26,8 @@ class YMysql extends YPdo {
 	 * @access public
 	 */
 	public function autoConnect() {
-		if (isset(Sy::$app['mysql'])) {
-			$this->setParam(Sy::$app['mysql']);
+		if (Sy::$app->has('mysql')) {
+			$this->setParam(Sy::$app->get('mysql'));
 		}
 	}
 	/**
@@ -41,7 +41,7 @@ class YMysql extends YPdo {
 		if (isset($config['name'])) {
 			$dsn .= 'dbname=' . $config['name'] . ';';
 		}
-		$dsn .= 'charset=' . strtolower(str_replace('-', '', Sy::$app['charset']));
+		$dsn .= 'charset=' . strtolower(str_replace('-', '', Sy::$app->get('charset')));
 		try {
 			$this->link[$id] = new PDO($dsn, $config['user'], $config['password']);
 			$this->link[$id]->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);

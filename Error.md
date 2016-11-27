@@ -2,11 +2,7 @@
 
 * 10000 未知错误
 
-* 10001 初始化Sy::createApplication时，未传入$config App.php
-
-* 10002 初始化Sy::createApplication时，传入文件路径，但文件不存在 App.php
-
-* 10003 初始化Sy::createApplication时，传入了一个不能识别的配置 App.php
+* 10001 初始化Sy::createApplication时，传入了一个不能识别的配置 App.php
 
 * 10005 使用Sy::createConsoleApplication，但环境不是CLI模式 BaseSY.php
 

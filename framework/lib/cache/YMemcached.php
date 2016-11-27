@@ -29,8 +29,8 @@ class YMemcached {
 		if (!class_exists('Memcached', FALSE)) {
 			throw new SYException('Class "Memcached" is required', '10025');
 		}
-		if (isset(Sy::$app['memcached'])) {
-			$this->setParam(Sy::$app['memcached']);
+		if (Sy::$app->has('memcached')) {
+			$this->setParam(Sy::$app->get('memcached'));
 		}
 	}
 	/**

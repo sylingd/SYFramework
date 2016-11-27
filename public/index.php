@@ -15,4 +15,4 @@ require (__DIR__ . '/../framework/sy.php');
 
 $config = __DIR__ . '/../application/config.php';
 
-Sy::createApplication(__DIR__, $config);
+Sy::createApplication(__DIR__, new \sy\base\Config($config));

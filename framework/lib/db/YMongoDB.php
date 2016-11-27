@@ -68,8 +68,8 @@ class YMongoDB {
 			throw new SYException('Extension "mongodb" is required', '10026');
 		}
 		$this->setCurrent($current);
-		if (isset(Sy::$app['mongo']) && $current === 'default') {
-			$this->setParam(Sy::$app['mongo']);
+		if (Sy::$app->has('mongo') && $current === 'default') {
+			$this->setParam(Sy::$app->get('mongo'));
 		}
 	}
 	/**

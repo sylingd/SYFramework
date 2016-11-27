@@ -80,7 +80,7 @@ class i18n {
 	}
 	/**
 	 * 获取默认语言
-	 * 优先级：浏览器发送的Accept-Language > Sy::$app[language]
+	 * 优先级：浏览器发送的Accept-Language >  Sy::$app->get('language');
 	 * @return string
 	 */
 	public static function getDefaultLanguage() {
@@ -89,8 +89,8 @@ class i18n {
 		$ie = ['zh-Hans-CN' => 'zh-CN', 'zh-Hans' => 'zh'];
 		if (count($browser) !== 0) {
 			$language = $browser[0][0];
-		} elseif (isset(Sy::$app['language'])) {
-			$language = Sy::$app['language'];
+		} elseif (Sy::$app->has('language')) {
+			$language = Sy::$app->get('language');
 		} else {
 			$language = 'en-US';
 		}
@@ -120,8 +120,8 @@ class i18n {
 				}
 			}
 		}
-		if (isset(Sy::$app['language'])) {
-			$language = Sy::$app['language'];
+		if (Sy::$app->has('language')) {
+			$language =  Sy::$app->get('language');
 			if (isset($ie[$language])) {
 				$language = $ie[$language];
 			}

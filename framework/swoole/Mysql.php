@@ -44,8 +44,8 @@ class Mysql {
 		if (version_compare(Server::getVersion(), '1.8.6') < 0) {
 			throw new SYException('Swoole needs 1.8.6 or higher', '10027');
 		}
-		if (isset(Sy::$app['mysql']) && $this->current === 'default') {
-			$this->setParam(Sy::$app['mysql']);
+		if (Sy::$app->has('mysql') && $this->current === 'default') {
+			$this->setParam(Sy::$app->get('mysql'));
 		}
 	}
 	/**
@@ -77,7 +77,7 @@ class Mysql {
 			if ($r === false) {
 				throw new SYDException(YHtml::encode($db->connect_error), 'MySQL', 'NULL');
 			}
-			$sql = 'set charset = ' . strtolower(str_replace('-', '', Sy::$app['charset']));
+			$sql = 'set charset = ' . strtolower(str_replace('-', '', Sy::$app->get('charset')));
 			$db->query($sql, function(swoole_mysql $db, $r) {
 			});
 		});

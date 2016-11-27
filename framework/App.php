@@ -30,39 +30,31 @@ trait App {
 	/**
 	 * 初始化：创建Application（通用）
 	 * @access protected
-	 * @param mixed $config设置
+	 * @param object $config设置
 	 */
-	protected static function createApplicationInit($siteDir, $config = NULL) {
+	protected static function createApplicationInit($siteDir, $config) {
 		static::$frameworkDir =  str_replace('\\', '/', __DIR__ ) . '/';
 		//PHP运行模式
 		if (PHP_SAPI === 'cli') {
 			static::$isCli = TRUE;
 		}
-		if ($config === NULL) {
-			throw new SYException('Configuration is required', '10001');
-		} elseif (is_string($config)) {
-			if (is_file($config)) {
-				$config = require($config);
-			} else {
-				throw new SYException('Config file ' . $config . ' not exists', '10002');
-			}
-		} elseif (!is_array($config)) {
-			throw new SYException('Config can not be recognised', '10003');
+		if (!is_obecjt($config) || !($config instanceof \sy\base\Config)) {
+			throw new SYException('Config can not be recognised', '10001');
 		}
 		//路径相关
 		static::$siteDir = str_replace('\\', '/', $siteDir) . '/';
 		static::$frameworkDir = str_replace('\\', '/', __DIR__) . '/';
 		//基本信息
-		$config['cookie']['path'] = str_replace('@app/', $dir, $config['cookie']['path']);
+		$config->replace('cookie.path', str_replace('@app/', $dir, $config->get('cookie.path')));
 		static::$app = $config;
 		//应用的绝对路径
 		static::$appDir = str_replace('\\', '/', $config['dir']) . '/';
-		if (isset($config['debug'])) {
-			static::$debug = $config['debug'];
+		if ($config->get('debug')) {
+			static::$debug = $config->get('debug');
 		}
 		//编码相关
 		if (function_exists('mb_internal_encoding')) {
-			mb_internal_encoding($config['charset']);
+			mb_internal_encoding($config->get('charset'));
 		}
 		//加载App的基本函数
 		if (is_file(static::$appDir . 'common.php')) {
@@ -72,9 +64,9 @@ trait App {
 	/**
 	 * 初始化：创建WebApplication
 	 * @access public
-	 * @param mixed $config设置
+	 * @param object $config设置
 	 */
-	public static function createApplication($siteDir, $config = NULL) {
+	public static function createApplication($siteDir, $config) {
 		static::createApplicationInit($siteDir, $config);
 		//网站目录
 		$now = $_SERVER['PHP_SELF'];
@@ -85,13 +77,20 @@ trait App {
 		if (isset(static::$app['csrf']) && static::$app['csrf']) {
 			\sy\lib\YSecurity::csrfSetCookie();
 		}
+		//调试模式
+		if (static::$debug && function_exists('xdebug_start_trace')) {
+			xdebug_start_trace();
+		}
 		//开始路由分发
 		static::router();
+		if (static::$debug && function_exists('xdebug_stop_trace')) {
+			xdebug_stop_trace();
+		}
 	}
 	/**
 	 * 初始化：创建ConsoleApplication
 	 * @access public
-	 * @param mixed $config设置
+	 * @param object $config设置
 	 */
 	public static function createConsoleApplication($siteDir, $config = NULL) {
 		static::createApplicationInit($siteDir, $config);
@@ -119,7 +118,7 @@ trait App {
 	 * 建议使用Nginx等软件作为前端
 	 * 
 	 * @access public
-	 * @param mixed $config设置
+	 * @param object $config设置
 	 */
 	public static function createSwooleApplication($siteDir, $config = NULL) {
 		//swoole检查

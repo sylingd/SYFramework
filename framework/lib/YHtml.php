@@ -22,7 +22,7 @@ class YHtml {
 	 */
 	public static function meta($set = NULL) {
 		$set = (array )$set;
-		$out = ['http-equiv|content-type' => 'text/html; charset=' . Sy::$app['charset'], 'http-equiv|X-UA-Compatible' => 'IE=edge'];
+		$out = ['http-equiv|content-type' => 'text/html; charset=' . Sy::$app->get('charset'), 'http-equiv|X-UA-Compatible' => 'IE=edge'];
 		$out = array_merge($out, $set);
 		$r = '';
 		foreach ($out as $k => $v) {
@@ -41,7 +41,7 @@ class YHtml {
 	 * @return string
 	 */
 	public static function encode($str) {
-		return htmlspecialchars($str, ENT_QUOTES, Sy::$app['charset']);
+		return htmlspecialchars($str, ENT_QUOTES, Sy::$app->get('charset'));
 	}
 	/**
 	 * 经过封装的htmlspecialchars_decode
@@ -50,7 +50,7 @@ class YHtml {
 	 * @return string
 	 */
 	public static function decode($str) {
-		return htmlspecialchars_decode($str, ENT_QUOTES, Sy::$app['charset']);
+		return htmlspecialchars_decode($str, ENT_QUOTES, Sy::$app->get('charset'));
 	}
 	/**
 	 * 获取绝对路径

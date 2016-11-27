@@ -78,7 +78,7 @@ return [
 				'port' => '9501'
 			]
 		],
-		'pidPath' => '/tmp',
+		'pidPath' => '/var/run',
 		'http' => [
 			'advanced' => [ //关于Swoole的高级选项，一般没有特别说明的，不需要改动
 				'daemonize' => TRUE,
@@ -98,7 +98,8 @@ return [
 				'backlog' => 3000,
 				'log_file' => '/tmp/sw_server.log',//swoole系统日志，任何代码内echo都会在这里输出
 				'task_tmpdir' => '/tmp/swtasktmp/',//task 投递内容过长时，会临时保存在这里，请将tmp设置使用内存
-				'pid_path' => '/tmp/'
+				'pid_path' => '/var/run',
+				'http_parse_post' => TRUE
 			],
 			'ssl' => [
 				'enable' => FALSE, //HTTPS开关

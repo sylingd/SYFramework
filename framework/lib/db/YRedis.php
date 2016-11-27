@@ -52,8 +52,8 @@ class YRedis {
 			throw new SYException('Class "Redis" is required', '10022');
 		}
 		$this->setCurrent($current);
-		if (isset(Sy::$app['redis']) && $current === 'default') {
-			$this->setParam(Sy::$app['redis']);
+		if (Sy::$app->has('redis') && $current === 'default') {
+			$this->setParam(Sy::$app->get('redis'));
 		}
 	}
 	/**

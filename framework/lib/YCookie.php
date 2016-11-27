@@ -30,10 +30,10 @@ class YCookie {
 	 * @param string $param[requestId] 请求ID，仅当运行于HttpServer模式时需要
 	 */
 	public static function set($param) {
-		$name = Sy::$app['cookie']['prefix'] . $param['name'];
+		$name = Sy::$app->get('cookie.prefix') . $param['name'];
 		//处理过期时间
 		if (!isset($param['expire'])) {
-			$expire = time() + Sy::$app['cookie']['expire'];
+			$expire = time() +Sy::$app->get('cookie.expire');
 		} elseif ($param['expire'] === -1) {
 			$expire = time() - 3600;
 		} elseif ($param['expire'] === 0) {
@@ -42,8 +42,8 @@ class YCookie {
 			$expire = time() + $param['expire'];
 		}
 		//其他参数的处理
-		!isset($param['path']) && $param['path'] = Sy::$app['cookie']['path'];
-		!isset($param['domain']) && $param['domain'] = Sy::$app['cookie']['domain'];
+		!isset($param['path']) && $param['path'] = Sy::$app->get('cookie.path');
+		!isset($param['domain']) && $param['domain'] = Sy::$app->get('cookie.domain');
 		!isset($param['httponly']) && $param['httponly'] = FALSE;
 		//HTTPS
 		if (!isset($param['https'])) {
@@ -68,7 +68,7 @@ class YCookie {
 	 * @return string
 	 */
 	public static function get($name, $requestId = NULL) {
-		$name = Sy::$app['cookie']['prefix'] . $name;
+		$name = Sy::$app->get('cookie.prefix') . $name;
 		if ($requestId === NULL) {
 			return isset($_COOKIE[$name]) ? $_COOKIE[$name] : NULL;
 		} else {
@@ -83,7 +83,7 @@ class YCookie {
 	 * @return string
 	 */
 	public static function exists($name, $requestId = NULL) {
-		$name = Sy::$app['cookie']['prefix'] . $name;
+		$name =Sy::$app->get('cookie.prefix') . $name;
 		if ($requestId === NULL) {
 			return isset($_COOKIE[$name]);
 		} else {
@@ -99,7 +99,7 @@ class YCookie {
 	 */
 	public static function sSet($type, $cookie) {
 		if ($type === 1) {
-			$sign = md5($cookie['value'] . Sy::$app['cookieKey']);
+			$sign = md5($cookie['value'] . Sy::$app->get('cookieKey'));
 			self::set($cookie);
 			$cookie['name'] .= '_sign';
 			$cookie['value'] = $sign;
@@ -120,7 +120,7 @@ class YCookie {
 			return NULL;
 		}
 		if ($type === 1 || ($type === 0 && self::exists($name . '_sign'))) {
-			$sign = md5($v . Sy::$app['cookieKey']);
+			$sign = md5($v . Sy::$app->get('cookieKey'));
 			if ($sign === self::get($name . '_sign')) {
 				return $v;
 			} else {

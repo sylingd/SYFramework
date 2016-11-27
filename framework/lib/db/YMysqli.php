@@ -40,8 +40,8 @@ class YMysqli {
 		if (!class_exists('mysqli', FALSE)) {
 			throw new SYException('Class "MySQLi" is required', '10020');
 		}
-		if (isset(Sy::$app['mysql']) && $this->current === 'default') {
-			$this->setParam(Sy::$app['mysql']);
+		if (Sy::$app->has('mysql') && $this->current === 'default') {
+			$this->setParam(Sy::$app->get('mysql'));
 		}
 	}
 	/**
@@ -66,7 +66,7 @@ class YMysqli {
 		if ($this->link[$id]->connect_error) {
 			throw new SYDException(YHtml::encode($this->link[$id]->connect_error), $this->dbtype, 'NULL');
 		}
-		$this->link[$id]->set_charset(strtolower(str_replace('-', '', Sy::$app['charset'])));
+		$this->link[$id]->set_charset(strtolower(str_replace('-', '', Sy::$app->get('charset'))));
 	}
 	/**
 	 * 处理Key
