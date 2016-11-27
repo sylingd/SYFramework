@@ -54,6 +54,24 @@ trait Stratified {
 		return $className::i();
 	}
 	/**
+	 * 获取Model操作类
+	 * @access public
+	 * @param string $name
+	 * @return object
+	 */
+	public static function model($name) {
+		//名称
+		$className = '\\' . static::$app['appNamespace'] . '\\models\\' . ucfirst($name);
+		if (!class_exists($className)) {
+			$fileName = static::$appDir . 'models/' . lcfirst($name) . '.php';
+			if (!is_file($fileName)) {
+				throw new SYException('Model  ' . $fileName . ' not exists', '10010');
+			}
+			require ($fileName);
+		}
+		return $className::i();
+	}
+	/**
 	 * 获取Controller操作类
 	 * @access public
 	 * @param string $controllerName
@@ -66,7 +84,7 @@ trait Stratified {
 		if (!in_array($controllerName, static::$app['controller'], TRUE)) {
 			return NULL;
 		}
-		//多级路由时，引入顶级路由（如果存在）
+		//多级路由时，引入顶级类（如果存在）
 		if ($isPath !== FALSE) {
 			$topController = substr($controllerName, 0, $isPath);
 			$topControllerFile = static::$appDir . 'controllers/' . $topController . '/_base.php';
