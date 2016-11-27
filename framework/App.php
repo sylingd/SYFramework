@@ -74,7 +74,7 @@ trait App {
 		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
 		static::$sitePath = $dir;
 		//是否启用CSRF验证
-		if (isset(static::$app['csrf']) && static::$app['csrf']) {
+		if (static::$app->get('csrf')) {
 			\sy\lib\YSecurity::csrfSetCookie();
 		}
 		//调试模式
@@ -103,10 +103,10 @@ trait App {
 		$opt = getopt(static::$routeParam . ':');
 		//以参数方式运行
 		$run = $opt[static::$routeParam];
-		if (!empty($run) && isset(static::$app['console'][$run])) {
-			list($fileName, $callback) = static::$app['console'][$run];
+		if (!empty($run) && static::$app->has('console.' . $run)) {
+			list($fileName, $callback) = static::$app->get('console.' . $run);
 		} else {
-			list($fileName, $callback) = static::$app['console']['default'];
+			list($fileName, $callback) = static::$app->get('console.default');
 		}
 		require(static::$appDir . '/workers/' . $fileName);
 		if (is_callable($callback)) {
@@ -135,7 +135,7 @@ trait App {
 		static::$httpRequest = [];
 		static::$httpResponse = [];
 		//初始化Swoole
-		static::$swServer = new \swoole_http_server(static::$app['swoole']['ip'], static::$app['swoole']['port']);
+		static::$swServer = new \swoole_http_server(static::$app->get('swoole.ip'), static::$app->get('swoole.port'));
 		//基本事件
 		static::$swServer->on('Start', ['\sy\swoole\Server', 'eventStart']);
 		static::$swServer->on('ManagerStart', ['\sy\swoole\Server', 'eventManagerStart']);

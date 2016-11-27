@@ -77,7 +77,7 @@ class BaseSY {
 			$r = trim($_GET[static::$routeParam]);
 		}
 		if (empty($r)) {
-			$r = static::$app['defaultRouter'];
+			$r = static::$app->get('defaultRouter');
 		}
 		if (strpos($r, '.') !== FALSE || strpos($r, '/') === FALSE) {
 			if (NULL === $requestId) {
@@ -129,11 +129,11 @@ class BaseSY {
 		//判断是否为框架的class
 		if (strpos($className, 'sy\\') === FALSE) {
 			//是否为App自有class
-			if (isset(static::$app['class'][$className])) {
-				$fileName = str_replace('@app/', static::$appDir, static::$app['class'][$className]);
-			} elseif (is_string(static::$app['appNamespace']) && strpos($className, static::$app['appNamespace'] . '\\') === 0) {
+			if (static::$app->has('class.' . $className)) {
+				$fileName = str_replace('@app/', static::$appDir, static::$app->get('class.' . $className));
+			} elseif (is_string(static::$app->get('appNamespace')) && strpos($className, static::$app->get('appNamespace') . '\\') === 0) {
 				//namespace匹配
-				$fileName = substr($className, strlen(static::$app['appNamespace']) + 1) . '.php';
+				$fileName = substr($className, strlen(static::$app->get('appNamespace')) + 1) . '.php';
 				$fileName = static::$appDir . str_replace('\\', '/', $fileName);
 			} else {
 				return;
@@ -176,8 +176,8 @@ class BaseSY {
 		$controllerName = substr($router, 0, $last);
 		$actionName = substr($router, $last + 1);
 		//是否启用了Rewrite
-		if (static::$app['rewrite'] && isset(static::$app['rewriteRule'][$router])) {
-			$url .= str_replace('@root/', static::$sitePath, static::$app['rewriteRule'][$router]);
+		if (static::$app->get('rewrite') && static::$app->has('rewriteRule.' . $router)) {
+			$url .= str_replace('@root/', static::$sitePath, static::$app->get('rewriteRule.' . $router));
 			foreach ($param as $k => $v) {
 				$k_tpl = '{{' . $k . '}}';
 				if (strpos($url, $k_tpl) === FALSE) {
@@ -187,11 +187,11 @@ class BaseSY {
 				//去掉此参数，防止后面http_build_query重复
 				unset($param[$k]);
 			}
-		} elseif (static::$app['rewrite']) {
-			if ($ext === NULL && empty(static::$app['rewriteExt'])) {
+		} elseif (static::$app->get('rewrite')) {
+			if ($ext === NULL && empty(static::$app->get('rewriteExt'))) {
 				$url .= static::$sitePath . $controllerName . '/' . $actionName;
 			} else {
-				$url .= static::$sitePath . $controllerName . '/' . $actionName . '.' . ($ext === NULL ? static::$app['rewriteExt'] : $ext);
+				$url .= static::$sitePath . $controllerName . '/' . $actionName . '.' . ($ext === NULL ? static::$app->get('rewriteExt') : $ext);
 			}
 		} else {
 			$url .= static::$sitePath . 'index.php?r=' . $controllerName . '/' . $actionName;
@@ -219,7 +219,7 @@ class BaseSY {
 		}
 		$header = $mimeType . ';';
 		if (in_array($type, ['js', 'json', 'atom', 'rss', 'xhtml'], TRUE) || substr($mimeType, 0, 5) === 'text/') {
-			$header .= ' charset=' . static::$app['charset'];
+			$header .= ' charset=' . static::$app->get('charset');
 		}
 		if (NULL === $requestId) {
 			@header('Content-type:' . $header);
@@ -256,7 +256,7 @@ class BaseSY {
 	 */
 	public static function view($__tpl, $_param = NULL) {
 		//是否启用CSRF验证
-		if (static::$app['csrf']) {
+		if (static::$app->get('csrf')) {
 			$_param['_csrf_token'] = \sy\lib\YSecurity::csrfGetHash();
 		}
 		if (is_array($_param)) {

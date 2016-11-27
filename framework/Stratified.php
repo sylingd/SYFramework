@@ -25,7 +25,7 @@ trait Stratified {
 	 */
 	public static function DAO($name) {
 		//名称
-		$className = '\\' . static::$app['appNamespace'] . '\\DAO\\' . ucfirst($name);
+		$className = '\\' . static::$app->get('appNamespace') . '\\DAO\\' . ucfirst($name);
 		if (!class_exists($className)) {
 			$fileName = static::$appDir . 'DAO/' . lcfirst($name) . '.php';
 			if (!is_file($fileName)) {
@@ -43,7 +43,7 @@ trait Stratified {
 	 */
 	public static function service($name) {
 		//名称
-		$className = '\\' . static::$app['appNamespace'] . '\\service\\' . ucfirst($name);
+		$className = '\\' . static::$app->get('appNamespace') . '\\service\\' . ucfirst($name);
 		if (!class_exists($className)) {
 			$fileName = static::$appDir . 'services/' . lcfirst($name) . '.php';
 			if (!is_file($fileName)) {
@@ -61,7 +61,7 @@ trait Stratified {
 	 */
 	public static function model($name) {
 		//名称
-		$className = '\\' . static::$app['appNamespace'] . '\\models\\' . ucfirst($name);
+		$className = '\\' . static::$app->get('appNamespace') . '\\models\\' . ucfirst($name);
 		if (!class_exists($className)) {
 			$fileName = static::$appDir . 'models/' . lcfirst($name) . '.php';
 			if (!is_file($fileName)) {
@@ -99,7 +99,7 @@ trait Stratified {
 		} else {
 			$className = $controllerName;
 		}
-		$className = '\\' . static::$app['appNamespace'] . '\\controller\\' . ucfirst($className);
+		$className = '\\' . static::$app->get('appNamespace') . '\\controller\\' . ucfirst($className);
 		if (!is_file($fileName)) {
 			throw new SYException('Controller ' . $controllerName . ' not exists', '10012');
 		}
