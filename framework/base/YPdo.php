@@ -117,7 +117,8 @@ abstract class YPdo {
 		$prepare_sql = $this->setQuery($sql);
 		$st = $this->link[$id]->prepare($prepare_sql);
 		if ($st === FALSE) {
-			throw new SYDException('Failed to prepare SQL', $this->dbtype, $sql);
+			$e = $this->link[$id]->errorInfo();
+			throw new SYDException(YHtml::encode($e[2]), $this->dbtype, $sql);
 		}
 		if (is_array($data)) {
 			foreach ($data as $k => $v) {
@@ -139,5 +140,21 @@ abstract class YPdo {
 		}
 		$st->setFetchMode(PDO::FETCH_ASSOC);
 		return $st->fetchAll();
+	}
+	/**
+	 * Ping模拟
+	 * @access public
+	 * @return boolean
+	 */
+	public function ping() {
+		$id = $this->current;
+		try{
+			$this->link[$id]->getAttribute(PDO::ATTR_SERVER_INFO);
+		} catch (PDOException $e) {
+			if (strpos($e->getMessage(), 'MySQL server has gone away') !== FALSE) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

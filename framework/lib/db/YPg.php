@@ -43,7 +43,6 @@ class YPg extends YPdo {
 		}
 		try {
 			$this->link[$id] = new PDO($dsn, $config['user'], $config['password']);
-			$this->link[$id]->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
 			$this->result[$id] = [];
 		} catch (PDOException $e) {
 			throw new SYDException(YHtml::encode($e->getMessage), $this->dbtype, $dsn);
