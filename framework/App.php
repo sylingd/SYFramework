@@ -113,34 +113,4 @@ trait App {
 			call_user_func($callback);
 		}
 	}
-	/**
-	 * 初始化：创建SwooleApplication（需要swoole）
-	 * 建议使用Nginx等软件作为前端
-	 * 
-	 * @access public
-	 * @param object $config设置
-	 */
-	public static function createSwooleApplication($siteDir, $config = NULL) {
-		//swoole检查
-		if (!extension_loaded('swoole')) {
-			throw new SYException('Extension "Swoole" is required', '10027');
-		}
-		static::createApplicationInit($siteDir, $config);
-		//网站目录
-		static::$sitePath = '/';
-		if (!static::$isCli) {
-			throw new SYException('Must run at CLI mode', '10005');
-		}
-		//变量初始化
-		static::$httpRequest = [];
-		static::$httpResponse = [];
-		//初始化Swoole
-		static::$swServer = new \swoole_http_server(static::$app->get('swoole.ip'), static::$app->get('swoole.port'));
-		//基本事件
-		static::$swServer->on('Start', ['\sy\swoole\Server', 'eventStart']);
-		static::$swServer->on('ManagerStart', ['\sy\swoole\Server', 'eventManagerStart']);
-		static::$swServer->on('WorkerStart', ['\sy\swoole\Server', 'eventWorkerStart']);
-		static::$swServer->on('WorkerError', ['\sy\swoole\Server', 'eventWorkerError']);
-		static::$swServer->on('Finish', ['\sy\swoole\Server', 'eventFinish']);
-	}
 }

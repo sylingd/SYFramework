@@ -25,35 +25,21 @@ class YSecurity {
 	 * @param boolean $show_error 验证不通过时，是否直接报错
 	 * @return boolean
 	 */
-	public static function csrfVerify($show_error = TRUE, $requestId = NULL) {
+	public static function csrfVerify($show_error = TRUE) {
 		//仅POST需要验证csrf
-		$REQUEST_METHOD = ($requestId === NULL ? $_SERVER['REQUEST_METHOD'] : Sy::$httpRequest[$requestId]->server['request_method']);
-		if (strtoupper($REQUEST_METHOD) !== 'POST') {
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 			static::csrfSetCookie($requestId);
 			return TRUE;
 		}
-		if (NULL !== $requestId) {
-			if (!isset(Sy::$httpRequest[$requestId]->post[static::$csrf_config['tokenName']]) || YCookie::get(static::$csrf_config['cookieName'], $requestId) === NULL || (Sy::$httpRequest[$requestId]->post[static::$csrf_config['tokenName']] !== YCookie::get(static::$csrf_config['cookieName'], $requestId))) {
-				if ($show_error) {
-					Sy::$httpResponse[$requestId]->status(403);
-					Sy::$httpResponse[$requestId]->end();
-					return;
-				} else {
-					return FALSE;
-				}
+		if (!isset($_POST[static::$csrf_config['tokenName']]) || YCookie::get(static::$csrf_config['cookieName']) === NULL || ($_POST[static::$csrf_config['tokenName']] !== YCookie::get(static::$csrf_config['cookieName']))) {
+			if ($show_error) {
+				header(Sy::getHttpStatus('403'));
+				exit;
+			} else {
+				return FALSE;
 			}
-			unset(Sy::$httpRequest[$requestId]->post[static::$csrf_config['tokenName']]);
-		} else {
-			if (!isset($_POST[static::$csrf_config['tokenName']]) || YCookie::get(static::$csrf_config['cookieName']) === NULL || ($_POST[static::$csrf_config['tokenName']] !== YCookie::get(static::$csrf_config['cookieName']))) {
-				if ($show_error) {
-					header(Sy::getHttpStatus('403'));
-					exit;
-				} else {
-					return FALSE;
-				}
-			}
-			unset($_POST[static::$csrf_config['tokenName']]);
 		}
+		unset($_POST[static::$csrf_config['tokenName']]);
 		return TRUE;
 	}
 	/**

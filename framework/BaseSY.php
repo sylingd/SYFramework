@@ -212,7 +212,7 @@ class BaseSY {
 	 * @access public
 	 * @param string $type 可为文件扩展名，或者Content-type的值
 	 */
-	public static function setMimeType($type, $requestId = NULL) {
+	public static function setMimeType($type) {
 		$mimeType = static::getMimeType($type);
 		if ($mimeType === NULL) {
 			$mimeType = $type;
@@ -221,11 +221,7 @@ class BaseSY {
 		if (in_array($type, ['js', 'json', 'atom', 'rss', 'xhtml'], TRUE) || substr($mimeType, 0, 5) === 'text/') {
 			$header .= ' charset=' . static::$app->get('charset');
 		}
-		if (NULL === $requestId) {
-			@header('Content-type:' . $header);
-		} else {
-			static::$httpResponse[$requestId]->header('Content-Type', $header);
-		}
+		header('Content-type:' . $header);
 	}
 	/**
 	 * 获取扩展名对应的mimeType
@@ -264,14 +260,7 @@ class BaseSY {
 		}
 		$__viewPath = static::viewPath($__tpl);
 		if (is_file($__viewPath)) {
-			//对Swoole应用封装
-			if (static::$swServer !== NULL) {
-				ob_start();
-			}
 			include($__viewPath);
-			if (static::$swServer !== NULL) {
-				return ob_get_clean();
-			}
 		}
 	}
 	/**
