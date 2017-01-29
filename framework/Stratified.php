@@ -18,42 +18,6 @@ use \sy\base\SYException;
 
 trait Stratified {
 	/**
-	 * 获取DAO操作类
-	 * @access public
-	 * @param string $name
-	 * @return object
-	 */
-	public static function DAO($name) {
-		//名称
-		$className = '\\' . static::$app->get('appNamespace') . '\\DAO\\' . ucfirst($name);
-		if (!class_exists($className)) {
-			$fileName = static::$appDir . 'DAO/' . lcfirst($name) . '.php';
-			if (!is_file($fileName)) {
-				throw new SYException('DAO ' . $fileName . ' not exists', '10011');
-			}
-			require ($fileName);
-		}
-		return $className::i();
-	}
-	/**
-	 * 获取Service操作类
-	 * @access public
-	 * @param string $name
-	 * @return object
-	 */
-	public static function service($name) {
-		//名称
-		$className = '\\' . static::$app->get('appNamespace') . '\\service\\' . ucfirst($name);
-		if (!class_exists($className)) {
-			$fileName = static::$appDir . 'services/' . lcfirst($name) . '.php';
-			if (!is_file($fileName)) {
-				throw new SYException('Service ' . $fileName . ' not exists', '10010');
-			}
-			require ($fileName);
-		}
-		return $className::i();
-	}
-	/**
 	 * 获取Model操作类
 	 * @access public
 	 * @param string $name
