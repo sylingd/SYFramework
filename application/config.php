@@ -28,35 +28,21 @@ return [
 	'securityKey' => 'test',
 	//是否默认开启CSRF验证
 	'csrf' => FALSE,
+	//路由相关配置
+	'router' => [
+		'type' => 'supervar',
+		'module' => 'index',
+		'modules' => ['admin', 'index']
+	],
 	//是否启用URL重写
-	'rewrite' => TRUE,
-	//URL后缀，仅rewrite启用时有效
-	'rewriteExt' => 'html',
-	//自定义重写规则
-	//此处@root作用与YHtml::css中@root作用相同
-	'rewriteRule' => [
-		// 'article/view' => '@root/article/view/{{id}}.html',
-		// 'article/list' => '@root/article/list/{{id}}-{{page}}.html',
-		// 'user/view' => '/member/view-{{id}}.html'
-		'document/start' => '@root/start/{{title}}.html',
-		'document/class' => '@root/class/{{f}}.html',
+	'rewrite' => [
+		'enable' => TRUE,
+		'ext' => 'html', //URL后缀，仅rewrite启用时有效
+		//自定义重写规则此处@root作用与YHtml::css中@root作用相同
+		'rule' => [
+			// 'item_view_comment' => '@root/item/{{id}}/comment.html'
+		],
 	],
-	//反向解析规则，仅HttpServer需要
-	'rewriteParseRule' => [
-		[
-			'#^/class/(.*?).html$#', //匹配规则
-			'document/class', //Controller名称
-			'f' //参数，与$1、$2等相对
-		]
-	],
-	//Controller列表
-	'controller' => [
-		'document',
-		'admin/user',
-		'admin/setting'
-	],
-	//默认的Router
-	'defaultRouter' => 'document/hello',
 	//会被Autoload加载的class列表
 	'class' => [
 		'demo\libs\option' => '@app/libs/option.php'
