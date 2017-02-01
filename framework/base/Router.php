@@ -226,6 +226,7 @@ class Router {
 			require($fullPath);
 		}
 		$controller = new $className;
+		$controller->_sy_module = $module;
 		return $controller;
 	}
 }
