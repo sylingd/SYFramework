@@ -13,6 +13,7 @@
 
 namespace sy\base;
 use \Sy;
+use \sy\lib\Plugin;
 
 class Router {
 	//路由参数名称
@@ -33,7 +34,7 @@ class Router {
 		switch (self::$routerType) {
 			case 'map':
 				//根据REQUEST_URI解析
-				$uri = $_SERVER['REQUEST_URI'];
+				$uri = ltrim($_SERVER['REQUEST_URI'], '/');
 				if (strpos('?', $uri) !== FALSE) {
 					$uri = substr($uri, 0, strpos($uri, '?'));
 				}
@@ -50,6 +51,10 @@ class Router {
 						'action' => $uri[1]
 					];
 				}
+				//移除扩展名
+				if (($dot = strrpos($result['action'], '.')) !== FALSE) {
+					$result['action'] = substr($result['action'], 0, $dot);
+				}
 				break;
 			case 'simple':
 				//直接从参数获取路由信息
@@ -63,7 +68,7 @@ class Router {
 				break;
 			case 'supervar':
 			default:
-				$url = $_GET[self::$routeParam];
+				$uri = $_GET[self::$routeParam];
 				$uri = explode('/', $uri, 3);
 				if (count($uri) === 3) {
 					$result = [
@@ -109,7 +114,7 @@ class Router {
 			exit;
 		}
 		//执行动作
-		$actionName = 'action' . ucfirst($actionName);
+		$actionName = 'action' . ucfirst($route['action']);
 		if (!method_exists($controller, $actionName)) {
 			header(Sy::getHttpStatus('404'));
 			Plugin::trigger('error404');
@@ -135,15 +140,15 @@ class Router {
 			return $PluginResult;
 		}
 		//基本URL
-		$url = '';
 		if (empty($route)) {
 			return Sy::$sitePath;
 		}
+		$url = Sy::$sitePath;
 		unset($param[0]);
 		//是否启用了Rewrite
-		if (Sy::$app->get('rewrite')) {
+		if (Sy::$app->get('rewrite.enable')) {
 			if (($rule = Sy::$app->get('rewrite.rule.' . str_replace('/', '_', $route))) !== NULL) {
-				$url .= str_replace('@root/', Sy::$sitePath, $rule);
+				$url = str_replace('@root/', Sy::$sitePath, $rule);
 				foreach ($param as $k => $v) {
 					$k_tpl = '{{' . $k . '}}';
 					if (strpos($url, $k_tpl) === FALSE) {
@@ -156,7 +161,7 @@ class Router {
 			} else {
 				$url .= $route;
 				if ($ext !== NULL || Sy::$app->has('rewrite.ext')) {
-					$url .= ($ext === NULL ? Sy::$app->get('rewrite.ext') : $ext);
+					$url .= '.' . ($ext === NULL ? Sy::$app->get('rewrite.ext') : $ext);
 				}
 			}
 		} else {

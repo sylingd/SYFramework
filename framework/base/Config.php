@@ -101,7 +101,7 @@ final class Config {
 		$this->replaceConf[$key] = $val;
 	}
 	public function has($key) {
-		return $this->get($key) === NULL;
+		return $this->get($key) !== NULL;
 	}
 	/**
 	 * 魔术方法，方便调用

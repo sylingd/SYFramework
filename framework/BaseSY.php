@@ -14,20 +14,7 @@
 namespace sy;
 use \sy\base\SYException;
 use \sy\base\Router;
-
-//将系统异常封装为自有异常
-set_exception_handler(function ($e) {
-	if (isset(\Sy::$httpServer) && \Sy::$httpServer !== NULL) {
-		\Sy::setMimeType('Content-Type:text/html; charset=utf-8');
-	}
-	if (!($e instanceof SYException)) {
-		$e = new SYException($e->getMessage(), '10000', [$e->getFile(), $e->getLine()]);
-	}
-	echo strval($e);
-	if (isset(\Sy::$httpServer) && \Sy::$httpServer !== NULL) {
-		exit;
-	}
-});
+use \sy\lib\Plugin;
 
 class BaseSY {
 	//会从data下的相应文件读取
@@ -49,22 +36,24 @@ class BaseSY {
 	 * @param object $config设置
 	 */
 	protected static function createApplicationInit($siteDir, $config) {
-		static::$frameworkDir =  str_replace('\\', '/', __DIR__ ) . '/';
+		//路径相关
+		static::$siteDir = str_replace('\\', '/', $siteDir) . '/';
+		static::$frameworkDir = str_replace('\\', '/', __DIR__) . '/';
 		//PHP运行模式
 		if (PHP_SAPI === 'cli') {
 			static::$isCli = TRUE;
 		}
-		if (!is_obecjt($config) || !($config instanceof \sy\base\Config)) {
+		if (is_string($config) && is_file($config)) {
+			$config = new \sy\base\Config($config);
+		}
+		if (!is_object($config) || !($config instanceof \sy\base\Config)) {
 			throw new SYException('Config can not be recognised', '10001');
 		}
-		//路径相关
-		static::$siteDir = str_replace('\\', '/', $siteDir) . '/';
-		static::$frameworkDir = str_replace('\\', '/', __DIR__) . '/';
 		//基本信息
 		$config->replace('cookie.path', str_replace('@app/', $dir, $config->get('cookie.path')));
 		static::$app = $config;
 		//应用的绝对路径
-		static::$appDir = str_replace('\\', '/', $config['dir']) . '/';
+		static::$appDir = str_replace('\\', '/', $config->get('dir')) . '/';
 		if ($config->get('debug')) {
 			static::$debug = $config->get('debug');
 		}
@@ -88,6 +77,10 @@ class BaseSY {
 		$dir = str_replace('\\', '/', dirname($now));
 		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
 		static::$sitePath = $dir;
+		//单元测试
+		if (defined('SY_UNIT')) {
+			return;
+		}
 		//是否启用CSRF验证
 		if (static::$app->get('csrf')) {
 			\sy\lib\YSecurity::csrfSetCookie();
@@ -109,9 +102,9 @@ class BaseSY {
 		}
 		$newRoute = Plugin::trigger('routerShutdown', [$route]);
 		if (is_array($newRoute)) {
-			Route::router($route);
+			Router::router($newRoute);
 		} else {
-			Route::router($newRoute);
+			Router::router($route);
 		}
 		if (static::$debug && function_exists('xdebug_stop_trace')) {
 			xdebug_stop_trace();
