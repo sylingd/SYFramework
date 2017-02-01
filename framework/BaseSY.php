@@ -263,42 +263,4 @@ class BaseSY {
 			include($__viewPath);
 		}
 	}
-	/**
-	 * 添加钩子，用于自定义一些操作（例如对404的处理）
-	 * 重复添加将不会有任何影响，也不会有任何效果
-	 * @access public
-	 * @param object $obj 必须为实现hook的类
-	 */
-	public static function addHook($obj) {
-		if (!($obj instanceof \sy\interfaces\hook)) {
-			return;
-		}
-		if (!is_array(static::$hookList[$obj->type])) {
-			static::$hookList[$obj->type] = [];
-		}
-		if (!is_array(static::$hookListObj[$obj->type])) {
-			static::$hookListObj[$obj->type] = [];
-		}
-		if (in_array($obj->name, static::$hookList[$obj->type], TRUE)) {
-			return;
-		}
-		static::$hookList[$obj->type][] = $obj->name;
-		static::$hookList[$obj->type][] = $obj;
-	}
-	/**
-	 * 触发一个钩子
-	 * 将会按照顺序调用每个钩子
-	 * @access public
-	 * @param string $hookName
-	 * @param array $data 数据
-	 */
-	public static function triggerHook($type, $data = []) {
-		if (!is_array(static::$hookListObj[$type])) {
-			return $data;
-		}
-		foreach (static::$hookListObj[$type] as $hook) {
-			$data = call_user_func_array($hook, (array)$data);
-		}
-		return $data;
-	}
 }
