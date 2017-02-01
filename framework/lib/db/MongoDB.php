@@ -18,7 +18,7 @@ use \Exception;
 use \sy\base\SYException;
 use \sy\base\SYDException;
 
-class YMongoDB {
+class MongoDB {
 	protected $dbtype = 'MongoDB';
 	//MongoDB
 	protected $WriteConcern = [

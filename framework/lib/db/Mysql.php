@@ -14,7 +14,7 @@
 namespace sy\lib\db;
 use \Sy;
 use \PDO;
-use \sy\base\YPdo;
+use \sy\base\Pdo as YPdo;
 use \sy\lib\YHtml;
 use \sy\base\SYException;
 use \sy\base\SYDException;

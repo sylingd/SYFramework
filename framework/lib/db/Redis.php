@@ -13,11 +13,11 @@
 
 namespace sy\lib\db;
 use \Sy;
-use \Redis;
+use \Redis as SRedis;
 use \sy\base\SYException;
 use \sy\base\SYDException;
 
-class YRedis {
+class Redis {
 	protected $dbtype = 'Redis';
 	protected $link = [];
 	protected $dbInfo = [];
@@ -48,7 +48,7 @@ class YRedis {
 	 * @access public
 	 */
 	public function __construct($current) {
-		if (!class_exists('Redis', FALSE)) {
+		if (!class_exists('SRedis', FALSE)) {
 			throw new SYException('Class "Redis" is required', '10022');
 		}
 		$this->setCurrent($current);
@@ -62,7 +62,7 @@ class YRedis {
 	 */
 	protected function connect() {
 		$id = $this->current;
-		$this->link[$id] = new Redis;
+		$this->link[$id] = new SRedis;
 		$this->link[$id]->connect($this->dbInfo[$id]['host'], $this->dbInfo['port']);
 		if (!empty($this->dbInfo[$id]['password'])) {
 			$this->link[$id]->auth($this->dbInfo['password']);

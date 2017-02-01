@@ -14,10 +14,10 @@
 
 namespace sy\lib;
 use \Sy;
-use \sy\lib\YCookie;
+use \sy\lib\Cookie;
 use \sy\base\SYException;
 
-class YSecurity {
+class Security {
 	protected static $csrf_config = ['tokenName' => '_csrf_token', 'cookieName' => '_csrf_token'];
 	protected static $csrf_hash = NULL;
 	/**
@@ -28,10 +28,10 @@ class YSecurity {
 	public static function csrfVerify($show_error = TRUE) {
 		//仅POST需要验证csrf
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-			static::csrfSetCookie($requestId);
+			static::csrfSetCookie();
 			return TRUE;
 		}
-		if (!isset($_POST[static::$csrf_config['tokenName']]) || YCookie::get(static::$csrf_config['cookieName']) === NULL || ($_POST[static::$csrf_config['tokenName']] !== YCookie::get(static::$csrf_config['cookieName']))) {
+		if (!isset($_POST[static::$csrf_config['tokenName']]) || Cookie::get(static::$csrf_config['cookieName']) === NULL || ($_POST[static::$csrf_config['tokenName']] !== Cookie::get(static::$csrf_config['cookieName']))) {
 			if ($show_error) {
 				header(Sy::getHttpStatus('403'));
 				exit;
@@ -46,9 +46,9 @@ class YSecurity {
 	 * 生成/获取csrf_hash
 	 * @return string
 	 */
-	public static function csrfGetHash($requestId = NULL) {
+	public static function csrfGetHash() {
 		if (static::$csrf_hash === NULL) {
-			$cookie_hash = YCookie::get(static::$csrf_config['cookieName'], $requestId);
+			$cookie_hash = Cookie::get(static::$csrf_config['cookieName']);
 			if ($cookie_hash !== NULL && preg_match('/^[0-9a-f]{32}$/iS', $cookie_hash)) {
 				return static::$csrf_hash = $cookie_hash;
 			}
@@ -60,12 +60,9 @@ class YSecurity {
 	 * 设置CSRF-Cookie
 	 * @access public
 	 */
-	public static function csrfSetCookie($requestId = NULL) {
+	public static function csrfSetCookie() {
 		$param = ['name' => static::$csrf_config['cookieName'], 'value' => static::csrfGetHash($requestId), 'httponly' => TRUE];
-		if ($requestId !== NULL) {
-			$param['requestId'] = $requestId;
-		}
-		YCookie::set($param);
+		Cookie::set($param);
 	}
 	/**
 	 * 进行可逆加密

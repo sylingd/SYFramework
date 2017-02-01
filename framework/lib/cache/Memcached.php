@@ -12,10 +12,10 @@
  */
 
 namespace sy\lib\cache;
-use \Memcached;
+use \Memcached as SMemcached;
 use \Sy;
 
-class YMemcached {
+class Memcached {
 	protected $dbtype = 'Memcached';
 	protected $link = NULL;
 	protected static $_instance = NULL;
@@ -26,7 +26,7 @@ class YMemcached {
 		return static::$_instance;
 	}
 	public function __construct() {
-		if (!class_exists('Memcached', FALSE)) {
+		if (!class_exists('SMemcached', FALSE)) {
 			throw new SYException('Class "Memcached" is required', '10025');
 		}
 		if (Sy::$app->has('memcached')) {
@@ -39,7 +39,7 @@ class YMemcached {
 	 */
 	public function connect() {
 		if ($this->link === NULL) {
-			$this->link = new Memcached;
+			$this->link = new SMemcached;
 		}
 		//多个服务器
 		if (is_array($this->info['server'])) {
@@ -83,7 +83,7 @@ class YMemcached {
 			}
 		} elseif ($method === 'setMulti') {
 			foreach ($args[0] as $k => $v) {
-				unset($args[0][$k])
+				unset($args[0][$k]);
 				$args[0][$this->setQuery($k)] = $v;
 			}
 		}

@@ -14,7 +14,7 @@
 namespace sy\lib;
 use Sy;
 
-class YHtml {
+class Html {
 	/**
 	 * 输出meta标签
 	 * @param array $set 自设定标签，为空则不输出

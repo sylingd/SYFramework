@@ -14,7 +14,7 @@
 namespace sy\lib;
 use \Sy;
 
-class YForm {
+class Form {
 	/**
 	 * 格式验证
 	 * @param string $str 待验证字符串

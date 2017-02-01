@@ -15,7 +15,7 @@ namespace sy\lib;
 use \Sy;
 use \sy\base\SYException;
 
-class YCookie {
+class Cookie {
 	/**
 	 * 设置Cookie
 	 * @access public

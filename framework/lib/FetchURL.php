@@ -14,7 +14,7 @@
 namespace sy\lib;
 use \Sy;
 
-class YFetchURL {
+class FetchURL {
 	protected $handle;
 	protected $connectMethod;
 	protected $strExec = FALSE;
