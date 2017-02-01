@@ -13,14 +13,7 @@
 
 namespace sy;
 use \sy\base\SYException;
-
-//载入依赖库
-if (!trait_exists('sy\App', FALSE)) {
-	require(__DIR__ . '/App.php');
-}
-if (!trait_exists('sy\Stratified', FALSE)) {
-	require(__DIR__ . '/Stratified.php');
-}
+use \sy\base\Router;
 
 //将系统异常封装为自有异常
 set_exception_handler(function ($e) {
@@ -37,20 +30,119 @@ set_exception_handler(function ($e) {
 });
 
 class BaseSY {
-	use App;
-	use Stratified;
 	//会从data下的相应文件读取
 	public static $mimeTypes = NULL;
 	public static $httpStatus = NULL;
-	//路由参数名称
-	public static $routeParam = 'r';
 	//调试模式
 	public static $debug = TRUE;
 	//CLI模式
 	public static $isCli = FALSE;
-	//Hook列表
-	public static $hookList = [];
-	public static $hookListObj = [];
+	//应用相关设置
+	public static $app;
+	public static $appDir;
+	public static $siteDir;
+	public static $sitePath;
+	public static $frameworkDir;
+	/**
+	 * 初始化：创建Application（通用）
+	 * @access protected
+	 * @param object $config设置
+	 */
+	protected static function createApplicationInit($siteDir, $config) {
+		static::$frameworkDir =  str_replace('\\', '/', __DIR__ ) . '/';
+		//PHP运行模式
+		if (PHP_SAPI === 'cli') {
+			static::$isCli = TRUE;
+		}
+		if (!is_obecjt($config) || !($config instanceof \sy\base\Config)) {
+			throw new SYException('Config can not be recognised', '10001');
+		}
+		//路径相关
+		static::$siteDir = str_replace('\\', '/', $siteDir) . '/';
+		static::$frameworkDir = str_replace('\\', '/', __DIR__) . '/';
+		//基本信息
+		$config->replace('cookie.path', str_replace('@app/', $dir, $config->get('cookie.path')));
+		static::$app = $config;
+		//应用的绝对路径
+		static::$appDir = str_replace('\\', '/', $config['dir']) . '/';
+		if ($config->get('debug')) {
+			static::$debug = $config->get('debug');
+		}
+		//编码相关
+		if (function_exists('mb_internal_encoding')) {
+			mb_internal_encoding($config->get('charset'));
+		}
+		//设置一些基本参数
+		Router::$routerType = $config->get('router.type');
+		Router::$defaultModule = $config->get('router.module');
+	}
+	/**
+	 * 初始化：创建WebApplication
+	 * @access public
+	 * @param object $config设置
+	 */
+	public static function createApplication($siteDir, $config) {
+		static::createApplicationInit($siteDir, $config);
+		//网站目录
+		$now = $_SERVER['PHP_SELF'];
+		$dir = str_replace('\\', '/', dirname($now));
+		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
+		static::$sitePath = $dir;
+		//是否启用CSRF验证
+		if (static::$app->get('csrf')) {
+			\sy\lib\YSecurity::csrfSetCookie();
+		}
+		//调试模式
+		if (static::$debug && function_exists('xdebug_start_trace')) {
+			xdebug_start_trace();
+		}
+		//bootstrap
+		if (is_file(static::$appDir . 'Bootstrap.php')) {
+			require(static::$appDir . 'Bootstrap.php');
+			$bootstrap = new Bootstrap;
+			call_user_func([$bootstrap, 'run']);
+		}
+		//开始路由分发
+		$route = Plugin::trigger('routerStartup');
+		if ($route === NULL) {
+			$route = Router::getRoute();
+		}
+		$newRoute = Plugin::trigger('routerShutdown', [$route]);
+		if (is_array($newRoute)) {
+			Route::router($route);
+		} else {
+			Route::router($newRoute);
+		}
+		if (static::$debug && function_exists('xdebug_stop_trace')) {
+			xdebug_stop_trace();
+		}
+	}
+	/**
+	 * 初始化：创建ConsoleApplication
+	 * @access public
+	 * @param object $config设置
+	 */
+	public static function createConsoleApplication($siteDir, $config = NULL) {
+		static::createApplicationInit($siteDir, $config);
+		//网站目录
+		static::$sitePath = '/';
+		if (!static::$isCli) {
+			throw new SYException('Must run at CLI mode', '10005');
+		}
+		//仅支持参数方式运行
+		$opt = getopt(static::$routeParam . ':');
+		//以参数方式运行
+		$run = $opt[static::$routeParam];
+		if (!empty($run) && static::$app->has('console.' . $run)) {
+			list($fileName, $callback) = static::$app->get('console.' . $run);
+		} else {
+			list($fileName, $callback) = static::$app->get('console.default');
+		}
+		require(static::$appDir . '/workers/' . $fileName);
+		if (is_callable($callback)) {
+			call_user_func($callback);
+		}
+	}
 	/**
 	 * 获取HTTP状态文字
 	 * @access public
@@ -66,58 +158,6 @@ class BaseSY {
 			return "HTTP/$version $status $statusText";
 		} else {
 			return "HTTP/$version $status";
-		}
-	}
-	/**
-	 * 简单Router
-	 * @access public
-	 */
-	public static function router($r = NULL, $requestId = NULL) {
-		if ($r === NULL) {
-			$r = trim($_GET[static::$routeParam]);
-		}
-		if (empty($r)) {
-			$r = static::$app->get('defaultRouter');
-		}
-		if (strpos($r, '.') !== FALSE || strpos($r, '/') === FALSE) {
-			if (NULL === $requestId) {
-				header(static::getHttpStatus('404'));
-				exit;
-			} else {
-				static::$httpResponse[$requestId]->status(404);
-				return;
-			}
-		}
-		//解析controller名称和action名称
-		$last = strrpos($r, '/');
-		$controllerName = substr($r, 0, $last);
-		$actionName = substr($r, $last + 1);
-		//获取操作类
-		$controller = static::controller($controllerName);
-		if (NULL === $controller) {
-			if (NULL === $requestId) {
-				header(static::getHttpStatus('404'));
-				exit;
-			} else {
-				static::$httpResponse[$requestId]->status(404);
-				return;
-			}
-		}
-		//执行动作
-		$actionName = 'action' . ucfirst($actionName);
-		if (!method_exists($controller, $actionName)) {
-			if (NULL === $requestId) {
-				header(static::getHttpStatus('404'));
-				exit;
-			} else {
-				static::$httpResponse[$requestId]->status(404);
-				return;
-			}
-		}
-		if ($requestId !== NULL) {
-			call_user_func([$controller, $actionName], $requestId);
-		} else {
-			call_user_func([$controller, $actionName]);
 		}
 	}
 	/**
@@ -149,65 +189,6 @@ class BaseSY {
 		}
 	}
 	/**
-	 * 创建URL
-	 * @access public
-	 * @param mixed $param URL参数
-	 * @param string $ext 自定义扩展名
-	 * @return string
-	 */
-	public static function createUrl($param = '', $ext = NULL) {
-		$param = (array )$param;
-		$router = $param[0];
-		$anchor = isset($param['#']) ? '#' . $param['#'] : '';
-		unset($param[static::$routeParam], $param['#']);
-		//Hook
-		$hookResult = static::triggerHook('sy_createUrl', [$router, $anchor, $param, $ext]);
-		if (is_string($hookResult)) {
-			return $hookResult;
-		}
-		//基本URL
-		$url = '';
-		if (empty($router)) {
-			return static::$sitePath;
-		}
-		unset($param[0]);
-		//多级路由支持
-		$last = strrpos($router, '/');
-		$controllerName = substr($router, 0, $last);
-		$actionName = substr($router, $last + 1);
-		//是否启用了Rewrite
-		if (static::$app->get('rewrite') && static::$app->has('rewriteRule.' . $router)) {
-			$url .= str_replace('@root/', static::$sitePath, static::$app->get('rewriteRule.' . $router));
-			foreach ($param as $k => $v) {
-				$k_tpl = '{{' . $k . '}}';
-				if (strpos($url, $k_tpl) === FALSE) {
-					continue;
-				}
-				$url = str_replace($k_tpl, $v, $url);
-				//去掉此参数，防止后面http_build_query重复
-				unset($param[$k]);
-			}
-		} elseif (static::$app->get('rewrite')) {
-			if ($ext === NULL && empty(static::$app->get('rewriteExt'))) {
-				$url .= static::$sitePath . $controllerName . '/' . $actionName;
-			} else {
-				$url .= static::$sitePath . $controllerName . '/' . $actionName . '.' . ($ext === NULL ? static::$app->get('rewriteExt') : $ext);
-			}
-		} else {
-			$url .= static::$sitePath . 'index.php?r=' . $controllerName . '/' . $actionName;
-		}
-		if (count($param) > 0) {
-			if (strpos($url, '?') === FALSE) {
-				$url .= '?';
-			} else {
-				$url .= '&';
-			}
-			$url .= http_build_query($param);
-		}
-		$url .= $anchor;
-		return $url;
-	}
-	/**
 	 * 发送Content-type的header，也就是mimeType
 	 * @access public
 	 * @param string $type 可为文件扩展名，或者Content-type的值
@@ -235,32 +216,5 @@ class BaseSY {
 		}
 		$ext = strtolower($ext);
 		return isset(static::$mimeTypes[$ext]) ? (static::$mimeTypes[$ext]) : null;
-	}
-	/**
-	 * 获取模板路径
-	 * @access public
-	 * @param string $tpl 模板文件
-	 */
-	public static function viewPath($tpl) {
-		return static::$appDir . 'views/' . $tpl . '.php';
-	}
-	/**
-	 * 引入模板
-	 * @access public
-	 * @param string $__tpl 模板文件
-	 * @param array $_param 参数
-	 */
-	public static function view($__tpl, $_param = NULL) {
-		//是否启用CSRF验证
-		if (static::$app->get('csrf')) {
-			$_param['_csrf_token'] = \sy\lib\YSecurity::csrfGetHash();
-		}
-		if (is_array($_param)) {
-			extract($_param, EXTR_SKIP);
-		}
-		$__viewPath = static::viewPath($__tpl);
-		if (is_file($__viewPath)) {
-			include($__viewPath);
-		}
 	}
 }

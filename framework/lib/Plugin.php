@@ -15,6 +15,7 @@ namespace sy\lib;
 use \Sy;
 
 class Plugin {
+	protected static $_list = [];
 	/**
 	 * 注册插件，用于自定义一些操作（例如对404的处理）
 	 * @access public
