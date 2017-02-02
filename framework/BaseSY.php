@@ -30,6 +30,8 @@ class BaseSY {
 	public static $siteDir;
 	public static $sitePath;
 	public static $frameworkDir;
+	//应用namespace
+	public static $cfgAppNamespace = NULL;
 	/**
 	 * 初始化：创建Application（通用）
 	 * @access protected
@@ -37,8 +39,8 @@ class BaseSY {
 	 */
 	protected static function createApplicationInit($siteDir, $config) {
 		//路径相关
-		static::$siteDir = str_replace('\\', '/', $siteDir) . '/';
-		static::$frameworkDir = str_replace('\\', '/', __DIR__) . '/';
+		static::$siteDir = $siteDir . '/';
+		static::$frameworkDir = __DIR__ . '/';
 		//PHP运行模式
 		if (PHP_SAPI === 'cli') {
 			static::$isCli = TRUE;
@@ -53,7 +55,7 @@ class BaseSY {
 		$config->replace('cookie.path', str_replace('@app/', $dir, $config->get('cookie.path')));
 		static::$app = $config;
 		//应用的绝对路径
-		static::$appDir = str_replace('\\', '/', $config->get('dir')) . '/';
+		static::$appDir = $config->get('dir') . '/';
 		if ($config->get('debug')) {
 			static::$debug = $config->get('debug');
 		}
@@ -62,6 +64,7 @@ class BaseSY {
 			mb_internal_encoding($config->get('charset'));
 		}
 		//设置一些基本参数
+		static::$cfgAppNamespace = $config->get('appNamespace');
 		Router::$routerType = $config->get('router.type');
 		Router::$defaultModule = $config->get('router.module');
 	}
@@ -164,10 +167,14 @@ class BaseSY {
 			//是否为App自有class
 			if (static::$app->has('class.' . $className)) {
 				$fileName = str_replace('@app/', static::$appDir, static::$app->get('class.' . $className));
-			} elseif (is_string(static::$app->get('appNamespace')) && strpos($className, static::$app->get('appNamespace') . '\\') === 0) {
+			} elseif (static::$cfgAppNamespace !== NULL && strpos($className, static::$cfgAppNamespace . '\\') === 0) {
 				//namespace匹配
-				$fileName = substr($className, strlen(static::$app->get('appNamespace')) + 1) . '.php';
-				$fileName = static::$appDir . str_replace('\\', '/', $fileName);
+				if (strpos($className, static::$cfgAppNamespace . '\\model\\') === 0) {
+					$fileName = static::$appDir . 'models/' . substr($className, strrpos($className, '\\')) . '.php';
+				} else {
+					$fileName = substr($className, strlen(static::$cfgAppNamespace) + 1) . '.php';
+					$fileName = static::$appDir . str_replace('\\', '/', $fileName);
+				}
 			} else {
 				return;
 			}
