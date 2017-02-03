@@ -6,9 +6,17 @@
 
 ## 2.0.8 Beta
 
-* 移除所有Swoole特性
+* Add. 一个简单的模板引擎
 
-* 结构改为Module、Model、Controller、View
+* Add. Model自动加载
+
+* Mod. Plugin和Router作为独立的class存在
+
+* Mod. 结构改为Module、Model、Controller、View
+
+* Mod. 移除类库的“Y”前缀
+
+* Del. 所有Swoole特性
 
 ## 2.0.7 Beta
 
