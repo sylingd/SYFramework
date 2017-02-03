@@ -14,7 +14,6 @@
 
 namespace sy\base;
 use \Sy;
-use \PDO as SPdo;
 use \PDOException;
 use \sy\base\SYException;
 use \sy\base\SYDException;
@@ -66,7 +65,7 @@ abstract class Pdo {
 	 * @access public
 	 */
 	public function __construct($current) {
-		if (!class_exists('SPdo', FALSE)) {
+		if (!class_exists('PDO', FALSE)) {
 			throw new SYException('Class "PDO" is required', '10021');
 		}
 		$this->setCurrent($current);
@@ -136,10 +135,10 @@ abstract class Pdo {
 				$e = $st->errorInfo();
 				throw new SYDException(YHtml::encode($e[2]), $this->dbtype, $sql);
 			}
-		} catch (PDOException $e) {
+		} catch (\PDOException $e) {
 			throw new SYDException(YHtml::encode($e->getMessage()), $this->dbtype, $sql);
 		}
-		$st->setFetchMode(SPdo::FETCH_ASSOC);
+		$st->setFetchMode(\PDO::FETCH_ASSOC);
 		return $st->fetchAll();
 	}
 	/**
@@ -150,8 +149,8 @@ abstract class Pdo {
 	public function ping() {
 		$id = $this->current;
 		try{
-			$this->link[$id]->getAttribute(SPdo::ATTR_SERVER_INFO);
-		} catch (PDOException $e) {
+			$this->link[$id]->getAttribute(\PDO::ATTR_SERVER_INFO);
+		} catch (\PDOException $e) {
 			if (strpos($e->getMessage(), 'MySQL server has gone away') !== FALSE) {
 				return false;
 			}

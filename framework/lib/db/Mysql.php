@@ -19,7 +19,7 @@ use \sy\lib\YHtml;
 use \sy\base\SYException;
 use \sy\base\SYDException;
 
-class YMysql extends YPdo {
+class Mysql extends YPdo {
 	protected $dbtype = 'MySQL';
 	/**
 	 * 自动连接

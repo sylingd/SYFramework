@@ -13,7 +13,6 @@
 
 namespace sy\lib\db;
 use \Sy;
-use \mysqli as SMysqli;
 use \sy\lib\Html;
 use \sy\base\SYException;
 use \sy\base\SYDException;
@@ -37,7 +36,7 @@ class Mysqli {
 	 * @access public
 	 */
 	public function __construct() {
-		if (!class_exists('SMysqli', FALSE)) {
+		if (!class_exists('mysqli', FALSE)) {
 			throw new SYException('Class "MySQLi" is required', '10020');
 		}
 		if (Sy::$app->has('mysql') && $this->current === 'default') {
@@ -62,7 +61,7 @@ class Mysqli {
 	protected function connect() {
 		$id = $this->current;
 		$config = $this->dbInfo[$id];
-		$this->link[$id] = new SMysqli($config['host'], $config['user'], $config['password'], $config['name'], $config['port']);
+		$this->link[$id] = new \mysqli($config['host'], $config['user'], $config['password'], $config['name'], $config['port']);
 		if ($this->link[$id]->connect_error) {
 			throw new SYDException(YHtml::encode($this->link[$id]->connect_error), $this->dbtype, 'NULL');
 		}

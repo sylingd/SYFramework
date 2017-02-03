@@ -170,7 +170,7 @@ class BaseSY {
 			} elseif (static::$cfgAppNamespace !== NULL && strpos($className, static::$cfgAppNamespace . '\\') === 0) {
 				//namespace匹配
 				if (strpos($className, static::$cfgAppNamespace . '\\model\\') === 0) {
-					$fileName = static::$appDir . 'models/' . substr($className, strrpos($className, '\\')) . '.php';
+					$fileName = static::$appDir . 'models/' . substr($className, strrpos($className, '\\') + 1) . '.php';
 				} else {
 					$fileName = substr($className, strlen(static::$cfgAppNamespace) + 1) . '.php';
 					$fileName = static::$appDir . str_replace('\\', '/', $fileName);
