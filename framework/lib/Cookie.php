@@ -90,7 +90,7 @@ class Cookie {
 			$cookie['value'] = $sign;
 			self::set($cookie);
 		} else {
-			$cookie['value'] = YSecurity::securityCode($cookie['value'], 'ENCODE');
+			$cookie['value'] = Security::securityCode($cookie['value'], 'ENCODE');
 			self::set($cookie);
 		}
 	}
@@ -113,7 +113,7 @@ class Cookie {
 			}
 		}
 		if ($type === 2 || $type === 0) {
-			$vv = YSecurity::securityCode($v, 'DECODE');
+			$vv = Security::securityCode($v, 'DECODE');
 			if (is_string($vv)) {
 				return $vv;
 			}

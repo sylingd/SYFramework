@@ -86,7 +86,7 @@ class BaseSY {
 		}
 		//是否启用CSRF验证
 		if (static::$app->get('csrf')) {
-			\sy\lib\YSecurity::csrfSetCookie();
+			\sy\lib\Security::csrfSetCookie();
 		}
 		//调试模式
 		if (static::$debug && function_exists('xdebug_start_trace')) {
