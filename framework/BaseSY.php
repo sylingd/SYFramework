@@ -95,7 +95,7 @@ class BaseSY {
 		//bootstrap
 		if (is_file(static::$appDir . 'Bootstrap.php')) {
 			require(static::$appDir . 'Bootstrap.php');
-			$bootstrap = new Bootstrap;
+			$bootstrap = new \Bootstrap;
 			call_user_func([$bootstrap, 'run']);
 		}
 		//开始路由分发
