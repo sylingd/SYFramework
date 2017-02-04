@@ -17,7 +17,7 @@ use \Sy;
 use \PDOException;
 use \sy\base\SYException;
 use \sy\base\SYDException;
-use \sy\lib\YHtml;
+use \sy\lib\Html;
 
 abstract class Pdo {
 	protected $link = [];
@@ -118,7 +118,7 @@ abstract class Pdo {
 		$st = $this->link[$id]->prepare($prepare_sql);
 		if ($st === FALSE) {
 			$e = $this->link[$id]->errorInfo();
-			throw new SYDException(YHtml::encode($e[2]), $this->dbtype, $sql);
+			throw new SYDException(Html::encode($e[2]), $this->dbtype, $sql);
 		}
 		if (is_array($data)) {
 			foreach ($data as $k => $v) {
@@ -133,10 +133,10 @@ abstract class Pdo {
 			$r = $st->execute();
 			if ($r === FALSE) {
 				$e = $st->errorInfo();
-				throw new SYDException(YHtml::encode($e[2]), $this->dbtype, $sql);
+				throw new SYDException(Html::encode($e[2]), $this->dbtype, $sql);
 			}
 		} catch (\PDOException $e) {
-			throw new SYDException(YHtml::encode($e->getMessage()), $this->dbtype, $sql);
+			throw new SYDException(Html::encode($e->getMessage()), $this->dbtype, $sql);
 		}
 		$st->setFetchMode(\PDO::FETCH_ASSOC);
 		return $st->fetchAll();
