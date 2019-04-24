@@ -1,6 +1,6 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use \sy\base\Config;
+use Sy\base\Config;
 
 class ConfigTest extends PHPUnit_Framework_TestCase {
 	const AppName = 'MyApplication';

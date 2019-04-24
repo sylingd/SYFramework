@@ -1,5 +1,4 @@
-<?php
-define('SY_UNIT', 1);
+<?phpdefine('SY_UNIT', 1);
 require (__DIR__ . '/../framework/sy.php');
 $config = __DIR__ . '/../application/config.php';
-Sy::createApplication(__DIR__, $config);
+App::createApplication(__DIR__, $config);

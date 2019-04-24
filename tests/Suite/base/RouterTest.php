@@ -1,6 +1,5 @@
-<?php
-use \PHPUnit\Framework\TestCase;
-use \sy\base\Router;
+<?phpuse \PHPUnit\Framework\TestCase;
+use Sy\base\Router;
 
 class RouterTest extends PHPUnit_Framework_TestCase {
 	public function testGetMap() {
