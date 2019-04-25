@@ -24,8 +24,7 @@ if (!defined('SY_PATH')) {
 }
 
 class App {
-	//调试模式
-	public static $debug = TRUE;
+	protected static $environment = 'product';
 	//CLI模式
 	public static $isCli = FALSE;
 	//应用相关设置
@@ -46,6 +45,9 @@ class App {
 		if (!defined('APP_PATH')) {
 			throw new StartException('You must define APP_PATH');
 		}
+		if (defined('APP_ENV')) {
+			self::$environment = APP_ENV;
+		}
 		if (is_string($config) && is_file($config)) {
 			$config = Arr::fromIniFile($config);
 		}
@@ -57,9 +59,6 @@ class App {
 		}
 		//基本信息
 		self::$config = $config;
-		if ($config->get('debug')) {
-			self::$debug = $config->get('debug');
-		}
 		//编码相关
 		if (function_exists('mb_internal_encoding')) {
 			mb_internal_encoding($config->get('charset'));
@@ -87,12 +86,12 @@ class App {
 			return;
 		}
 		//调试模式
-		if (self::$debug && function_exists('xdebug_start_trace')) {
+		if (self::getEnv() === 'develop' && function_exists('xdebug_start_trace')) {
 			xdebug_start_trace();
 		}
 		//开始路由分发
 		Dispatcher::handleRequest();
-		if (self::$debug && function_exists('xdebug_stop_trace')) {
+		if (self::getEnv() === 'develop' && function_exists('xdebug_stop_trace')) {
 			xdebug_stop_trace();
 		}
 	}
@@ -159,6 +158,6 @@ class App {
 		}
 	}
 	public static function getEnv() {
-		return self::$debug ? 'develop' : 'product';
+		return self::$environment;
 	}
 }
