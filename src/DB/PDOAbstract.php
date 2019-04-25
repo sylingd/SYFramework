@@ -27,22 +27,6 @@ abstract class PDOAbstract {
 	 */
 	abstract protected function connect();
 	/**
-	 * 抽象函数：获取一个结果
-	 * @access public
-	 * @param string $sql
-	 * @param array $data
-	 * @param string $id 连接ID
-	 * @return array
-	 */
-	abstract public function get($sql, $data);
-	/**
-	 * 获取Builder对象
-	 * 
-	 * @access public
-	 * @return object
-	 */
-	abstract public static function getBuilder();
-	/**
 	 * 构造函数，自动连接
 	 * @access public
 	 */
