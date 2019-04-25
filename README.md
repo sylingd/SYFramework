@@ -1,5 +1,11 @@
 # SYFramework
 
+[![Build Status](https://travis-ci.org/sylingd/SYFramework.svg?branch=master)](https://travis-ci.org/sylingd/SYFramework)
+[![Coverage Status](https://coveralls.io/repos/github/sylingd/SYFramework/badge.svg?branch=master)](https://coveralls.io/github/sylingd/SYFramework?branch=master)
+[![Php Version](https://img.shields.io/badge/php-%3E=7.0-brightgreen.svg?maxAge=2592000)](https://secure.php.net/)
+[![Packagist](https://img.shields.io/packagist/v/sylingd/syframework.svg)](https://packagist.org/packages/sylingd/syframework)
+[![license](https://img.shields.io/github/license/sylingd/SYFramework.svg)](https://github.com/sylingd/SYFramework/blob/master/LICENSE)
+
 此框架是原为泷涯自用，框架基本遵循Module、Model、Controller、View的分层
 
 目前最新稳定版本为`1.5`，最新测试版本为`2.0.8 Beta`
