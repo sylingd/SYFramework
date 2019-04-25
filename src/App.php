@@ -14,6 +14,7 @@ namespace Sy;
 use Sy\Router;
 use Sy\Plugin;
 use Sy\DI\Container;
+use Sy\Http\Dispatcher;
 use Sy\Exception\Exception;
 use Sy\Exception\StartException;
 use Sy\Config\ConfigInterface;
