@@ -166,4 +166,7 @@ class App {
 			}
 		}
 	}
+	public static function getEnv() {
+		return self::$debug ? 'develop' : 'product';
+	}
 }

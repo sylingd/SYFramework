@@ -3,7 +3,7 @@
  * 设置接口
  * 
  * @author ShuangYa
- * @package Yesf
+ * @package SYFramework
  * @category Base
  * @link https://www.sylingd.com/
  * @copyright Copyright (c) 2015-2019 ShuangYa

@@ -10,7 +10,7 @@
  * @copyright Copyright (c) 2015-2019 ShuangYa
  * @license https://syframework.sylibs.com/license.html
  */
-namespace Sy\Utils;
+namespace Sy\Http;
 
 use Sy\App;
 use Sy\Exception\Exception;

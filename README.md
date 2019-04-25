@@ -1,5 +1,3 @@
-[English](README_en.md)
-
 # SYFramework
 
 此框架是原为泷涯自用，框架基本遵循Module、Model、Controller、View的分层

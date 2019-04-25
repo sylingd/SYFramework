@@ -99,12 +99,12 @@ class Dispatcher {
 		return $result;
 	}
 	private static function handleNotFound($request, $response) {
-		$arr = [$request, $yesf_response];
+		$arr = [$request, $response];
 		if (Plugin::trigger('dispatchFailed', $arr) === null) {
 			$response->status(404);
 			$response->disableView();
 			$response->setCurrentTemplateEngine(Template::class);
-			if (Yesf::app()->getEnvironment() === 'develop') {
+			if (App::getEnv() === 'develop') {
 				$response->assign('module', $request->module);
 				$response->assign('controller', $request->controller);
 				$response->assign('action', $request->action);
@@ -125,7 +125,7 @@ class Dispatcher {
 			//如果用户没有自行处理，输出默认模板
 			$response->disableView();
 			$response->setCurrentTemplateEngine(Template::class);
-			if (Yesf::app()->getEnvironment() === 'develop') {
+			if (App::getEnv() === 'develop') {
 				$response->assign('module', $request->module);
 				$response->assign('controller', $request->controller);
 				$response->assign('action', $request->action);

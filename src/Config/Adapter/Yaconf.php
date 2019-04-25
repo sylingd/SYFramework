@@ -11,7 +11,7 @@
  */
 namespace Sy\Config\Adapter;
 
-use Sy\Yesf;
+use Sy\App;
 use Sy\Config\ConfigTrait;
 use Sy\Config\ConfigInterface;
 
@@ -30,7 +30,7 @@ class Yaconf implements ConfigInterface {
 	 */
 	public function __construct($appName = null) {
 		$this->appName = $appName;
-		$this->environment = Yesf::app()->getEnvironment();
+		$this->environment = App::getEnv();
 	}
 	/**
 	 * Get full key

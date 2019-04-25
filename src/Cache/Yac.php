@@ -13,6 +13,7 @@
 namespace Sy\Cache;
 
 use Psr\SimpleCache\CacheInterface;
+use Sy\App;
 use Sy\Exception\Exception;
 use Sy\Exception\RequirementException;
 
@@ -24,7 +25,7 @@ class Yac implements CacheInterface {
 		if (!class_exists(\Yac::class)) {
 			throw new RequirementException("Extension Yac is required");
 		}
-		$prefix = Yesf::app()->getConfig('cache.prefix');
+		$prefix = App::$config->get('cache.prefix');
 		if (!$prefix) {
 			$prefix = '';
 		}

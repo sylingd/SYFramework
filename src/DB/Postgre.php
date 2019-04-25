@@ -14,7 +14,7 @@ namespace Sy\DB;
 use Sy\App;
 use Sy\Exception\DBException;
 
-class Pg extends PDOAbstract {
+class Postgre extends PDOAbstract {
 	/**
 	 * 自动连接
 	 * @access public

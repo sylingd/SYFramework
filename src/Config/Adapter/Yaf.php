@@ -11,7 +11,7 @@
  */
 namespace Sy\Config\Adapter;
 
-use Sy\Yesf;
+use Sy\App;
 use Sy\Exception\RequirementException;
 use Sy\Config\ConfigTrait;
 use Sy\Config\ConfigInterface;
@@ -34,7 +34,7 @@ class Yaf implements ConfigInterface {
 		if (!extension_loaded('Yaf')) {
 			throw new RequirementException("Extension Yaf is required");
 		}
-		$this->environment = Yesf::app()->getEnvironment();
+		$this->environment = App::getEnv();
 		if (class_exists('\\Yaf_Config_Ini', false)) {
 			$this->conf = new \Yaf_Config_Ini($conf, $this->environment);
 		} else {

@@ -3,7 +3,7 @@
  * 启动异常类
  * 
  * @author ShuangYa
- * @package Yesf
+ * @package SYFramework
  * @category Exception
  * @link https://www.sylingd.com/
  * @copyright Copyright (c) 2015-2019 ShuangYa

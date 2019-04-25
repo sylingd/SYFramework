@@ -12,7 +12,7 @@
 namespace Sy\Config\Adapter;
 
 use SplQueue;
-use Sy\Yesf;
+use Sy\App;
 use Sy\Exception\Exception;
 use Sy\Config\ConfigTrait;
 use Sy\Config\ConfigInterface;
@@ -34,7 +34,7 @@ class Arr implements ConfigInterface {
 	 */
 	public function __construct(array $conf, $env = null) {
 		if ($env === null) {
-			$env = Yesf::app()->getEnvironment();
+			$env = App::getEnv();
 		}
 		$this->environment = $env;
 		$this->conf = $conf;
