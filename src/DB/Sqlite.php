@@ -13,9 +13,7 @@ namespace Sy\DB;
 
 use Sy\App;
 use Sy\Exception\DBException;
-use Sy\DI\Container;
 use Latitude\QueryBuilder\QueryFactory;
-use Latitude\QueryBuilder\Engine\CommonEngine;
 
 class Sqlite extends PDOAbstract {
 	/**
@@ -59,6 +57,6 @@ class Sqlite extends PDOAbstract {
 	 * @return object
 	 */
 	public static function getBuilder() {
-		return new QueryFactory(Container::getInstance()->get(CommonEngine::class));
+		return new QueryFactory();
 	}
 }

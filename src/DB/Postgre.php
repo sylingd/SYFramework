@@ -13,9 +13,7 @@ namespace Sy\DB;
 
 use Sy\App;
 use Sy\Exception\DBException;
-use Sy\DI\Container;
 use Latitude\QueryBuilder\QueryFactory;
-use Latitude\QueryBuilder\Engine\PostgresEngine;
 
 class Postgre extends PDOAbstract {
 	/**
@@ -57,6 +55,6 @@ class Postgre extends PDOAbstract {
 	 * @return object
 	 */
 	public static function getBuilder() {
-		return new QueryFactory(Container::getInstance()->get(PostgresEngine::class));
+		return new QueryFactory('pgsql');
 	}
 }

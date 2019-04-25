@@ -13,9 +13,7 @@ namespace Sy\DB;
 
 use Sy\App;
 use Sy\Exception\DBException;
-use Sy\DI\Container;
 use Latitude\QueryBuilder\QueryFactory;
-use Latitude\QueryBuilder\Engine\MySqlEngine;
 
 class Mysql extends PDOAbstract implements DBInterface {
 	/**
@@ -57,6 +55,6 @@ class Mysql extends PDOAbstract implements DBInterface {
 	 * @return object
 	 */
 	public static function getBuilder() {
-		return new QueryFactory(Container::getInstance()->get(MySqlEngine::class));
+		return new QueryFactory('mysql');
 	}
 }
