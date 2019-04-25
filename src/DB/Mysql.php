@@ -23,7 +23,7 @@ class Mysql extends PDOAbstract implements DBInterface {
 	protected function connect() {
 		$this->config = App::$config->get('mysql');
 		$dsn = 'mysql:host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';';
-		if (isset($this->config['name'])) {
+		if (isset($this->config['database'])) {
 			$dsn .= 'dbname=' . $this->config['database'] . ';';
 		}
 		$dsn .= 'charset=' . strtolower(str_replace('-', '', App::$config->get('charset')));

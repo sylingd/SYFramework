@@ -42,7 +42,7 @@ abstract class ModelAbstract {
 		return $this->getBuilder()->insert($this->_table_name);
 	}
 	public function newUpdate() {
-		return $this->getBuilder()->update($this->_table_name);
+		return $this->getBuilder()->update($this->_table_name, []);
 	}
 	public function newDelete() {
 		return $this->getBuilder()->delete($this->_table_name);
@@ -121,7 +121,7 @@ abstract class ModelAbstract {
 			}
 		}
 		$query = $this->newUpdate();
-		$query->set($set);
+		$query->map($set);
 		if ($filter !== true) {
 			if (is_string($filter) || is_numeric($filter)) {
 				$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
