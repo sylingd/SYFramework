@@ -23,16 +23,12 @@ main() {
 	redis_ver="0.14.0"
 	yac_ver="2.0.2"
 	yaconf_ver="1.0.7"
-	memcached_ver="3.1.3"
 
 	# Install redis
 	installExt "redis" "phpredis/phpredis" "${redis_ver}" "phpredis-${redis_ver}"
 
 	# Install memcached
-	sudo add-apt-repository ppa:ubuntu/libmemcached
-	sudo apt-get update
-	sudo apt-get install -y libmemcached libmemcached11 libmemcached-dev libmemcachedutil2 libhashkit2 libhashkit-dev
-	installExt "memcached" "php-memcached-dev/php-memcached" "v${memcached_ver}" "php-memcached-${memcached_ver}"
+	phpenv config-add "$TRAVIS_BUILD_DIR/ci/config/memcached.ini"
 
 	# Install Yac
 	can_install_yac=$(php -r "echo version_compare(PHP_VERSION, '7.3');")

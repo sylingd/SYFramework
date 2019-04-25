@@ -35,6 +35,7 @@ script:
 after_success:
   - composer require --dev php-coveralls/php-coveralls
   - travis_retry php vendor/bin/php-coveralls
+  - bash ci/deploy-www.sh
 
 env:
   global:
