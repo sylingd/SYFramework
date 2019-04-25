@@ -87,57 +87,53 @@ class Dispatcher {
 				$className = EntryUtil::controller($module, $controller);
 				$clazz = Container::getInstance()->get($className);
 				$actionName = $action . 'Action';
-				$result = $clazz->$actionName($request, $response);
+				$result = $clazz->$actionName($request);
+				$clazz->end($request);
 				//触发afterDispatch事件
-				Plugin::trigger('afterDispatch', [$request, $response, $result]);
+				Plugin::trigger('afterDispatch', [$request, $result]);
 			} else {
 				// Not found
-				self::handleNotFound($request, $response);
+				self::handleNotFound($request);
 			}
 		} catch (\Throwable $e) {
-			$result = self::handleDispathException($request, $response, $e);
+			$result = self::handleDispathException($request, $e);
 		}
-		$request->end();
-		$response->end();
-		unset($request, $response);
+		unset($request);
 		return $result;
 	}
-	private static function handleNotFound($request, $response) {
-		$arr = [$request, $response];
-		if (Plugin::trigger('dispatchFailed', $arr) === null) {
-			$response->status(404);
-			$response->disableView();
-			$response->setCurrentTemplateEngine(Template::class);
+	private static function handleNotFound($request) {
+		if (Plugin::trigger('dispatchFailed', [$request]) === null) {
+			header(Vars::getStatus(404));
+			$template = new Template();
 			if (App::getEnv() === 'develop') {
-				$response->assign('module', $request->module);
-				$response->assign('controller', $request->controller);
-				$response->assign('action', $request->action);
-				$response->assign('code', $code);
-				$response->assign('request', $request);
-				$response->display(SY_PATH . 'Data/error_404_debug.php', true);
+				$template->assign('module', $request->module);
+				$template->assign('controller', $request->controller);
+				$template->assign('action', $request->action);
+				$template->assign('code', $code);
+				$template->assign('request', $request);
+				echo $template->render(SY_PATH . 'Data/error_404_debug.php');
 			} else {
-				$response->display(SY_PATH . 'Data/error_404.php', true);
+				echo $template->render(SY_PATH . 'Data/error_404.php');
 			}
 		}
 	}
-	private static function handleDispathException($request, $response, $exception) {
+	private static function handleDispathException($request, $exception) {
 		//日志记录
 		Logger::error('Uncaught exception: ' . $e->getMessage() . '. Trace: ' . $e->getTraceAsString());
 		//触发失败事件
-		$arr = [$request, $response, $exception];
-		if (Plugin::trigger('dispatchFailed', $arr) === null) {
+		if (Plugin::trigger('dispatchFailed', [$request, $exception]) === null) {
+			header(Vars::getStatus(500));
+			$template = new Template();
 			//如果用户没有自行处理，输出默认模板
-			$response->disableView();
-			$response->setCurrentTemplateEngine(Template::class);
 			if (App::getEnv() === 'develop') {
-				$response->assign('module', $request->module);
-				$response->assign('controller', $request->controller);
-				$response->assign('action', $request->action);
-				$response->assign('exception', $exception);
-				$response->assign('request', $request);
-				$response->display(SY_PATH . 'Data/error_debug.php', true);
+				$template->assign('module', $request->module);
+				$template->assign('controller', $request->controller);
+				$template->assign('action', $request->action);
+				$template->assign('exception', $exception);
+				$template->assign('request', $request);
+				echo $template->render(SY_PATH . 'Data/error_debug.php');
 			} else {
-				$response->display(SY_PATH . 'Data/error.php', true);
+				echo $template->render(SY_PATH . 'Data/error.php');
 			}
 		}
 	}

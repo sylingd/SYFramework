@@ -13,6 +13,9 @@ namespace Sy\DB;
 
 use Sy\App;
 use Sy\Exception\DBException;
+use Sy\DI\Container;
+use Latitude\QueryBuilder\QueryFactory;
+use Latitude\QueryBuilder\Engine\PostgresEngine;
 
 class Postgre extends PDOAbstract {
 	/**
@@ -48,11 +51,20 @@ class Postgre extends PDOAbstract {
 	 * @param array $data 参数
 	 * @return array
 	 */
-	public function getOne($sql, $data = NULL) {
+	public function get(string $sql, $data = null) {
 		if (stripos($sql, 'limit') === false && stripos($sql, 'offset') === false) {
 			$sql .= ' LIMIT 1 OFFSET 0';
 		}
 		$r = $this->query($sql, $data);
 		return current($r);
+	}
+	/**
+	 * 获取Builder对象
+	 * 
+	 * @access public
+	 * @return object
+	 */
+	public static function getBuilder() {
+		return new QueryFactory(Container::getInstance()->get(PostgresEngine::class));
 	}
 }

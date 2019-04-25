@@ -14,6 +14,8 @@ namespace Sy;
 use Sy\Router;
 use Sy\Plugin;
 use Sy\DI\Container;
+use Sy\DI\EntryUtil;
+use Sy\DB\DBInterface;
 use Sy\Http\Dispatcher;
 use Sy\Exception\Exception;
 use Sy\Exception\StartException;
@@ -65,8 +67,14 @@ class App {
 			mb_internal_encoding($config->get('charset'));
 		}
 		//设置一些基本参数
-		self::$cfgNamespace = $config->get('namespace');
+		$namespace = $config->get('namespace');
+		if ('\\' !== $namespace[strlen($namespace) - 1]) {
+			throw new StartException("A non-empty PSR-4 prefix must end with a namespace separator.");
+		}
+		self::$cfgNamespace = $namespace;
 		Dispatcher::init();
+		//init alias
+		EntryUtil::initAlias();
 		//Configuration
 		self::callConfiguration();
 	}

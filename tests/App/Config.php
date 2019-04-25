@@ -1,6 +1,13 @@
 <?php
 return [
 	'product' => [
+		'namespace' => 'SyApp\\',
+		'database' => 'mysql',
+		'template' => [
+			'engine' => 'Sy\\Http\\Template',
+			'auto' => true,
+			'extension' => 'phtml'
+		],
 		'cache' => [
 			'path' => '@TMP',
 			'prefix' => 'sy_'

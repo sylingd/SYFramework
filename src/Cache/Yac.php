@@ -25,10 +25,7 @@ class Yac implements CacheInterface {
 		if (!class_exists(\Yac::class)) {
 			throw new RequirementException("Extension Yac is required");
 		}
-		$prefix = App::$config->get('cache.prefix');
-		if (!$prefix) {
-			$prefix = '';
-		}
+		$prefix = App::$config->get('cache.prefix', '');
 		$len = YAC_MAX_KEY_LEN - 32;
 		if (strlen($prefix) > $len) {
 			throw new Exception("Prefix length must be less than $len");

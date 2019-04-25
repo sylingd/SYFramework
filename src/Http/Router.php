@@ -26,9 +26,8 @@ class Router {
 	private static $enable_extension;
 	public static function init() {
 		self::$routes = [];
-		$config = App::$config->get('router');
-		self::$enable_map = is_array($config) && isset($config['map']) ? $config['map'] : true;
-		self::$enable_extension = is_array($config) && isset($config['extension']) ? $config['extension'] : false;
+		self::$enable_map = App::$config->get('router.map', true);
+		self::$enable_extension = App::$config->get('router.extension', false);
 		self::$module = App::$config->get('module');
 	}
 	/**

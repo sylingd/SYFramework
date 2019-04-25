@@ -13,8 +13,11 @@ namespace Sy\DB;
 
 use Sy\App;
 use Sy\Exception\DBException;
+use Sy\DI\Container;
+use Latitude\QueryBuilder\QueryFactory;
+use Latitude\QueryBuilder\Engine\MySqlEngine;
 
-class Mysql extends PDOAbstract {
+class Mysql extends PDOAbstract implements DBInterface {
 	/**
 	 * 自动连接
 	 * @access public
@@ -48,11 +51,20 @@ class Mysql extends PDOAbstract {
 	 * @param array $data 参数
 	 * @return array
 	 */
-	public function getOne($sql, $data = NULL) {
+	public function get(string $sql, $data = null) {
 		if (stripos($sql, 'limit') === false) {
 			$sql .= ' LIMIT 0,1';
 		}
 		$r = $this->query($sql, $data);
 		return current($r);
+	}
+	/**
+	 * 获取Builder对象
+	 * 
+	 * @access public
+	 * @return object
+	 */
+	public static function getBuilder() {
+		return new QueryFactory(Container::getInstance()->get(MySqlEngine::class));
 	}
 }

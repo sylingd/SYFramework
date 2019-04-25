@@ -12,28 +12,29 @@
 namespace Sy;
 
 use Sy\App;
+use Sy\DI\Container;
+use Sy\Http\Security;
+use Sy\Http\TemplateInterface;
 
 abstract class ControllerAbstract {
-	public $_sy_module = '';
-	protected $_sy_tpl_vars = [];
+	protected $_sy_auto = true;
 	/**
-	 * 加载Model
-	 * @access protected
-	 * @param string $modelName
-	 * @param string $loadAs
+	 * 注册一个模板变量
+	 * 
+	 * @access public
+	 * @param string $k 名称
+	 * @param mixed $v 值
 	 */
-	protected function loadModel($modelName, $loadAs) {
-		$modelName .= 'Model';
-		$this->{$loadAs} = $modelName::getInstance();
+	protected function assign($k, $v) {
+		$this->getTemplate()->assign($k, $v);
 	}
 	/**
-	 * 注册模板变量
-	 * @access protected
-	 * @param string $key
-	 * @param mixed $value
+	 * 清空模板变量
+	 * 
+	 * @access public
 	 */
-	protected function assign($key, $value) {
-		$this->_sy_tpl_vars[$key] = $value;
+	protected function clearAssign() {
+		$this->getTemplate()->clearAssign();
 	}
 	/**
 	 * 渲染模板
@@ -42,12 +43,27 @@ abstract class ControllerAbstract {
 	 */
 	protected function display($name) {
 		if (App::$config->get('csrf')) {
-			$this->_sy_tpl_vars['_csrf_token'] = \sy\lib\Security::csrfGetHash();
+			$this->getTemplate()->assign('_csrf_token', Security::csrfGetHash());
 		}
-		$_sy_fullPath = APP_PATH . 'modules/' . $this->_sy_module . '/views/' . $name . '.phtml';
-		extract($this->_sy_tpl_vars, EXTR_SKIP);
-		if (is_file($_sy_fullPath)) {
-			include($_sy_fullPath);
+		$clazz = str_replace(App::$cfgNamespace, '', get_class($this), 1);
+		$clazz_info = split('\\', $clazz, 3);
+		$module = $clazz[1];
+		$fullPath = APP_PATH . 'Module/' . $module . '/View/' . $name . '.' . App::$config->get('template.extension', 'phtml');
+		echo $this->getTemplate()->render();
+	}
+	public function disableView() {
+		$this->_sy_auto = false;
+	}
+	public function getTemplate() {
+		static $template = null;
+		if ($template === null) {
+			$template = Container::getInstance()->get(TemplateInterface::class);
+		}
+		return $template;
+	}
+	public function end($request) {
+		if ($this->_sy_auto && App::$config->get('template.auto', true)) {
+			$this->display($request->controller . '/' . $request->action);
 		}
 	}
 }

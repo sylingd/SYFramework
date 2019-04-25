@@ -41,6 +41,13 @@ abstract class PDOAbstract {
 	 */
 	abstract public function getOne($sql, $data);
 	/**
+	 * 获取Builder对象
+	 * 
+	 * @access public
+	 * @return object
+	 */
+	abstract public static function getBuilder();
+	/**
 	 * 构造函数，自动连接
 	 * @access public
 	 */
@@ -77,7 +84,7 @@ abstract class PDOAbstract {
 	 * @param array $data 参数
 	 * @return array
 	 */
-	public function query($sql, $data = NULL) {
+	public function query(string $sql, $data = null) {
 		$st = $this->connection->prepare($sql);
 		if ($st === FALSE) {
 			$e = $this->connection->errorInfo();
