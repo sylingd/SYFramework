@@ -20,9 +20,13 @@ cache:
 before_install:
   - bash ci/sync-gitee.sh
   - mkdir build
+  - bash ci/install.sh
 
 install:
   - composer install
+
+before_script:
+  - bash ci/init-mysql.sh
 
 script:
   - composer test
