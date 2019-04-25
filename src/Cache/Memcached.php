@@ -39,7 +39,10 @@ class Memcached implements CacheInterface {
 
 	public function get($key, $default = null) {
 		$result = $this->connection->get($key);
-		return $result === false ? $default : unserialize($result);
+		if (!is_string($result) || $this->connection->getResultCode() === \Memcached::RES_NOTSTORED) {
+			return $default;
+		}
+		return unserialize($result);
 	}
 
 	public function set($key, $value, $ttl = 0) {
@@ -78,6 +81,6 @@ class Memcached implements CacheInterface {
 	}
 
 	public function has($key) {
-		return $this->connection->get($key) === false;
+		return $this->get($key) === null;
 	}
 }
