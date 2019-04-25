@@ -46,9 +46,9 @@ class TestUtils {
 			'key3' => [1, 2, 3]
 		];
 		$handler->setMultiple($arr);
-		$that->assertTrue($handler->has('key1'));
+		$that->assertEquals(true, $handler->has('key1'));
 		$handler->clear();
-		$that->assertFalse($handler->has('key1'));
+		$that->assertEquals(false, $handler->has('key1'));
 		$that->assertNull($handler->get('key1'));
 		$that->assertNull($handler->get('key2'));
 		$that->assertNull($handler->get('key3'));
