@@ -19,6 +19,19 @@ installExt() {
 	sudo rm -rf $stage
 }
 
+installMemcached() {
+	stage=$(mktemp -d)
+	cd $stage
+	wget -O libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
+	tar -zxf libmemcached.tar.gz
+	cd libmemcached-1.0.18
+	./configure
+	make -j4
+	sudo make install
+	cd $TRAVIS_BUILD_DIR
+	sudo rm -rf $stage
+}
+
 main() {
 	redis_ver="0.14.0"
 	yac_ver="2.0.2"
@@ -29,6 +42,7 @@ main() {
 	installExt "redis" "phpredis/phpredis" "${redis_ver}" "phpredis-${redis_ver}"
 
 	# Install memcached
+	installMemcached
 	installExt "memcached" "php-memcached-dev/php-memcached" "v${memcached_ver}" "php-memcached-${memcached_ver}"
 
 	# Install Yac

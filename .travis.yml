@@ -21,7 +21,6 @@ cache:
 before_install:
   - bash ci/sync-gitee.sh
   - mkdir build
-  - sudo apt-get install -y libmemcached11 libmemcached-dev libmemcachedutil2
   - bash ci/install.sh
 
 install:
