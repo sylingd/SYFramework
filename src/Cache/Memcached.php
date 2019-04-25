@@ -30,7 +30,7 @@ class Memcached implements CacheInterface {
 		}
 		$config = App::$config->get('memcached');
 		$this->connection = new \Memcached;
-		if (is_array($config['server'])) {
+		if (isset($config['server']) && is_array($config['server'])) {
 			$this->connection->addServers($config['server']);
 		} else {
 			$this->connection->addServer($config['host'], $config['port']);
