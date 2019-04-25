@@ -16,6 +16,10 @@ return [
 			'password' => 'root',
 			'database' => 'test'
 		],
+		'memcached' => [
+			'host' => 'localhost',
+			'port' => '11211'
+		],
 		'charset' => 'UTF-8'
 	]
 ];
