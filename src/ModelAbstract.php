@@ -11,10 +11,10 @@
  */
 namespace Sy;
 
-use function Latitude\QueryBuilder\field;
 use Sy\DB\DBInterface;
 use Sy\Exception\Exception;
 use Sy\Exception\DBException;
+use Latitude\QueryBuilder\Conditions;
 
 abstract class ModelAbstract {
 	protected $_table_name = '';
@@ -54,7 +54,6 @@ abstract class ModelAbstract {
 	 * @return array
 	 */
 	public function execute($query) {
-		$query = $query->compile();
 		return $this->driver->query($query->sql(), $query->params());
 	}
 	/**
@@ -69,10 +68,10 @@ abstract class ModelAbstract {
 			$query->addColumns(...$cols);
 		}
 		if (!is_array($filter)) {
-			$query->where(field($this->_primary_key)->eq($filter));
+			$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
 		} else {
 			foreach ($filter as $k => $v) {
-				$query->andWhere(field($k)->eq($v));
+				$query->andWhere(Conditions::make($k . ' = ?', $v));
 			}
 		}
 		$query->limit(1);
@@ -94,7 +93,7 @@ abstract class ModelAbstract {
 			$query->addColumns(...$cols);
 		}
 		foreach ($filter as $k => $v) {
-			$query->andWhere(field($k)->eq($v));
+			$query->andWhere(Conditions::make($k . ' = ?', $v));
 		}
 		$query->offset($offset)->limit($num);
 		return $this->execute($query);
@@ -125,12 +124,12 @@ abstract class ModelAbstract {
 		$query->set($set);
 		if ($filter !== true) {
 			if (is_string($filter) || is_numeric($filter)) {
-				$query->where(field($this->_primary_key)->eq($filter));
+				$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
 			} elseif (!is_array($filter) || count($filter) === 0) {
 				throw new DBException("Filter can not be empty");
 			} else {
 				foreach ($filter as $k => $v) {
-					$query->andWhere(field($k)->eq($v));
+					$query->andWhere(Conditions::make($k . ' = ?', $v));
 				}
 			}
 		}
@@ -148,12 +147,12 @@ abstract class ModelAbstract {
 		$query = $this->newDelete();
 		if ($filter !== true) {
 			if (is_string($filter) || is_numeric($filter)) {
-				$query->where(field($this->_primary_key)->eq($filter));
+				$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
 			} elseif (!is_array($filter) || count($filter) === 0) {
 				throw new DBException("Filter can not be empty");
 			} else {
 				foreach ($filter as $k => $v) {
-					$query->andWhere(field($k)->eq($v));
+					$query->andWhere(Conditions::make($k . ' = ?', $v));
 				}
 			}
 		}
