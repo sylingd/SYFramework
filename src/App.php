@@ -16,7 +16,6 @@ use Sy\Plugin;
 use Sy\DI\Container;
 use Sy\Exception\Exception;
 use Sy\Exception\StartException;
-use Sy\Utils\Security;
 use Sy\Config\ConfigInterface;
 use Sy\Config\Adapter\Arr;
 
@@ -86,10 +85,6 @@ class App {
 		//单元测试
 		if (defined('SY_UNIT')) {
 			return;
-		}
-		//是否启用CSRF验证
-		if (self::$config->get('csrf')) {
-			Security::csrfSetCookie();
 		}
 		//调试模式
 		if (self::$debug && function_exists('xdebug_start_trace')) {

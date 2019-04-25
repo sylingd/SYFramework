@@ -80,6 +80,10 @@ class Dispatcher {
 		try {
 			$code = self::isValid($module, $controller, $action);
 			if ($code === self::ROUTE_VALID) {
+				//是否启用CSRF验证
+				if (App::$config->get('csrf')) {
+					Security::csrfSetCookie();
+				}
 				$className = EntryUtil::controller($module, $controller);
 				$clazz = Container::getInstance()->get($className);
 				$actionName = $action . 'Action';

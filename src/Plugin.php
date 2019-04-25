@@ -21,9 +21,6 @@ class Plugin {
 	 * @param object $obj 实现plugin的类
 	 */
 	public static function register($obj) {
-		if (!($obj instanceof \sy\interfaces\plugin)) {
-			return;
-		}
 		if (!is_array(static::$_list[$obj->type])) {
 			static::$_list[$obj->type] = [];
 		}
