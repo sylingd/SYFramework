@@ -19,8 +19,6 @@ use Sy\Config\ConfigInterface;
 
 class Arr implements ConfigInterface {
 	use ConfigTrait;
-	/** @var string $environment Environment name */
-	protected $environment;
 
 	/** @var array $conf Configs */
 	protected $conf;
@@ -33,9 +31,6 @@ class Arr implements ConfigInterface {
 	 * @param string $env
 	 */
 	public function __construct(array $conf, $env = null) {
-		if ($env === null) {
-			$env = App::getEnv();
-		}
 		$this->environment = $env;
 		$this->conf = $conf;
 	}
@@ -49,7 +44,7 @@ class Arr implements ConfigInterface {
 	 */
 	public function get($key, $default = null) {
 		$keys = explode('.', $key);
-		$conf = empty($this->environment) ? $this->conf : $this->conf[$this->environment];
+		$conf = empty(App::getEnv()) ? $this->conf : $this->conf[App::getEnv()];
 		foreach ($keys as $v) {
 			if (isset($conf[$v])) {
 				$conf = $conf[$v];
@@ -68,7 +63,7 @@ class Arr implements ConfigInterface {
 	 */
 	public function has($key) {
 		$keys = explode('.', $key);
-		$conf = empty($this->environment) ? $this->conf : $this->conf[$this->environment];
+		$conf = empty(App::getEnv()) ? $this->conf : $this->conf[App::getEnv()];
 		foreach ($keys as $v) {
 			if (isset($conf[$v])) {
 				$conf = $conf[$v];

@@ -158,6 +158,9 @@ class App {
 			}
 		}
 	}
+	public static function setEnv($env) {
+		self::$environment = $env;
+	}
 	public static function getEnv() {
 		return self::$environment;
 	}
