@@ -1,9 +1,8 @@
 <?php
-namespace SyTest\Cache\Adapter;
+namespace SyTest\Cache;
 
 use PHPUnit\Framework\TestCase;
-use Sy\Cache\Adapter\Yac as SyYac;
-use SyTest\Cache\TestUtils;
+use Sy\Cache\Yac as SyYac;
 
 class YacTest extends TestCase {
 	/**

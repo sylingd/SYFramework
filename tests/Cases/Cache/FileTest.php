@@ -1,9 +1,8 @@
 <?php
-namespace SyTest\Cache\Adapter;
+namespace SyTest\Cache;
 
 use PHPUnit\Framework\TestCase;
-use Sy\Cache\Adapter\File;
-use SyTest\Cache\TestUtils;
+use Sy\Cache\File;
 
 class FileTest extends TestCase {
 	public function testFile() {

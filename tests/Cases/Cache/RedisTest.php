@@ -1,9 +1,8 @@
 <?php
-namespace SyTest\Cache\Adapter;
+namespace SyTest\Cache;
 
 use PHPUnit\Framework\TestCase;
-use Sy\Cache\Adapter\Redis as SyRedis;
-use SyTest\Cache\TestUtils;
+use Sy\Cache\Redis as SyRedis;
 
 class RedisTest extends TestCase {
 	public function testRedis() {
