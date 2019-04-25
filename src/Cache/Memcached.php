@@ -81,6 +81,6 @@ class Memcached implements CacheInterface {
 	}
 
 	public function has($key) {
-		return $this->get($key) === null;
+		return $this->get($key) !== null;
 	}
 }
