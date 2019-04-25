@@ -2,8 +2,7 @@
 namespace SyTest\Cache\Adapter;
 
 use PHPUnit\Framework\TestCase;
-use Yesf\Yesf;
-use Yesf\Cache\Adapter\Yac as YesfYac;
+use Sy\Cache\Adapter\Yac as SyYac;
 use SyTest\Cache\TestUtils;
 
 class YacTest extends TestCase {
@@ -11,7 +10,7 @@ class YacTest extends TestCase {
 	 * @requires extension yac
 	 */
 	public function testYac() {
-		$handler = new YesfYac();
+		$handler = new SyYac();
 		TestUtils::single($this, $handler);
 		TestUtils::multi($this, $handler);
 		TestUtils::clear($this, $handler);

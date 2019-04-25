@@ -31,7 +31,7 @@ class Mysql extends PDOAbstract {
 	protected function connect() {
 		$dsn = 'mysql:host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';';
 		if (isset($this->config['name'])) {
-			$dsn .= 'dbname=' . $this->config['name'] . ';';
+			$dsn .= 'dbname=' . $this->config['database'] . ';';
 		}
 		$dsn .= 'charset=' . strtolower(str_replace('-', '', App::$config->get('charset')));
 		try {

@@ -20,8 +20,8 @@ class Postgre extends PDOAbstract {
 	 * @access public
 	 */
 	public function autoConnect() {
-		if (App::$config->has('pg')) {
-			$this->setParam(App::$config->get('pg'));
+		if (App::$config->has('postgre')) {
+			$this->setParam(App::$config->get('postgre'));
 		}
 	}
 	/**
@@ -31,7 +31,7 @@ class Postgre extends PDOAbstract {
 	protected function connect() {
 		$dsn = 'pgsql:host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';';
 		if (isset($this->config['name'])) {
-			$dsn .= 'dbname=' . $this->config['name'] . ';';
+			$dsn .= 'dbname=' . $this->config['database'] . ';';
 		}
 		$dsn .= 'charset=' . strtolower(str_replace('-', '', App::$config->get('charset')));
 		try {

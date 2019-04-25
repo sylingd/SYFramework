@@ -15,7 +15,6 @@ use Sy\App;
 use Sy\Exception\DBException;
 
 class Sqlite extends PDOAbstract {
-	protected $dbtype = 'SQLite';
 	/**
 	 * 自动连接
 	 * @access protected

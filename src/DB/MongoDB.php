@@ -37,15 +37,6 @@ class MongoDB {
 	public $currentCollection = [];
 	public $lastError = [];
 	protected $current;
-	protected static $_instance = NULL;
-	public static function i($id = 'default') {
-		if (static::$_instance === NULL) {
-			static::$_instance = new static($id);
-		} else {
-			static::$_instance->setCurrent($id);
-		}
-		return static::$_instance;
-	}
 	/**
 	 * 设置当前Server
 	 * @param string $current

@@ -22,7 +22,7 @@ class Memcached implements CacheInterface {
 	private $connection;
 
 	public function __construct() {
-		if (!class_exists('Redis', FALSE)) {
+		if (!class_exists('Memcached', FALSE)) {
 			throw new RequirementException('Class "Memcached" is required');
 		}
 		if (!App::$config->has('memcached')) {
