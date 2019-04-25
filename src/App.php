@@ -20,7 +20,9 @@ use Sy\Utils\Security;
 use Sy\Config\ConfigInterface;
 use Sy\Config\Adapter\Arr;
 
-define('SY_PATH', __DIR__ . '/');
+if (!defined('SY_PATH')) {
+	define('SY_PATH', __DIR__ . '/');
+}
 
 class App {
 	//会从data下的相应文件读取
