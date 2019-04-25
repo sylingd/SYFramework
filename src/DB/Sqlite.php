@@ -19,19 +19,11 @@ use Latitude\QueryBuilder\Engine\CommonEngine;
 
 class Sqlite extends PDOAbstract {
 	/**
-	 * 自动连接
-	 * @access protected
-	 */
-	protected function autoConnect() {
-		if (App::$config->has('sqlite')) {
-			$this->setParam(App::$config->get('sqlite'));
-		}
-	}
-	/**
 	 * 连接到MySQL
 	 * @access protected
 	 */
 	protected function connect() {
+		$this->config = App::$config->get('mysql');
 		//对老版本的支持
 		if ($this->config['version'] === 'sqlite3') {
 			$dsn = 'sqlite:';

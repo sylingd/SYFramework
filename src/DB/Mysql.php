@@ -19,19 +19,11 @@ use Latitude\QueryBuilder\Engine\MySqlEngine;
 
 class Mysql extends PDOAbstract implements DBInterface {
 	/**
-	 * 自动连接
-	 * @access public
-	 */
-	public function autoConnect() {
-		if (App::$config->has('mysql')) {
-			$this->setParam(App::$config->get('mysql'));
-		}
-	}
-	/**
 	 * 连接到MySQL
 	 * @access protected
 	 */
 	protected function connect() {
+		$this->config = App::$config->get('mysql');
 		$dsn = 'mysql:host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';';
 		if (isset($this->config['name'])) {
 			$dsn .= 'dbname=' . $this->config['database'] . ';';

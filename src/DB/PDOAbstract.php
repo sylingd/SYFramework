@@ -21,11 +21,6 @@ abstract class PDOAbstract {
 	protected $connection = null;
 	protected $config = null;
 	/**
-	 * 抽象函数：自动连接
-	 * @access protected
-	 */
-	abstract protected function autoConnect();
-	/**
 	 * 抽象函数：连接
 	 * @access protected
 	 * @param string $id
@@ -39,7 +34,7 @@ abstract class PDOAbstract {
 	 * @param string $id 连接ID
 	 * @return array
 	 */
-	abstract public function getOne($sql, $data);
+	abstract public function get($sql, $data);
 	/**
 	 * 获取Builder对象
 	 * 
@@ -55,17 +50,6 @@ abstract class PDOAbstract {
 		if (!class_exists('PDO', FALSE)) {
 			throw new SYException('Class "PDO" is required');
 		}
-		$this->autoConnect();
-	}
-	/**
-	 * 设置Server
-	 * @access public
-	 * @param array $param MySQL服务器参数
-	 * @param string $id
-	 */
-	public function setParam($param) {
-		$this->config = $param;
-		$this->connection = NULL;
 		$this->connect();
 	}
 	/**

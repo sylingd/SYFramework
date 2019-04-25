@@ -19,19 +19,11 @@ use Latitude\QueryBuilder\Engine\PostgresEngine;
 
 class Postgre extends PDOAbstract {
 	/**
-	 * 自动连接
-	 * @access public
-	 */
-	public function autoConnect() {
-		if (App::$config->has('postgre')) {
-			$this->setParam(App::$config->get('postgre'));
-		}
-	}
-	/**
 	 * 连接
 	 * @access protected
 	 */
 	protected function connect() {
+		$this->config = App::$config->get('mysql');
 		$dsn = 'pgsql:host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';';
 		if (isset($this->config['name'])) {
 			$dsn .= 'dbname=' . $this->config['database'] . ';';
