@@ -25,9 +25,6 @@ if (!defined('SY_PATH')) {
 }
 
 class App {
-	//会从data下的相应文件读取
-	public static $mimeTypes = NULL;
-	public static $httpStatus = NULL;
 	//调试模式
 	public static $debug = TRUE;
 	//CLI模式
@@ -43,8 +40,6 @@ class App {
 	 * @param object $config设置
 	 */
 	protected static function createInit($config) {
-		//路径相关
-		self::$siteDir = $siteDir . '/';
 		//PHP运行模式
 		if (PHP_SAPI === 'cli') {
 			self::$isCli = TRUE;
