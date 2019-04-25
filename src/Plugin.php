@@ -14,34 +14,50 @@ namespace Sy;
 use Sy\App;
 
 class Plugin {
-	protected static $_list = [];
+	protected static $plugins = [];
 	/**
-	 * 注册插件，用于自定义一些操作（例如对404的处理）
+	 * 注册一个插件
+	 * 
 	 * @access public
-	 * @param object $obj 实现plugin的类
+	 * @param string $event 事件名称
+	 * @param callable $callback 回调函数
 	 */
-	public static function register($obj) {
-		if (!is_array(static::$_list[$obj->type])) {
-			static::$_list[$obj->type] = [];
+	public static function register(string $event, callable $callback) {
+		if (!isset(self::$plugins[$event])) {
+			self::$plugins[$event] = [];
 		}
-		static::$_list[$obj->type][] = $obj;
+		self::$plugins[$event][] = $callback;
+	}
+	/**
+	 * 清除已注册的插件
+	 * 
+	 * @access public
+	 * @param string $event 事件名称
+	 */
+	public static function clear(string $event = '') {
+		if (empty($event)) {
+			self::$plugins = [];
+		} else {
+			self::$plugins[$event] = [];
+		}
 	}
 	/**
 	 * 触发一个事件
+	 * 
 	 * @access public
-	 * @param string $type
-	 * @param array $data 数据
+	 * @param string $event 事件名称
+	 * @param array $data 参数
 	 */
-	public static function trigger($type, $data = []) {
-		if (!is_array(static::$_list[$type])) {
-			return NULL;
-		}
-		foreach (static::$_list[$type] as $plugin) {
-			$result = call_user_func_array($plugin, $data);
-			if ($result !== NULL) {
-				return $result;
+	public static function trigger(string $event, $data = []) {
+		$result = null;
+		if (isset(self::$plugins[$event])) {
+			foreach (self::$plugins[$event] as $callback) {
+				$result = call_user_func_array($callback, $data);
+				if ($result !== null) {
+					break;
+				}
 			}
 		}
-		return NULL;
+		return $result;
 	}
 }

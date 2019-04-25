@@ -1,7 +1,7 @@
 <?php
 namespace SyApp\Model;
 
-use Yesf\ModelAbstract;
+use Sy\ModelAbstract;
 
 class User extends ModelAbstract {
 	protected $_table_name = 'user';
