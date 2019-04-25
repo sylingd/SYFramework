@@ -55,12 +55,12 @@ class Memcached implements CacheInterface {
 	}
 
 	public function getMultiple($keys, $default = null) {
-		$result = $this->connection->getMulti ($keys);
-		foreach ($result as $k => $v) {
-			if ($v === false || $v === null) {
-				$result[$k] = $default;
+		$result = $this->connection->getMulti($keys);
+		foreach ($keys as $key) {
+			if (isset($result[$key])) {
+				$result[$key] = unserialize($result[$key]);
 			} else {
-				$result[$k] = unserialize($v);
+				$result[$key] = $default;
 			}
 		}
 		return $result;
@@ -70,11 +70,11 @@ class Memcached implements CacheInterface {
 		foreach ($values as $k => $v) {
 			$values[$k] = serialize($v);
 		}
-		$this->connection->setMulti ($values, $ttl);
+		$this->connection->setMulti($values, $ttl);
 	}
 
 	public function deleteMultiple($keys) {
-		return $this->connection->deleteMulti ($keys);
+		return $this->connection->deleteMulti($keys);
 	}
 
 	public function has($key) {
