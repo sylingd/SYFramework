@@ -42,7 +42,7 @@ class App {
 	 * @access protected
 	 * @param object $config设置
 	 */
-	protected static function createApplicationInit($config) {
+	protected static function createInit($config) {
 		//路径相关
 		self::$siteDir = $siteDir . '/';
 		//PHP运行模式
