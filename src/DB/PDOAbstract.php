@@ -72,7 +72,7 @@ abstract class PDOAbstract {
 				'_affected_rows' => $st->rowCount()
 			];
 			if (stripos($sql, 'insert') === 0) {
-				$result['_insert_id'] = $connection->insert_id;
+				$result['_insert_id'] = $this->connection->lastInsertId();
 			}
 			return $result;
 		}
