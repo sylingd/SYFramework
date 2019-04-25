@@ -13,13 +13,6 @@ namespace Sy\DB;
 
 interface DBInterface {
 	/**
-	 * 获取最后产生的ID
-	 * @access public
-	 * @param string $id
-	 * @return int
-	 */
-	public function getLastId();
-	/**
 	 * 执行查询并返回结果
 	 * 
 	 * @access public

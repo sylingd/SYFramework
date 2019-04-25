@@ -37,15 +37,6 @@ abstract class PDOAbstract {
 		$this->connect();
 	}
 	/**
-	 * 获取最后产生的ID
-	 * @access public
-	 * @param string $id
-	 * @return int
-	 */
-	public function getLastId() {
-		return intval($this->connection->lastInsertId());
-	}
-	/**
 	 * 执行查询
 	 * @access public
 	 * @param string $sql SQL语句
@@ -68,13 +59,22 @@ abstract class PDOAbstract {
 			}
 		}
 		try {
-			$r = $st->execute();
-			if ($r === FALSE) {
+			$result = $st->execute();
+			if ($result === FALSE) {
 				$e = $st->errorInfo();
 				throw new DBException($e[2]);
 			}
 		} catch (\PDOException $e) {
 			throw new DBException($e->getMessage());
+		}
+		if (stripos($sql, 'delete') === 0 || stripos($sql, 'insert') === 0 || stripos($sql, 'update') === 0) {
+			$result = [
+				'_affected_rows' => $st->rowCount()
+			];
+			if (stripos($sql, 'insert') === 0) {
+				$result['_insert_id'] = $connection->insert_id;
+			}
+			return $result;
 		}
 		$st->setFetchMode(\PDO::FETCH_ASSOC);
 		return $st->fetchAll();
