@@ -88,8 +88,15 @@ class Dispatcher {
 				$className = EntryUtil::controller($module, $controller);
 				$clazz = Container::getInstance()->get($className);
 				$actionName = $action . 'Action';
-				$clazz->$actionName($request);
-				$clazz->end($request);
+				$result = $clazz->$actionName($request);
+				if ($result !== null) {
+					if (is_array($result) || is_object($result)) {
+						$result = json_encode($result);
+					}
+					echo $result;
+				} else {
+					$clazz->end($request);
+				}
 				//触发afterDispatch事件
 				Plugin::trigger('afterDispatch', [$request, $result]);
 			} else {
