@@ -11,11 +11,11 @@
  */
 namespace Sy;
 
-use Sy\Router;
 use Sy\Plugin;
 use Sy\DI\Container;
 use Sy\DI\EntryUtil;
 use Sy\DB\DBInterface;
+use Sy\Http\Router;
 use Sy\Http\Dispatcher;
 use Sy\Exception\Exception;
 use Sy\Exception\StartException;
@@ -73,6 +73,7 @@ class App {
 		}
 		self::$cfgNamespace = $namespace;
 		Dispatcher::init();
+		Router::init();
 		//init alias
 		EntryUtil::initAlias();
 		//Configuration

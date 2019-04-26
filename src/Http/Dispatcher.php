@@ -12,6 +12,7 @@
 namespace Sy\Http;
 
 use Sy\App;
+use Sy\Plugin;
 use Sy\DI\Container;
 use Sy\DI\EntryUtil;
 use Sy\Exception\NotFoundException;
@@ -87,21 +88,20 @@ class Dispatcher {
 				$className = EntryUtil::controller($module, $controller);
 				$clazz = Container::getInstance()->get($className);
 				$actionName = $action . 'Action';
-				$result = $clazz->$actionName($request);
+				$clazz->$actionName($request);
 				$clazz->end($request);
 				//触发afterDispatch事件
 				Plugin::trigger('afterDispatch', [$request, $result]);
 			} else {
 				// Not found
-				self::handleNotFound($request);
+				self::handleNotFound($request, $code);
 			}
 		} catch (\Throwable $e) {
 			$result = self::handleDispathException($request, $e);
 		}
 		unset($request);
-		return $result;
 	}
-	private static function handleNotFound($request) {
+	private static function handleNotFound($request, $code) {
 		if (Plugin::trigger('dispatchFailed', [$request]) === null) {
 			header(Vars::getStatus(404));
 			$template = new Template();

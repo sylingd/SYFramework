@@ -38,6 +38,9 @@ class Request {
 	public $cookie;
 	public $files;
 
+	/** @var string $extension Extension */
+	public $extension;
+
 	public function __construct() {
 		$this->get = &$_GET;
 		$this->post = &$_POST;

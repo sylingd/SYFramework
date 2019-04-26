@@ -139,7 +139,7 @@ class Router {
 	 * @param string $uri
 	 * @return array
 	 */
-	private static function parseMap($uri) {
+	private static function parseMap(Request $request) {
 		//解析
 		$res = explode('/', trim($request->uri, '/'), 3);
 		if (count($res) === 3) {
@@ -236,10 +236,10 @@ class Router {
 		$res = false;
 		$method = strtolower($request->server['REQUEST_METHOD']);
 		if (isset(self::$routes[$method])) {
-			$res = self::$parseBy(self::$routes[$method], $request);
+			$res = self::parseBy(self::$routes[$method], $request);
 		}
 		if ($res === false && isset(self::$routes['any'])) {
-			$res = self::$parseBy(self::$routes['any'], $request);
+			$res = self::parseBy(self::$routes['any'], $request);
 		}
 		if ($res === false) {
 			if (self::$enable_map) {

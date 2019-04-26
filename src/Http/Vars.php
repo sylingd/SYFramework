@@ -27,9 +27,9 @@ class Vars {
 		$version = ((isset($_SERVER['SERVER_PROTOCOL']) && $_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.0') ? '1.0' : '1.1');
 		if (isset($status[$code])) {
 			$statusText = $status[$code];
-			return "HTTP/$version $status $statusText";
+			return "HTTP/$version $code $statusText";
 		} else {
-			return "HTTP/$version $status";
+			return "HTTP/$version $code";
 		}
 	}
 	/**

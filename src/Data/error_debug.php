@@ -96,10 +96,10 @@
 			<tr><td class="name">module</td><td><?=htmlspecialchars($request->module)?></td></tr>
 			<tr><td class="name">controller</td><td><?=htmlspecialchars($request->controller)?></td></tr>
 			<tr><td class="name">action</td><td><?=htmlspecialchars($request->action)?></td></tr>
-			<tr><td class="name">request_uri</td><td><?=htmlspecialchars($request->server['request_uri'])?></td></tr>
+			<tr><td class="name">request_uri</td><td><?=htmlspecialchars($request->server['REQUEST_URI'])?></td></tr>
 			<tr><td class="name">uri</td><td><?=htmlspecialchars($request->uri)?></td></tr>
 			<tr><td class="name">extension</td><td><?=htmlspecialchars($request->extension)?></td></tr>
-			<tr><td class="name">param</td><td><?=htmlspecialchars(var_export($req->param, true))?></td></tr>
+			<tr><td class="name">param</td><td><?=htmlspecialchars(var_export($request->param, true))?></td></tr>
 		</table>
 		<div class="title">Server</div>
 		<table>
