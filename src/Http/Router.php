@@ -28,7 +28,25 @@ class Router {
 		self::$routes = [];
 		self::$enable_map = App::$config->get('router.map', true);
 		self::$enable_extension = App::$config->get('router.extension', false);
-		self::$module = App::$config->get('module');
+		self::$module = App::$config->get('module', 'index');
+	}
+	/**
+	 * Load from string
+	 * 
+	 * @access public
+	 * @param string $str
+	 */
+	public static function from($str) {
+		self::$routes = unserialize($str);
+	}
+	/**
+	 * Dump to string
+	 * 
+	 * @access public
+	 * @return string
+	 */
+	public static function dump() {
+		return serialize(self::$routes);
 	}
 	/**
 	 * Add rule
