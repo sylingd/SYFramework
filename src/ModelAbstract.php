@@ -70,9 +70,11 @@ abstract class ModelAbstract {
 		if (!is_array($filter)) {
 			$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
 		} else {
+			$where = Conditions::make();
 			foreach ($filter as $k => $v) {
-				$query->andWhere(Conditions::make($k . ' = ?', $v));
+				$where->andWith($k . ' = ?', $v);
 			}
+			$query->where($where);
 		}
 		$query->limit(1);
 		$result = $this->execute($query);
@@ -92,8 +94,12 @@ abstract class ModelAbstract {
 		if (is_array($cols)) {
 			$query->addColumns(...$cols);
 		}
-		foreach ($filter as $k => $v) {
-			$query->andWhere(Conditions::make($k . ' = ?', $v));
+		if (count($filter) > 0) {
+			$where = Conditions::make();
+			foreach ($filter as $k => $v) {
+				$where->andWith($k . ' = ?', $v);
+			}
+			$query->where($where);
 		}
 		$query->offset($offset)->limit($num);
 		return $this->execute($query);
@@ -128,9 +134,11 @@ abstract class ModelAbstract {
 			} elseif (!is_array($filter) || count($filter) === 0) {
 				throw new DBException("Filter can not be empty");
 			} else {
+				$where = Conditions::make();
 				foreach ($filter as $k => $v) {
-					$query->andWhere(Conditions::make($k . ' = ?', $v));
+					$where->andWith($k . ' = ?', $v);
 				}
+				$query->where($where);
 			}
 		}
 		$result = $this->execute($query);
@@ -151,9 +159,11 @@ abstract class ModelAbstract {
 			} elseif (!is_array($filter) || count($filter) === 0) {
 				throw new DBException("Filter can not be empty");
 			} else {
+				$where = Conditions::make();
 				foreach ($filter as $k => $v) {
-					$query->andWhere(Conditions::make($k . ' = ?', $v));
+					$where->andWith($k . ' = ?', $v);
 				}
+				$query->where($where);
 			}
 		}
 		return $this->execute($query);
