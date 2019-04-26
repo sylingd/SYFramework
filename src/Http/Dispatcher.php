@@ -70,7 +70,7 @@ class Dispatcher {
 	 * @param object $request
 	 * @return mixed
 	 */
-	public function dispatch(Request $request) {
+	public static function dispatch(Request $request) {
 		$module = ucfirst($request->module);
 		$controller = ucfirst($request->controller);
 		$action = ucfirst($request->action);
@@ -118,8 +118,6 @@ class Dispatcher {
 		}
 	}
 	private static function handleDispathException($request, $exception) {
-		//日志记录
-		Logger::error('Uncaught exception: ' . $e->getMessage() . '. Trace: ' . $e->getTraceAsString());
 		//触发失败事件
 		if (Plugin::trigger('dispatchFailed', [$request, $exception]) === null) {
 			header(Vars::getStatus(500));
