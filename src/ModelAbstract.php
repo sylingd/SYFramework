@@ -65,7 +65,7 @@ abstract class ModelAbstract {
 	public function get($filter, $cols = null) {
 		$query = $this->newSelect();
 		if (is_array($cols)) {
-			$query->addColumns(...$cols);
+			$query->columns(...$cols);
 		}
 		if (!is_array($filter)) {
 			$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
