@@ -11,6 +11,7 @@
  */
 namespace Sy;
 
+use ReflectionClass;
 use Sy\Plugin;
 use Sy\DI\Container;
 use Sy\DI\EntryUtil;
