@@ -67,14 +67,16 @@ abstract class ModelAbstract {
 		if (is_array($cols)) {
 			$query->columns(...$cols);
 		}
-		if (!is_array($filter)) {
-			$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
-		} else {
-			$where = Conditions::make();
-			foreach ($filter as $k => $v) {
-				$where->andWith($k . ' = ?', $v);
+		if ($filter !== null) {
+			if (!is_array($filter)) {
+				$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
+			} else {
+				$where = Conditions::make();
+				foreach ($filter as $k => $v) {
+					$where->andWith($k . ' = ?', $v);
+				}
+				$query->where($where);
 			}
-			$query->where($where);
 		}
 		$query->limit(1);
 		$result = $this->execute($query);
