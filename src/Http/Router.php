@@ -225,7 +225,7 @@ class Router {
 		$len = strlen(self::$prefix);
 		//路由解析
 		$uri = $request->server['REQUEST_URI'];
-		if (strpos('?', $uri) !== false) {
+		if (strpos($uri, '?') !== false) {
 			$uri = substr($uri, 0, strpos($uri, '?'));
 		}
 		//去除开头的prefix
