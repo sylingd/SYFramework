@@ -143,8 +143,8 @@ abstract class ModelAbstract {
 				$query->where($where);
 			}
 		}
-		$result = $this->execute($query);
-		return intval($result['_affected_rows']);
+		$res = $this->execute($query);
+		return intval($res['_affected_rows']);
 	}
 	/**
 	 * 删除数据
@@ -168,7 +168,8 @@ abstract class ModelAbstract {
 				$query->where($where);
 			}
 		}
-		return $this->execute($query);
+		$res = $this->execute($query);
+		return intval($res['_affected_rows']);
 	}
 	/**
 	 * 添加数据
