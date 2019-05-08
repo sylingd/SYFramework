@@ -94,7 +94,7 @@ abstract class ModelAbstract {
 	public function list($filter = [], $num = 30, $offset = 0, $cols = null) {
 		$query = $this->newSelect();
 		if (is_array($cols)) {
-			$query->addColumns(...$cols);
+			$query->columns(...$cols);
 		}
 		if (count($filter) > 0) {
 			$where = Conditions::make();
