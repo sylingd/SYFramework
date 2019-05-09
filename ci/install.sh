@@ -20,12 +20,8 @@ installExt() {
 }
 
 main() {
-	redis_ver="0.14.0"
 	yac_ver="2.0.2"
 	yaconf_ver="1.0.7"
-
-	# Install redis
-	installExt "redis" "phpredis/phpredis" "${redis_ver}" "phpredis-${redis_ver}"
 
 	# Install memcached
 	phpenv config-add "$TRAVIS_BUILD_DIR/ci/config/memcached.ini"
