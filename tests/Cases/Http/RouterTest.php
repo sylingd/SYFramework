@@ -13,7 +13,7 @@ class RouterTest extends TestCase {
 	}
 	public function setUp() {
 		Router::from(serialize([]));
-		Router::enableMap();
+		Router::enableMap();Router::setPrefix('');
 		$this->request = new Request();
 	}
 	public function testMap() {
@@ -114,6 +114,14 @@ class RouterTest extends TestCase {
 		$this->assertEquals('view', $this->request->action);
 	}
 	public function testEmpty() {
+		$this->request->server['REQUEST_METHOD'] = 'GET';
+		$this->request->server['REQUEST_URI'] = '/';
+		Router::parse($this->request);
+		$this->assertEquals('index', $this->request->module);
+		$this->assertEquals('index', $this->request->controller);
+		$this->assertEquals('index', $this->request->action);
+	}
+	public function testOther() {
 		Router::setPrefix('/api');
 		$this->request->server['REQUEST_METHOD'] = 'GET';
 		$this->request->server['REQUEST_URI'] = '/api/user/view.html?id=1';
