@@ -3,6 +3,9 @@ return [
 	'product' => [
 		'namespace' => 'SyApp\\',
 		'database' => 'mysql',
+		'router' => [
+			'extension' => true
+		],
 		'template' => [
 			'engine' => 'Sy\\Http\\Template',
 			'auto' => true,
@@ -27,6 +30,8 @@ return [
 			'host' => 'localhost',
 			'port' => '11211'
 		],
+		'modules' => ['index'],
+		'module' => 'index',
 		'charset' => 'UTF-8'
 	]
 ];

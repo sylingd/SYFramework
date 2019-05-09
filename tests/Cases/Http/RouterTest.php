@@ -8,6 +8,9 @@ use Sy\Http\Request;
 
 class RouterTest extends TestCase {
 	private $request;
+	public static function setUpBeforeClass() {
+		Router::init();
+	}
 	public function setUp() {
 		Router::from(serialize([]));
 		$this->request = new Request();
@@ -68,16 +71,8 @@ class RouterTest extends TestCase {
 	public function testMethod() {
 		$this->request->server['REQUEST_METHOD'] = 'put';
 		$this->request->server['REQUEST_URI'] = '/user/123';
-		Router::get('/user/{id}', [
-			'module' => 'index',
-			'controller' => 'user',
-			'action' => 'view'
-		]);
-		Router::put('/user/{id}', [
-			'module' => 'index',
-			'controller' => 'user',
-			'action' => 'update'
-		]);
+		Router::get('/user/{id}', 'user.view');
+		Router::put('/user/{id}', 'user.update');
 		Router::disableMap();
 		Router::parse($this->request);
 		$this->assertEquals('update', $this->request->action);
@@ -117,5 +112,14 @@ class RouterTest extends TestCase {
 		Router::parse($this->request);
 		$this->assertEquals('123', $this->request->param['id']);
 		$this->assertEquals('view', $this->request->action);
+	}
+	public function testEmpty() {
+		Router::setPrefix('/api');
+		$this->request->server['REQUEST_URI'] = '/api/user/view.html?id=1';
+		Router::parse($this->request);
+		$this->assertEquals('index', $this->request->module);
+		$this->assertEquals('user', $this->request->controller);
+		$this->assertEquals('view', $this->request->action);
+		$this->assertEquals('html', $this->request->extension);
 	}
 }
