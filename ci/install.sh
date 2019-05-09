@@ -23,6 +23,9 @@ main() {
 	yac_ver="2.0.2"
 	yaconf_ver="1.0.7"
 
+	# Install redis
+	phpenv config-add "$TRAVIS_BUILD_DIR/ci/config/redis.ini"
+
 	# Install memcached
 	phpenv config-add "$TRAVIS_BUILD_DIR/ci/config/memcached.ini"
 
