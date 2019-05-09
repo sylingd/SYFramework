@@ -13,10 +13,10 @@ class RouterTest extends TestCase {
 	}
 	public function setUp() {
 		Router::from(serialize([]));
+		Router::enableMap();
 		$this->request = new Request();
 	}
 	public function testMap() {
-		Router::enableMap();
 		$this->request->server['REQUEST_METHOD'] = 'get';
 		$this->request->server['REQUEST_URI'] = '/ap/foo';
 		Router::parse($this->request);
@@ -30,7 +30,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals('bar', $this->request->action);
 	}
 	public function testNoParam() {
-		$this->request->server['REQUEST_METHOD'] = 'get';
+		$this->request->server['REQUEST_METHOD'] = 'GET';
 		$this->request->server['REQUEST_URI'] = '/user/list';
 		Router::get('/user/list', 'index.user.list');
 		Router::disableMap();
@@ -40,7 +40,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals('list', $this->request->action);
 	}
 	public function testParamCorrect() {
-		$this->request->server['REQUEST_METHOD'] = 'get';
+		$this->request->server['REQUEST_METHOD'] = 'GET';
 		$this->request->server['REQUEST_URI'] = '/user/123';
 		Router::get('/user/{id}', [
 			'module' => 'index',
@@ -57,7 +57,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals('123', $this->request->param['id']);
 	}
 	public function testParamIncorrect() {
-		$this->request->server['REQUEST_METHOD'] = 'get';
+		$this->request->server['REQUEST_METHOD'] = 'GET';
 		$this->request->server['REQUEST_URI'] = '/user/someone';
 		Router::get('/user/{id}', 'index.user.view', [
 			'id' => '(\d+)'
@@ -69,7 +69,7 @@ class RouterTest extends TestCase {
 		$this->assertNull($this->request->action);
 	}
 	public function testMethod() {
-		$this->request->server['REQUEST_METHOD'] = 'put';
+		$this->request->server['REQUEST_METHOD'] = 'PUT';
 		$this->request->server['REQUEST_URI'] = '/user/123';
 		Router::get('/user/{id}', 'user.view');
 		Router::put('/user/{id}', 'user.update');
@@ -78,7 +78,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals('update', $this->request->action);
 	}
 	public function testAny() {
-		$this->request->server['REQUEST_METHOD'] = 'get';
+		$this->request->server['REQUEST_METHOD'] = 'GET';
 		$this->request->server['REQUEST_URI'] = '/user/someone';
 		Router::get('/user/{id}', [
 			'module' => 'index',
@@ -97,7 +97,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals('view', $this->request->action);
 	}
 	public function testClosure() {
-		$this->request->server['REQUEST_METHOD'] = 'get';
+		$this->request->server['REQUEST_METHOD'] = 'GET';
 		$this->request->server['REQUEST_URI'] = '/user/123/view';
 		Router::get('/user/{id}/{action}', function($param) {
 			return [
@@ -115,6 +115,7 @@ class RouterTest extends TestCase {
 	}
 	public function testEmpty() {
 		Router::setPrefix('/api');
+		$this->request->server['REQUEST_METHOD'] = 'GET';
 		$this->request->server['REQUEST_URI'] = '/api/user/view.html?id=1';
 		Router::parse($this->request);
 		$this->assertEquals('index', $this->request->module);
