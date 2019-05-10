@@ -45,11 +45,14 @@ abstract class ControllerAbstract {
 		if (App::$config->get('csrf')) {
 			$this->getTemplate()->assign('_csrf_token', Security::csrfGetHash());
 		}
-		$clazz = str_replace(App::$cfgNamespace, '', get_class($this), 1);
-		$clazz_info = split('\\', $clazz, 3);
-		$module = $clazz[1];
+		$clazz = get_class($this);
+		if (strpos($clazz, App::$cfgNamespace) === 0) {
+			$clazz = substr($clazz, strlen(App::$cfgNamespace));
+		}
+		$clazz_info = explode('\\', $clazz, 3);
+		$module = $clazz_info[1];
 		$fullPath = APP_PATH . 'Module/' . $module . '/View/' . $name . '.' . App::$config->get('template.extension', 'phtml');
-		echo $this->getTemplate()->render();
+		echo $this->getTemplate()->render($fullPath);
 	}
 	public function disableView() {
 		$this->_sy_auto = false;

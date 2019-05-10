@@ -23,6 +23,9 @@ main() {
 	yac_ver="2.0.2"
 	yaconf_ver="1.0.7"
 
+	# PHP Version
+	is_php_73=$(php -r "echo version_compare(PHP_VERSION, '7.3');")
+
 	# Install redis
 	phpenv config-add "$TRAVIS_BUILD_DIR/ci/config/redis.ini"
 
@@ -30,15 +33,18 @@ main() {
 	phpenv config-add "$TRAVIS_BUILD_DIR/ci/config/memcached.ini"
 
 	# Install Yac
-	can_install_yac=$(php -r "echo version_compare(PHP_VERSION, '7.3');")
-	if [[ "$can_install_yac" == "-1" ]];then
+	if [[ "$is_php_73" == "-1" ]];then
 		installExt "yac" "laruence/yac" "yac-${yac_ver}" "yac-yac-${yac_ver}"
 	else
 		echo -e "Skip install Yac\n"
 	fi
 
 	# Install Yaconf
-	installExt "yaconf" "laruence/yaconf" "yaconf-${yaconf_ver}" "yaconf-yaconf-${yaconf_ver}"
+	if [[ "$is_php_73" == "-1" ]];then
+		installExt "yaconf" "laruence/yaconf" "yaconf-${yaconf_ver}" "yaconf-yaconf-${yaconf_ver}"
+	else
+		echo -e "Skip install Yaconf\n"
+	fi
 }
 
 main
