@@ -78,33 +78,36 @@ class Dispatcher {
 		if (!empty($request->extension)) {
 			$response->mimeType($request->extension);
 		}
-		try {
-			$code = self::isValid($module, $controller, $action);
-			if ($code === self::ROUTE_VALID) {
-				//是否启用CSRF验证
-				if (App::$config->get('csrf')) {
-					Security::csrfSetCookie();
-				}
-				$className = EntryUtil::controller($module, $controller);
-				$clazz = Container::getInstance()->get($className);
-				$actionName = $action . 'Action';
-				$result = $clazz->$actionName($request);
-				if ($result !== null) {
-					if (is_array($result) || is_object($result)) {
-						$result = json_encode($result);
+		//触发beforeDispatch事件
+		if (null === Plugin::trigger('beforeDispatch', [$request])) {
+			try {
+				$code = self::isValid($module, $controller, $action);
+				if ($code === self::ROUTE_VALID) {
+					//是否启用CSRF验证
+					if (App::$config->get('csrf')) {
+						Security::csrfSetCookie();
 					}
-					echo $result;
+					$className = EntryUtil::controller($module, $controller);
+					$clazz = Container::getInstance()->get($className);
+					$actionName = $action . 'Action';
+					$result = $clazz->$actionName($request);
+					if ($result !== null) {
+						if (is_array($result) || is_object($result)) {
+							$result = json_encode($result);
+						}
+						echo $result;
+					} else {
+						$clazz->end($request);
+					}
+					//触发afterDispatch事件
+					Plugin::trigger('afterDispatch', [$request, $result]);
 				} else {
-					$clazz->end($request);
+					// Not found
+					self::handleNotFound($request, $code);
 				}
-				//触发afterDispatch事件
-				Plugin::trigger('afterDispatch', [$request, $result]);
-			} else {
-				// Not found
-				self::handleNotFound($request, $code);
+			} catch (\Throwable $e) {
+				self::handleDispathException($request, $e);
 			}
-		} catch (\Throwable $e) {
-			$result = self::handleDispathException($request, $e);
 		}
 		unset($request);
 	}
