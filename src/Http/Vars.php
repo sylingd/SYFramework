@@ -22,7 +22,7 @@ class Vars {
 	public static function getStatus($code) {
 		static $status = null;
 		if ($status === NULL) {
-			$status = require(SY_PATH . 'data/httpStatus.php');
+			$status = require(SY_PATH . 'Data/httpStatus.php');
 		}
 		$version = ((isset($_SERVER['SERVER_PROTOCOL']) && $_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.0') ? '1.0' : '1.1');
 		if (isset($status[$code])) {
@@ -57,7 +57,7 @@ class Vars {
 	public static function getMimeType($ext) {
 		static $type = null;
 		if ($type === NULL) {
-			$type = require(SY_PATH . 'data/mimeTypes.php');
+			$type = require(SY_PATH . 'Data/mimeTypes.php');
 		}
 		$ext = strtolower($ext);
 		return isset($type[$ext]) ? ($type[$ext]) : null;
