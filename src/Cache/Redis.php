@@ -43,7 +43,7 @@ class Redis implements CacheInterface {
 
 	public function set($key, $value, $ttl = null) {
 		if ($ttl !== null) {
-			return $this->connection->setEx($key, $ttl * 100, serialize($value));
+			return $this->connection->setEx($key, $ttl, serialize($value));
 		} else {
 			return $this->connection->set($key, serialize($value));
 		}
@@ -76,7 +76,7 @@ class Redis implements CacheInterface {
 		$this->connection->mSet($values);
 		if ($ttl !== null) {
 			foreach ($values as $k => $v) {
-				$this->connection->expire($k, $ttl * 100);
+				$this->connection->expire($k, $ttl);
 			}
 		}
 	}
