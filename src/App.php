@@ -116,20 +116,19 @@ class App {
 		//网站目录
 		self::$sitePath = '/';
 		if (!self::$isCli) {
-			throw new SYException('Must run at CLI mode', '10005');
+			throw new StartException('Must run at CLI mode');
 		}
-		//仅支持参数方式运行
-		$opt = getopt(self::$routeParam . ':');
-		//以参数方式运行
-		$run = $opt[self::$routeParam];
-		if (!empty($run) && self::$config->has('console.' . $run)) {
-			list($fileName, $callback) = self::$config->get('console.' . $run);
-		} else {
-			list($fileName, $callback) = self::$config->get('console.default');
+		//调试模式
+		if (self::getEnv() === 'develop' && function_exists('xdebug_start_trace')) {
+			xdebug_start_trace();
 		}
-		require(APP_PATH . '/workers/' . $fileName);
-		if (is_callable($callback)) {
-			call_user_func($callback);
+		//开始
+		if (class_exists(self::$cfgNamespace . 'Console')) {
+			$className = self::$cfgNamespace . 'Console';
+			$className::run();
+		}
+		if (self::getEnv() === 'develop' && function_exists('xdebug_stop_trace')) {
+			xdebug_stop_trace();
 		}
 	}
 	/**
