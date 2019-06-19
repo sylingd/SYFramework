@@ -92,10 +92,6 @@ class App {
 		$dir = str_replace('\\', '/', dirname($now));
 		$dir !== '/' && $dir = rtrim($dir, '/') . '/';
 		self::$sitePath = $dir;
-		//单元测试
-		if (defined('SY_UNIT')) {
-			return;
-		}
 		//调试模式
 		if (self::getEnv() === 'develop' && function_exists('xdebug_start_trace')) {
 			xdebug_start_trace();
