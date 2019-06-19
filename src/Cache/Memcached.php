@@ -37,6 +37,10 @@ class Memcached implements CacheInterface {
 		}
 	}
 
+	public function getConnection() {
+		return $this->connection;
+	}
+
 	public function get($key, $default = null) {
 		$result = $this->connection->get($key);
 		if (!is_string($result) || $this->connection->getResultCode() === \Memcached::RES_NOTSTORED) {

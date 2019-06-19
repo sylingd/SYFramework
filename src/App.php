@@ -121,7 +121,7 @@ class App {
 		//开始
 		if (class_exists(self::$cfgNamespace . 'Console')) {
 			$className = self::$cfgNamespace . 'Console';
-			$className::run();
+			$className::run(Container::getInstance());
 		}
 		if (self::getEnv() === 'develop' && function_exists('xdebug_stop_trace')) {
 			xdebug_stop_trace();

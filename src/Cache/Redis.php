@@ -36,6 +36,10 @@ class Redis implements CacheInterface {
 		};
 	}
 
+	public function getConnection() {
+		return $this->connection;
+	}
+
 	public function get($key, $default = null) {
 		$result = $this->connection->get($key);
 		return ($result === false || $result === null) ? $default : unserialize($result);
