@@ -33,7 +33,10 @@ class Redis implements CacheInterface {
 		$this->connection->connect($config['host'], $config['port']);
 		if (!empty($config['password'])) {
 			$this->connection->auth($config['password']);
-		};
+		}
+		if (isset($config['index'])) {
+			$this->connection->select($config['index']);
+		}
 	}
 
 	public function getConnection() {
