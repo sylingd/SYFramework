@@ -89,7 +89,7 @@ class Redis implements CacheInterface {
 	}
 
 	public function deleteMultiple($keys) {
-		return $this->connection->delete($keys);
+		return $this->connection->del($keys);
 	}
 
 	public function has($key) {
