@@ -57,7 +57,7 @@ class Redis implements CacheInterface {
 	}
 
 	public function delete($key) {
-		return $this->connection->delete($key);
+		return $this->connection->del($key);
 	}
 
 	public function clear() {
