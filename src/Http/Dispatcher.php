@@ -72,14 +72,14 @@ class Dispatcher {
 	 * @return mixed
 	 */
 	public static function dispatch(Request $request) {
-		$module = ucfirst($request->module);
-		$controller = ucfirst($request->controller);
-		$action = ucfirst($request->action);
 		if (!empty($request->extension)) {
-			$response->mimeType($request->extension);
+			Vars::setMimeType($request->extension);
 		}
 		//触发beforeDispatch事件
 		if (null === Plugin::trigger('beforeDispatch', [$request])) {
+			$module = ucfirst($request->module);
+			$controller = ucfirst($request->controller);
+			$action = ucfirst($request->action);
 			try {
 				$code = self::isValid($module, $controller, $action);
 				if ($code === self::ROUTE_VALID) {
