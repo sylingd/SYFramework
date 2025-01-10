@@ -62,7 +62,7 @@ class Request {
 		// Parse json object
 		try {
 			$this->parseJsonBody();
-		} catch (\Error) {
+		} catch (\Throwable $e) {
 			// ignore
 		}
 	}
