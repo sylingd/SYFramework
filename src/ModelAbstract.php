@@ -96,14 +96,23 @@ abstract class ModelAbstract {
 		if (is_array($cols)) {
 			$query->columns(...$cols);
 		}
+		$limit = $num;
 		if (count($filter) > 0) {
 			$where = Conditions::make();
-			foreach ($filter as $k => $v) {
-				$where->andWith($k . ' = ?', $v);
+			if (isset($filter[0])) {
+				// is index array
+				$limit = count($filter);
+				$call_args = $filter;
+				array_unshift($call_args, $this->_primary_key . ' IN (' . implode(',', array_fill(0, count($filter), '?')) . ')');
+				call_user_func_array([$where, 'andWith'], $call_args);
+			} else {
+				foreach ($filter as $k => $v) {
+					$where->andWith($k . ' = ?', $v);
+				}
 			}
 			$query->where($where);
 		}
-		$query->offset($offset)->limit($num);
+		$query->offset($offset)->limit($limit);
 		return $this->execute($query);
 	}
 	/**
