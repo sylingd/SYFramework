@@ -155,6 +155,7 @@ abstract class ModelAbstract {
 		$res = $this->execute($query);
 		return intval($res['_affected_rows']);
 	}
+	
 	/**
 	 * 删除数据
 	 * 注意：$filter不能为空，如果要清除所有数据，必须传入$filter为TRUE
