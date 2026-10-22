@@ -178,6 +178,7 @@ abstract class ModelAbstract {
 		$res = $this->execute($query);
 		return intval($res['_affected_rows']);
 	}
+
 	/**
 	 * 添加数据
 	 * 如果指定了$primary_key，则会返回最后一次生成的ID

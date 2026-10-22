@@ -5,9 +5,7 @@ on:
 
 jobs:
   unit-test:
-    needs: check_changes
     runs-on: ubuntu-24.04
-    if: ${{ needs.check_changes.outputs.src_changed == 'true' }}strategy:
     strategy:
       matrix:
         php-version: [8.0, 8.1, 8.5]
