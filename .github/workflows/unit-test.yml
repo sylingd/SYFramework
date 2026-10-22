@@ -10,8 +10,8 @@ jobs:
       matrix:
         php-version: [8.1, 8.5]
     env:
-      extensions: mbstring, redis, curl, yac, memcached, yaconf
-      key: v1
+      PHP_EXTENSIONS: mbstring, redis, curl, yac, memcached, yaconf
+      PHP_EXTENSIONS_KEY: v1
     steps:
     - uses: actions/checkout@v6
 
@@ -20,8 +20,8 @@ jobs:
       uses: shivammathur/cache-extensions@v1
       with:
         php-version: ${{ matrix.php-versions }}
-        extensions: ${{ env.extensions }}
-        key: ${{ env.key }}
+        extensions: ${{ env.PHP_EXTENSIONS }}
+        key: ${{ env.PHP_EXTENSIONS_KEY }}
 
     - name: Cache extensions
       uses: actions/cache@v4
@@ -34,7 +34,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: ${{ env.extensions }}
+        extensions: ${{ env.PHP_EXTENSIONS }}
         tools: composer:v2
         ini-values: yac.enable = On, yac.enable_cli = On
 
@@ -69,11 +69,6 @@ jobs:
 
     - name: Test unit tests
       run: composer test
-
-    - name: Coverage
-      run: |
-        composer global require php-coveralls/php-coveralls
-        php-coveralls --coverage_clover=report/clover.xml -v
 
     - name: Upload reports
       uses: actions/upload-artifact@v7

@@ -10,6 +10,7 @@ class PluginTest extends TestCase {
 		self::$isTrigger = 1;
 		return null;
 	}
+	
 	public static function callback2($data) {
 		return '_t_' . $data;
 	}
@@ -17,7 +18,7 @@ class PluginTest extends TestCase {
 	public static function errorCallback($data = '') {
 		throw new \Exception('Test Exception');
 	}
-	
+
 	public function testOnePlugin() {
 		Plugin::clear('test');
 		Plugin::register('test', [__CLASS__, 'callback2']);
