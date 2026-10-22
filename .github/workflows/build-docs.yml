@@ -1,0 +1,32 @@
+name: "Build Docs"
+
+on:
+  workflow_call:
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v6
+    - uses: pnpm/action-setup@v6
+      with:
+        version: 11.11.0
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: 24
+    - name: Install doc dependencies
+      run: |
+        cd $GITHUB_WORKSPACE/docs
+        pnpm i --ignore-scripts
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE/docs
+        npm run build
+        echo "syframework.sylibs.com" > $GITHUB_WORKSPACE/docs/.vuepress/dist/CNAME
+    - name: Upload
+      uses: actions/upload-artifact@v7
+      with:
+        name: docs
+        retention-days: 1
+        path: docs/.vuepress/dist

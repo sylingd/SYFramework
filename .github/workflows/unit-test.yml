@@ -1,0 +1,38 @@
+name: "Unit Test"
+
+on:
+  workflow_call:
+
+jobs:
+  unit-test:
+    needs: check_changes
+    runs-on: ubuntu-24.04
+    if: ${{ needs.check_changes.outputs.src_changed == 'true' }}
+    matrix:
+      php-version: [8.0, 8.1, 8.5]
+    steps:
+    - uses: actions/checkout@v6
+    - name: Setup PHP with PECL extension
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mbstring, redis, curl, yac, memcached, yaconf
+        tools: composer:v2
+        ini-values: yac.enable = On, yac.enable_cli = On
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.8.1
+      with:
+        redis-version: 6
+    - name: Start MySQL
+      run: sudo systemctl start mysql.service
+    - name: Install dependencies
+      run: composer install
+    - name: Init test data
+      run: |
+        mysql -uroot -proot < $GITHUB_WORKSPACE/tests/App/mysql.sql
+    - name: Test unit tests
+      run: npm run test:unit
+    - name: Coverage
+      run: |
+        composer require --dev php-coveralls/php-coveralls
+        php vendor/bin/php-coveralls
