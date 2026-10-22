@@ -22,7 +22,8 @@ use Sy\Cache\Redis;
 use Sy\Cache\Memcached;
 use Sy\Http\Template;
 use Sy\Http\TemplateInterface;
-use Psr\SimpleCache\CacheInterface;
+use Sy\Cache\CacheInterface;
+use Psr\SimpleCache\CacheInterface as PsrCacheInterface;
 
 class EntryUtil {
 	public static function controller($module, $controller) {
@@ -63,6 +64,7 @@ class EntryUtil {
 		}
 		if ($cache_class) {
 			Container::getInstance()->set(CacheInterface::class, $cache_class);
+			Container::getInstance()->set(PsrCacheInterface::class, $cache_class);
 		}
 		$template = App::$config->get('template.engine', Template::class);
 		Container::getInstance()->set(TemplateInterface::class, $template);
