@@ -117,6 +117,7 @@ abstract class ModelAbstract {
 		$query->offset($offset)->limit($limit);
 		return $this->execute($query);
 	}
+	
 	/**
 	 * 修改一条或多条数据
 	 * 当传入两个参数时，会认为第二个参数是$filter
@@ -155,7 +156,7 @@ abstract class ModelAbstract {
 		$res = $this->execute($query);
 		return intval($res['_affected_rows']);
 	}
-	
+
 	/**
 	 * 删除数据
 	 * 注意：$filter不能为空，如果要清除所有数据，必须传入$filter为TRUE

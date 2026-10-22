@@ -30,7 +30,7 @@ jobs:
       run: |
         mysql -uroot -proot < $GITHUB_WORKSPACE/tests/App/mysql.sql
     - name: Test unit tests
-      run: npm run test:unit
+      run: composer test
     - name: Coverage
       run: |
         composer require --dev php-coveralls/php-coveralls
