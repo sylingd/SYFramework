@@ -6,18 +6,17 @@
  * @author ShuangYa
  * @package SYFramework
  * @category Cache
- * @link https://www.sylibs.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @link https://www.sylingd.com/
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy\Cache;
 
-use Psr\SimpleCache\CacheInterface;
 use Sy\App;
 use Sy\Exception\Exception;
 use Sy\Exception\RequirementException;
 
-class Redis implements CacheInterface {
+class Redis extends CacheAbstract {
 	/** @var object $connection Connection */
 	private $connection;
 
@@ -43,28 +42,32 @@ class Redis implements CacheInterface {
 		return $this->connection;
 	}
 
-	public function get($key, $default = null) {
+	public function get(string $key, $default = null): mixed {
 		$result = $this->connection->get($key);
 		return ($result === false || $result === null) ? $default : unserialize($result);
 	}
 
-	public function set($key, $value, $ttl = null) {
+	public function set(string $key, mixed $value, $ttl = null): bool {
 		if ($ttl !== null) {
-			return $this->connection->setEx($key, $ttl, serialize($value));
+			return $this->connection->setEx($key, self::getSeconds($ttl), serialize($value));
 		} else {
 			return $this->connection->set($key, serialize($value));
 		}
 	}
 
-	public function delete($key) {
+	public function ttl(string $key, $ttl): bool {
+		return $this->connection->expire($key, self::getSeconds($ttl));
+	}
+
+	public function delete(string $key): bool {
 		return $this->connection->del($key);
 	}
 
-	public function clear() {
-		$this->connection->flushDb();
+	public function clear(): bool {
+		return $this->connection->flushDb();
 	}
 
-	public function getMultiple($keys, $default = null) {
+	public function getMultiple(iterable $keys, $default = null): array {
 		$result = $this->connection->mGet($keys);
 		foreach ($result as $k => $v) {
 			if ($v === false || $v === null) {
@@ -76,7 +79,7 @@ class Redis implements CacheInterface {
 		return array_combine($keys, $result);
 	}
 
-	public function setMultiple($values, $ttl = null) {
+	public function setMultiple(iterable $values, $ttl = null): bool {
 		foreach ($values as $k => $v) {
 			$values[$k] = serialize($v);
 		}
@@ -86,13 +89,14 @@ class Redis implements CacheInterface {
 				$this->connection->expire($k, $ttl);
 			}
 		}
+		return true;
 	}
 
-	public function deleteMultiple($keys) {
+	public function deleteMultiple(iterable $keys): bool {
 		return $this->connection->del($keys);
 	}
 
-	public function has($key) {
+	public function has(string $key): bool {
 		return $this->connection->exists($key);
 	}
 }

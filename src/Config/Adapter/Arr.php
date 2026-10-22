@@ -6,8 +6,8 @@
  * @package SYFramework
  * @category Base
  * @link https://www.sylingd.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy\Config\Adapter;
 
@@ -22,6 +22,8 @@ class Arr implements ConfigInterface {
 
 	/** @var array $conf Configs */
 	protected $conf;
+	/** @var string $environment Environment */
+	protected $environment;
 
 	/**
 	 * Constructor

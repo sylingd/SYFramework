@@ -6,8 +6,8 @@
  * @package SYFramework
  * @category Base
  * @link https://www.sylingd.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy\Http;
 
@@ -83,10 +83,6 @@ class Dispatcher {
 			try {
 				$code = self::isValid($module, $controller, $action);
 				if ($code === self::ROUTE_VALID) {
-					//是否启用CSRF验证
-					if (App::$config->get('csrf')) {
-						Security::csrfSetCookie();
-					}
 					$className = EntryUtil::controller($module, $controller);
 					$clazz = Container::getInstance()->get($className);
 					$actionName = $action . 'Action';

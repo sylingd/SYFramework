@@ -6,8 +6,8 @@
  * @package SYFramework
  * @category DI
  * @link https://www.sylingd.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy\DI;
 
@@ -71,7 +71,7 @@ class Container implements ContainerInterface {
 	 * @param string $id
 	 * @return bool
 	 */
-	public function has($id) {
+	public function has(string $id): bool {
 		$source = $id;
 		while (is_string($source) && isset($this->getter[$source])) {
 			$source = $this->getter[$source];
@@ -92,7 +92,7 @@ class Container implements ContainerInterface {
 	 * @param string $id
 	 * @return object
 	 */
-	public function get($id) {
+	public function get(string $id) {
 		$source = $id;
 		while (is_string($source) && isset($this->getter[$source])) {
 			$source = $this->getter[$source];

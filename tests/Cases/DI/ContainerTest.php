@@ -11,7 +11,7 @@ use Sy\Exception\CyclicDependencyException;
 use SyApp\DI as DITest;
 
 class ContainerTest extends TestCase {
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		// Set alias
 		Container::getInstance()->set('ClassOneAlias', DITest\ClassOne::class);
 	}

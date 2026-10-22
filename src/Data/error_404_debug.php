@@ -89,14 +89,14 @@ use Sy\Http\Dispatcher;
 		<div class="title">Server</div>
 		<table>
 			<?php foreach ($request->server as $k => $v) { ?>
-			<tr><td class="name"><?=htmlspecialchars($k)?></td><td><?=htmlspecialchars($v)?></td></tr>
+			<tr><td class="name"><?=htmlspecialchars($k)?></td><td><?=htmlspecialchars(is_string($v) ? $v : var_export($v, true))?></td></tr>
 			<?php } ?>
 		</table>
 		<?php if (is_array($request->get)) { ?>
 		<div class="title">Get</div>
 		<table>
 			<?php foreach ($request->get as $k => $v) { ?>
-			<tr><td class="name"><?=htmlspecialchars($k)?></td><td><?=htmlspecialchars($v)?></td></tr>
+			<tr><td class="name"><?=htmlspecialchars($k)?></td><td><?=htmlspecialchars(is_string($v) ? $v : var_export($v, true))?></td></tr>
 			<?php } ?>
 		</table>
 		<?php } ?>
@@ -104,7 +104,7 @@ use Sy\Http\Dispatcher;
 		<div class="title">Post</div>
 		<table>
 			<?php foreach ($request->post as $k => $v) { ?>
-			<tr><td class="name"><?=htmlspecialchars($k)?></td><td><?=htmlspecialchars($v)?></td></tr>
+			<tr><td class="name"><?=htmlspecialchars($k)?></td><td><?=htmlspecialchars(is_string($v) ? $v : var_export($v, true))?></td></tr>
 			<?php } ?>
 		</table>
 		<?php } ?>

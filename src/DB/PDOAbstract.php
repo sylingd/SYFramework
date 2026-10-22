@@ -6,9 +6,9 @@
  * @author ShuangYa
  * @package SYFramework
  * @category Base
- * @link https://www.sylibs.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @link https://www.sylingd.com/
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy\DB;
 
@@ -32,7 +32,7 @@ abstract class PDOAbstract {
 	 */
 	public function __construct() {
 		if (!class_exists('PDO', FALSE)) {
-			throw new SYException('Class "PDO" is required');
+			throw new DBException('Class "PDO" is required');
 		}
 		$this->connect();
 	}

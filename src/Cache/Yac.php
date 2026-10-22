@@ -6,19 +6,18 @@
  * @author ShuangYa
  * @package SYFramework
  * @category Cache
- * @link https://www.sylibs.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @link https://www.sylingd.com/
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy\Cache;
 
-use Psr\SimpleCache\CacheInterface;
 use Sy\App;
 use Sy\Exception\Exception;
 use Sy\Exception\RequirementException;
 
-class Yac implements CacheInterface {
-	/** @var Yac $handler Yac class instance */
+class Yac extends CacheAbstract {
+	/** @var \Yac $handler Yac class instance */
 	private $handler;
 
 	public function __construct() {
@@ -33,11 +32,11 @@ class Yac implements CacheInterface {
 		$this->handler = new \Yac($prefix);
 	}
 
-	private function getKey($key) {
+	private function getKey(string $key): string {
 		return strlen($key) > 32 ? md5($key) : $key;
 	}
 
-	public function get($key, $default = null) {
+	public function get(string $key, $default = null): mixed {
 		$res = $this->handler->get($this->getKey($key));
 		if ($res === false) {
 			return $default;
@@ -45,19 +44,26 @@ class Yac implements CacheInterface {
 		return $res;
 	}
 
-	public function set($key, $value, $ttl = 0) {
-		$this->handler->set($this->getKey($key), $value, $ttl);
+	public function set(string $key, mixed $value, $ttl = 0): bool {
+		return $this->handler->set($this->getKey($key), $value, self::getSeconds($ttl));
 	}
 
-	public function delete($key) {
-		$this->handler->delete($this->getKey($key));
+	public function ttl(string $key, $ttl = 0): bool {
+		if (!$this->has($key)) {
+			return false;
+		}
+		return $this->handler->set($this->getKey($key), $this->get($key), self::getSeconds($ttl));
 	}
 
-	public function clear() {
-		$this->handler->flush();
+	public function delete(string $key): bool {
+		return $this->handler->delete($this->getKey($key));
 	}
 
-	public function getMultiple($keys, $default = null) {
+	public function clear(): bool {
+		return $this->handler->flush();
+	}
+
+	public function getMultiple(iterable $keys, $default = null): array {
 		$toGet = [];
 		foreach ($keys as $v) {
 			$toGet[] = $this->getKey($v);
@@ -74,22 +80,24 @@ class Yac implements CacheInterface {
 		return $result;
 	}
 
-	public function setMultiple($values, $ttl = 0) {
+	public function setMultiple(iterable $values, $ttl = 0): bool {
 		$toSet = [];
 		foreach ($values as $k => $v) {
 			$toSet[$this->getKey($k)] = $v;
 		}
 		$this->handler->set($toSet, $ttl);
+		return true;
 	}
 
-	public function deleteMultiple($keys) {
+	public function deleteMultiple(iterable $keys): bool {
 		foreach ($keys as $k => $v) {
 			$keys[$k] = $this->getKey($v);
 		}
 		$this->handler->delete($keys);
+		return true;
 	}
 
-	public function has($key) {
+	public function has(string $key): bool {
 		return $this->get($key) !== null;
 	}
 }

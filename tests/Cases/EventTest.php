@@ -14,7 +14,7 @@ class PluginTest extends TestCase {
 		return '_t_' . $data;
 	}
 	public static function errorCallback($data = '') {
-		throw new Exception('Test Exception');
+		throw new \Exception('Test Exception');
 	}
 	public function testOnePlugin() {
 		Plugin::clear('test');

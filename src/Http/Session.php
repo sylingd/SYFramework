@@ -5,9 +5,9 @@
  * @author ShuangYa
  * @package SYFramework
  * @category Library
- * @link https://www.sylibs.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @link https://www.sylingd.com/
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy\Http;
 
@@ -53,19 +53,19 @@ class Session implements ArrayAccess {
 	/**
 	 * ArrayAccess
 	 */
-	public function offsetExists($offset) {
+	public function offsetExists($offset): bool {
 		return $this->has($offset);
 	}
 
-	public function offsetGet($offset) {
+	public function offsetGet($offset): mixed {
 		return $this->get($offset);
 	}
 
-	public function offsetSet($offset, $value) {
+	public function offsetSet($offset, $value): void {
 		$this->set($offset, $value);
 	}
 
-	public function offsetUnset($offset) {
+	public function offsetUnset($offset): void {
 		$this->delete($offset);
 	}
 }

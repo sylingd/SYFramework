@@ -6,16 +6,15 @@
  * @author ShuangYa
  * @package SYFramework
  * @category Cache
- * @link https://www.sylibs.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @link https://www.sylingd.com/
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy\Cache;
 
-use Psr\SimpleCache\CacheInterface;
 use Sy\App;
 
-class File implements CacheInterface {
+class File extends CacheAbstract {
 	/** @var string $path Cache file directory */
 	private $path;
 
@@ -45,7 +44,7 @@ class File implements CacheInterface {
 		return $this->path . $name;
 	}
 
-	public function get($key, $default = null) {
+	public function get(string $key, $default = null): mixed {
 		$fullpath = $this->getPath($key);
 		if (!is_file($fullpath)) {
 			return $default;
@@ -63,22 +62,40 @@ class File implements CacheInterface {
 		return unserialize(substr($res, 10));
 	}
 
-	public function set($key, $value, $ttl = null) {
+	public function set(string $key, mixed $value, $ttl = null): bool {
 		if ($ttl === null) {
 			$time = 0;
 		} else {
-			$time = time() + $ttl;
+			$time = time() + self::getSeconds($ttl);
 		}
 		$path = $this->getPath($key);
 		$content = str_pad($time, 10, '0', STR_PAD_LEFT) . serialize($value);
 		file_put_contents($path, $content);
+		return true;
 	}
 
-	public function delete($key) {
-		@unlink($this->getPath($key));
+	public function ttl(string $key, $ttl): bool {
+		$path = $this->getPath($key);
+		if (!is_file($path)) {
+			return false;
+		}
+    $fp = fopen($path, 'r+');
+    if (!$fp) {
+			throw new \RuntimeException("Cannot open file: {$path}");
+    }
+    try {
+			fwrite($fp, str_pad(time() + self::getSeconds($ttl), 10, '0', STR_PAD_LEFT));
+    } finally {
+      fclose($fp);
+    }
+		return true;
 	}
 
-	public function clear() {
+	public function delete(string $key): bool {
+		return @unlink($this->getPath($key));
+	}
+
+	public function clear(): bool {
 		$dh = opendir($this->path);
 		while ($f = readdir($dh)) {
 			if (!is_file($this->path . $f)) {
@@ -87,9 +104,10 @@ class File implements CacheInterface {
 			@unlink($this->path . $f);
 		}
 		closedir($dh);
+		return true;
 	}
 
-	public function getMultiple($keys, $default = null) {
+	public function getMultiple(iterable $keys, mixed $default = null): iterable {
 		$result = [];
 		foreach ($keys as $v) {
 			$res = $this->get($v);
@@ -102,19 +120,21 @@ class File implements CacheInterface {
 		return $result;
 	}
 
-	public function setMultiple($values, $ttl = null) {
+	public function setMultiple(iterable $values, $ttl = null): bool {
 		foreach ($values as $k => $v) {
 			$this->set($k, $v, $ttl);
 		}
+		return true;
 	}
 
-	public function deleteMultiple($keys) {
+	public function deleteMultiple(iterable $keys): bool {
 		foreach ($keys as $v) {
 			$this->delete($v);
 		}
+		return true;
 	}
 
-	public function has($key) {
+	public function has(string $key): bool {
 		return is_file($this->getPath($key));
 	}
 }

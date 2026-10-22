@@ -8,10 +8,10 @@ use Sy\Http\Request;
 
 class RouterTest extends TestCase {
 	private $request;
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		Router::init();
 	}
-	public function setUp() {
+	public function setUp(): void {
 		Router::from(serialize([]));
 		Router::enableMap();Router::setPrefix('');
 		$this->request = new Request();

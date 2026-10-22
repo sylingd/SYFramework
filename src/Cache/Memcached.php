@@ -6,18 +6,17 @@
  * @author ShuangYa
  * @package SYFramework
  * @category Cache
- * @link https://www.sylibs.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @link https://www.sylingd.com/
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy\Cache;
 
-use Psr\SimpleCache\CacheInterface;
 use Sy\App;
 use Sy\Exception\Exception;
 use Sy\Exception\RequirementException;
 
-class Memcached implements CacheInterface {
+class Memcached extends CacheAbstract {
 	/** @var object $connection Connection */
 	private $connection;
 
@@ -41,7 +40,7 @@ class Memcached implements CacheInterface {
 		return $this->connection;
 	}
 
-	public function get($key, $default = null) {
+	public function get(string $key, mixed $default = null): mixed {
 		$result = $this->connection->get($key);
 		if (!is_string($result) || $this->connection->getResultCode() === \Memcached::RES_NOTSTORED) {
 			return $default;
@@ -49,19 +48,24 @@ class Memcached implements CacheInterface {
 		return unserialize($result);
 	}
 
-	public function set($key, $value, $ttl = 0) {
-		return $this->connection->set($key, serialize($value), $ttl);
+	public function set(string $key, mixed $value, $ttl = 0): bool {
+		return $this->connection->set($key, serialize($value), self::getSeconds($ttl));
 	}
 
-	public function delete($key) {
+
+	public function ttl(string $key, $ttl): bool {
+		return $this->connection->touch($key, self::getSeconds($ttl));
+	}
+	
+	public function delete(string $key): bool {
 		return $this->connection->delete($key);
 	}
 
-	public function clear() {
-		$this->connection->flush();
+	public function clear(): bool {
+		return $this->connection->flush();
 	}
 
-	public function getMultiple($keys, $default = null) {
+	public function getMultiple(iterable $keys, mixed $default = null): array {
 		$result = $this->connection->getMulti($keys);
 		foreach ($keys as $key) {
 			if (isset($result[$key])) {
@@ -73,18 +77,18 @@ class Memcached implements CacheInterface {
 		return $result;
 	}
 
-	public function setMultiple($values, $ttl = 0) {
+	public function setMultiple(iterable $values, $ttl = 0): bool {
 		foreach ($values as $k => $v) {
 			$values[$k] = serialize($v);
 		}
-		$this->connection->setMulti($values, $ttl);
+		return $this->connection->setMulti($values, $ttl);
 	}
 
-	public function deleteMultiple($keys) {
+	public function deleteMultiple(iterable $keys): bool {
 		return $this->connection->deleteMulti($keys);
 	}
 
-	public function has($key) {
+	public function has(string $key): bool {
 		return $this->get($key) !== null;
 	}
 }

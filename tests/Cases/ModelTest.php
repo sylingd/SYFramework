@@ -10,7 +10,7 @@ use SyApp\Model\User;
 class ModelTest extends TestCase {
 	public static $pdo;
 	public static $model;
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		$dsn = sprintf(
 			'mysql:host=%s;port=%s;dbname=%s;charset=utf8',
 			App::$config->get('mysql.host'),

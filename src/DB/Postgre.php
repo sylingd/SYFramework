@@ -5,15 +5,16 @@
  * @author ShuangYa
  * @package SYFramework
  * @category Library
- * @link https://www.sylibs.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @link https://www.sylingd.com/
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy\DB;
 
 use Sy\App;
 use Sy\Exception\DBException;
 use Latitude\QueryBuilder\QueryFactory;
+use Latitude\QueryBuilder\Engine\PostgresEngine;
 
 class Postgre extends PDOAbstract {
 	/**
@@ -55,6 +56,6 @@ class Postgre extends PDOAbstract {
 	 * @return object
 	 */
 	public static function getBuilder() {
-		return new QueryFactory('pgsql');
+		return new QueryFactory(new PostgresEngine());
 	}
 }

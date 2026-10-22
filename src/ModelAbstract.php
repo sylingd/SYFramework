@@ -5,16 +5,22 @@
  * @author ShuangYa
  * @package SYFramework
  * @category Base
- * @link https://www.sylibs.com/
- * @copyright Copyright (c) 2015-2019 ShuangYa
- * @license https://syframework.sylibs.com/license.html
+ * @link https://www.sylingd.com/
+ * @copyright Copyright (c) 2015-2026 ShuangYa
+ * @license Apache License 2.0
  */
 namespace Sy;
 
 use Sy\DB\DBInterface;
 use Sy\Exception\Exception;
 use Sy\Exception\DBException;
-use Latitude\QueryBuilder\Conditions;
+use Latitude\QueryBuilder\QueryInterface;
+use Latitude\QueryBuilder\QueryFactory;
+use Latitude\QueryBuilder\Query\SelectQuery;
+use Latitude\QueryBuilder\Query\InsertQuery;
+use Latitude\QueryBuilder\Query\UpdateQuery;
+use Latitude\QueryBuilder\Query\DeleteQuery;
+use function Latitude\QueryBuilder\field;
 
 abstract class ModelAbstract {
 	protected $_table_name = '';
@@ -32,29 +38,31 @@ abstract class ModelAbstract {
 	 * @access public
 	 * @return object
 	 */
-	public function getBuilder() {
+	public function getBuilder(): QueryFactory {
 		return get_class($this->driver)::getBuilder();
 	}
-	public function newSelect() {
+	public function newSelect(): SelectQuery {
 		return $this->getBuilder()->select()->from($this->_table_name);
 	}
-	public function newInsert() {
+	public function newInsert(): InsertQuery {
 		return $this->getBuilder()->insert($this->_table_name);
 	}
-	public function newUpdate() {
+	public function newUpdate(): UpdateQuery {
 		return $this->getBuilder()->update($this->_table_name, []);
 	}
-	public function newDelete() {
+	public function newDelete(): DeleteQuery {
 		return $this->getBuilder()->delete($this->_table_name);
 	}
 	/**
 	 * 执行一条Builder的结果
 	 * @access public
-	 * @param object $builder
+	 * @param QueryInterface $query
 	 * @return array
 	 */
-	public function execute($query) {
-		return $this->driver->query($query->sql(), $query->params());
+	public function execute(QueryInterface $query) {
+		$ref = new \ReflectionProperty(get_class($query), 'engine');
+		$engine = $ref->getValue($query);
+		return $this->driver->query($query->sql($engine), $query->params($engine));
 	}
 	/**
 	 * 查询一条数据
@@ -69,13 +77,11 @@ abstract class ModelAbstract {
 		}
 		if ($filter !== null) {
 			if (!is_array($filter)) {
-				$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
+				$query->where(field($this->_primary_key)->eq($filter));
 			} else {
-				$where = Conditions::make();
 				foreach ($filter as $k => $v) {
-					$where->andWith($k . ' = ?', $v);
+					$query->andWhere(field($k)->eq($v));
 				}
-				$query->where($where);
 			}
 		}
 		$query->limit(1);
@@ -98,19 +104,15 @@ abstract class ModelAbstract {
 		}
 		$limit = $num;
 		if (count($filter) > 0) {
-			$where = Conditions::make();
 			if (isset($filter[0])) {
 				// is index array
 				$limit = count($filter);
-				$call_args = $filter;
-				array_unshift($call_args, $this->_primary_key . ' IN (' . implode(',', array_fill(0, count($filter), '?')) . ')');
-				call_user_func_array([$where, 'andWith'], $call_args);
+				$query->where(field($this->_primary_key)->in($filter));
 			} else {
 				foreach ($filter as $k => $v) {
-					$where->andWith($k . ' = ?', $v);
+					$query->andWhere(field($k)->eq($v));
 				}
 			}
-			$query->where($where);
 		}
 		$query->offset($offset)->limit($limit);
 		return $this->execute($query);
@@ -138,18 +140,16 @@ abstract class ModelAbstract {
 			}
 		}
 		$query = $this->newUpdate();
-		$query->map($set);
+		$query->set($set);
 		if ($filter !== true) {
 			if (is_string($filter) || is_numeric($filter)) {
-				$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
+				$query->where(field($this->_primary_key)->eq($filter));
 			} elseif (!is_array($filter) || count($filter) === 0) {
 				throw new DBException("Filter can not be empty");
 			} else {
-				$where = Conditions::make();
 				foreach ($filter as $k => $v) {
-					$where->andWith($k . ' = ?', $v);
+					$query->andWhere(field($k)->eq($v));
 				}
-				$query->where($where);
 			}
 		}
 		$res = $this->execute($query);
@@ -166,15 +166,13 @@ abstract class ModelAbstract {
 		$query = $this->newDelete();
 		if ($filter !== true) {
 			if (is_string($filter) || is_numeric($filter)) {
-				$query->where(Conditions::make($this->_primary_key . ' = ?', $filter));
+				$query->where(field($this->_primary_key)->eq($filter));
 			} elseif (!is_array($filter) || count($filter) === 0) {
 				throw new DBException("Filter can not be empty");
 			} else {
-				$where = Conditions::make();
 				foreach ($filter as $k => $v) {
-					$where->andWith($k . ' = ?', $v);
+					$query->andWhere(field($k)->eq($v));
 				}
-				$query->where($where);
 			}
 		}
 		$res = $this->execute($query);
