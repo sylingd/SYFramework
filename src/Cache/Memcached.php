@@ -85,7 +85,8 @@ class Memcached extends CacheAbstract {
 	}
 
 	public function deleteMultiple(iterable $keys): bool {
-		return $this->connection->deleteMulti($keys);
+		$result = $this->connection->deleteMulti($keys);
+		return !in_array(false, $result, true);
 	}
 
 	public function has(string $key): bool {
