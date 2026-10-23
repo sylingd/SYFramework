@@ -20,14 +20,14 @@ return [
 			'port' => '6379'
 		],
 		'mysql' => [
-			'host' => 'localhost',
+			'host' => '127.0.0.1',
 			'port' => 3306,
 			'user' => 'root',
 			'password' => 'root',
 			'database' => 'test'
 		],
 		'memcached' => [
-			'host' => 'localhost',
+			'host' => '127.0.0.1',
 			'port' => '11211'
 		],
 		'modules' => ['index'],

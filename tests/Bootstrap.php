@@ -9,4 +9,8 @@ define('SY_UNIT', 1);
 define('SY_TEST', __DIR__ . '/');
 require(PROJECT_PATH . '/vendor/autoload.php');
 
+if (file_exists(__DIR__ . '/Env.php')) {
+	require(__DIR__ . '/Env.php');
+}
+
 Sy\App::createConsole(require(TEST_APP . 'Config.php'));

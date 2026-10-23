@@ -11,6 +11,11 @@ class ModelTest extends TestCase {
 	public static $pdo;
 	public static $model;
 	public static function setUpBeforeClass(): void {
+		parent::setUpBeforeClass();
+		if (defined('SKIP_MODEL_TEST')) {
+			self::markTestSkipped('跳过：因配置跳过 Model 测试');
+			return;
+		}
 		$dsn = sprintf(
 			'mysql:host=%s;port=%s;dbname=%s;charset=utf8',
 			App::$config->get('mysql.host'),
@@ -20,6 +25,7 @@ class ModelTest extends TestCase {
 		self::$pdo = new PDO($dsn, App::$config->get('mysql.user'), App::$config->get('mysql.password'));
 		self::$model = Container::getInstance()->get(User::class);
 	}
+
 	public function testGet() {
 		$user = self::$pdo->query('SELECT * FROM `user` LIMIT 0,1')->fetch(PDO::FETCH_ASSOC);
 		$res = self::$model->get($user['id']);

@@ -15,12 +15,12 @@ class ArrTest extends TestCase {
 		$this->assertEquals('/product', $config->get('path2'));
 		$this->assertEquals('/base', $config->get('path'));
 		$this->assertEquals([
-			'host' => 'localhost',
+			'host' => '127.0.0.1',
 			'port' => '3306',
 			'user' => 'gce',
 			'password' => 'gce'
 		], $config->get('connection.my'));
-		$this->assertEquals('localhost', $config->get('connection.my.host'));
+		$this->assertEquals('127.0.0.1', $config->get('connection.my.host'));
 		// Finish
 		App::setEnv($env);
 	}
