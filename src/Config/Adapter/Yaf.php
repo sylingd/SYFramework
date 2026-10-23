@@ -50,10 +50,10 @@ class Yaf implements ConfigInterface {
 	 * @return mixed
 	 */
 	public function get($key, $default = null) {
-		if (!$this->has($key)) {
+		$rs = $this->conf->get($key);
+		if ($rs === null) {
 			return $default;
 		}
-		$rs = $this->conf->get($key);
 		if (is_object($rs)) {
 			$rs = $rs->toArray();
 		}
@@ -67,6 +67,6 @@ class Yaf implements ConfigInterface {
 	 * @return bool
 	 */
 	public function has($key) {
-		return isset($this->conf[$key]);
+		return $this->conf->get($key) !== null;
 	}
 }
