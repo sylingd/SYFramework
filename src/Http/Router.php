@@ -30,6 +30,11 @@ class Router {
 		self::$enable_extension = App::$config->get('router.extension', false);
 		self::$module = App::$config->get('module', 'index');
 	}
+
+	public static function setEnableExtension(bool $enable) {
+		self::$enable_extension = $enable;
+	}
+
 	/**
 	 * Load from string
 	 * 

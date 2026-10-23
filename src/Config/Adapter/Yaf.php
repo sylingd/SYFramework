@@ -21,7 +21,7 @@ class Yaf implements ConfigInterface {
 	/** @var string $environment Environment name */
 	protected $environment;
 
-	/** @var array $conf Configs */
+	/** @var object $conf Configs */
 	protected $conf;
 
 	/**
@@ -31,14 +31,14 @@ class Yaf implements ConfigInterface {
 	 * @param string $file
 	 */
 	public function __construct($file) {
-		if (!extension_loaded('Yaf')) {
+		if (!extension_loaded('yaf')) {
 			throw new RequirementException("Extension Yaf is required");
 		}
 		$this->environment = App::getEnv();
 		if (class_exists('\\Yaf_Config_Ini', false)) {
-			$this->conf = new \Yaf_Config_Ini($conf, $this->environment);
+			$this->conf = new \Yaf_Config_Ini($file, $this->environment);
 		} else {
-			$this->conf = new \Yaf\Config\Ini($conf, $this->environment);
+			$this->conf = new \Yaf\Config\Ini($file, $this->environment);
 		}
 	}
 	/**

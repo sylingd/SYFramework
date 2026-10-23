@@ -11,9 +11,11 @@
  */
 namespace Sy\Config\Adapter;
 
+use \Yaconf as YaconfClass;
 use Sy\App;
 use Sy\Config\ConfigTrait;
 use Sy\Config\ConfigInterface;
+use Sy\Exception\RequirementException;
 
 class Yaconf implements ConfigInterface {
 	use ConfigTrait;
@@ -29,6 +31,9 @@ class Yaconf implements ConfigInterface {
 	 * @param string $appName
 	 */
 	public function __construct($appName = null) {
+		if (!extension_loaded('yaconf')) {
+			throw new RequirementException("Extension Yaconf is required");
+		}
 		$this->appName = $appName;
 		$this->environment = App::getEnv();
 	}
@@ -55,7 +60,7 @@ class Yaconf implements ConfigInterface {
 	 */
 	public function get($key, $default = null) {
 		$key = $this->getKey($key);
-		return Yaconf::has($key) ? Yaconf::get($key) : $default;
+		return YaconfClass::has($key) ? YaconfClass::get($key) : $default;
 	}
 	/**
 	 * 检查配置是否存在
@@ -65,6 +70,6 @@ class Yaconf implements ConfigInterface {
 	 */
 	public function has($key) {
 		$key = $this->getKey($key);
-		return Yaconf::has($key);
+		return YaconfClass::has($key);
 	}
 }

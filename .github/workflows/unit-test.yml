@@ -24,7 +24,7 @@ jobs:
         key: ${{ env.PHP_EXTENSIONS_KEY }}
 
     - name: Cache extensions
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ${{ steps.extcache.outputs.dir }}
         key: ${{ steps.extcache.outputs.key }}
@@ -75,4 +75,4 @@ jobs:
       with:
         name: report
         retention-days: 1
-        path: report
+        path: report-{{ matrix.php-version }}

@@ -125,6 +125,7 @@ class RouterTest extends TestCase {
 		Router::setPrefix('/api');
 		$this->request->server['REQUEST_METHOD'] = 'GET';
 		$this->request->server['REQUEST_URI'] = '/api/user/view.html?id=1';
+		Router::setEnableExtension(true);
 		Router::parse($this->request);
 		$this->assertEquals('index', $this->request->module);
 		$this->assertEquals('user', $this->request->controller);
