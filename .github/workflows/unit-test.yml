@@ -10,7 +10,7 @@ jobs:
       matrix:
         php-version: [8.1, 8.5]
     env:
-      PHP_EXTENSIONS: mbstring, redis, curl, yac, memcached, yaconf
+      PHP_EXTENSIONS: mbstring, redis, curl, yac, memcached, yaconf, yaf
       PHP_EXTENSIONS_KEY: v1
     steps:
     - uses: actions/checkout@v6
