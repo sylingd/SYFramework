@@ -55,7 +55,7 @@ class Mysql extends PDOAbstract implements DBInterface {
 	 * @access public
 	 * @return object
 	 */
-	public static function getBuilder() {
+	public static function getBuilder(): QueryFactory {
 		return new QueryFactory(new MySqlEngine());
 	}
 }

@@ -11,6 +11,8 @@
  */
 namespace Sy\DB;
 
+use Latitude\QueryBuilder\QueryFactory;
+
 interface DBInterface {
 	/**
 	 * 执行查询并返回结果
@@ -21,6 +23,7 @@ interface DBInterface {
 	 * @return array
 	 */
 	public function query(string $sql, $data = null);
+
 	/**
 	 * 执行查询并返回一条结果
 	 * 
@@ -30,11 +33,12 @@ interface DBInterface {
 	 * @return array
 	 */
 	public function get(string $sql, $data = null);
+
 	/**
 	 * 获取Builder对象
 	 * 
 	 * @access public
 	 * @return string/object
 	 */
-	public static function getBuilder();
+	public static function getBuilder(): QueryFactory;
 }

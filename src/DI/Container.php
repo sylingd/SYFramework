@@ -33,13 +33,14 @@ class Container implements ContainerInterface {
 	/** @var array $creating Creating beans, for cyclic dependency check */
 	private $creating = [];
 
-	private static $_instance = null;
-	public static function getInstance() {
-		if (self::$_instance === null) {
+	private static Container $_instance;
+	public static function getInstance(): Container {
+		if (!self::$_instance) {
 			self::$_instance = new self;
 		}
 		return self::$_instance;
 	}
+
 	private function __construct() {
 		$this->set(ContainerInterface::class, self::class);
 		$this->instance[Container::class] = $this;

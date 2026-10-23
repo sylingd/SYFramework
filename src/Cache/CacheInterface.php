@@ -24,4 +24,14 @@ interface CacheInterface extends PsrCacheInterface {
    * @return bool
    */
   public function ttl(string $key, int|\DateInterval $ttl): bool;
-}
+
+  /**
+   * 获取缓存或执行查询
+   * 
+   * @access public
+   * @param string $key 缓存键
+   * @param callable $query 查询函数
+   * @return mixed
+   */
+  public function getOrQuery(string $key, callable $query, null|int|\DateInterval $ttl = null): mixed;
+ }

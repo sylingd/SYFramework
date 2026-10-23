@@ -13,7 +13,6 @@ namespace Sy;
 
 use Sy\App;
 use Sy\DI\Container;
-use Sy\Http\Security;
 use Sy\Http\TemplateInterface;
 
 abstract class ControllerAbstract {
@@ -42,9 +41,6 @@ abstract class ControllerAbstract {
 	 * @param string $name
 	 */
 	protected function display($name) {
-		if (App::$config->get('csrf')) {
-			$this->getTemplate()->assign('_csrf_token', Security::csrfGetHash());
-		}
 		$clazz = get_class($this);
 		if (strpos($clazz, App::$cfgNamespace) === 0) {
 			$clazz = substr($clazz, strlen(App::$cfgNamespace));

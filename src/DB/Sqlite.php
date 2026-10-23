@@ -57,7 +57,7 @@ class Sqlite extends PDOAbstract {
 	 * @access public
 	 * @return object
 	 */
-	public static function getBuilder() {
+	public static function getBuilder(): QueryFactory {
 		return new QueryFactory(new SqliteEngine());
 	}
 }

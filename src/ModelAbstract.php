@@ -25,7 +25,8 @@ use function Latitude\QueryBuilder\field;
 abstract class ModelAbstract {
 	protected $_table_name = '';
 	protected $_primary_key = 'id';
-	protected $driver;
+	protected DBInterface $driver;
+
 	public function __construct(DBInterface $driver) {
 		//检查table_name是否为空
 		if (empty($this->_table_name)) {
@@ -33,10 +34,11 @@ abstract class ModelAbstract {
 		}
 		$this->driver = $driver;
 	}
+
 	/**
 	 * 获取Builder实例类
 	 * @access public
-	 * @return object
+	 * @return QueryFactory
 	 */
 	public function getBuilder(): QueryFactory {
 		return get_class($this->driver)::getBuilder();
@@ -53,6 +55,7 @@ abstract class ModelAbstract {
 	public function newDelete(): DeleteQuery {
 		return $this->getBuilder()->delete($this->_table_name);
 	}
+
 	/**
 	 * 执行一条Builder的结果
 	 * @access public
@@ -64,6 +67,10 @@ abstract class ModelAbstract {
 		$engine = $ref->getValue($query);
 		return $this->driver->query($query->sql($engine), $query->params($engine));
 	}
+
+	protected function processItem(&$item) {
+	}
+
 	/**
 	 * 查询一条数据
 	 * @access public
@@ -86,8 +93,11 @@ abstract class ModelAbstract {
 		}
 		$query->limit(1);
 		$result = $this->execute($query);
-		return count($result) > 0 ? current($result) : null;
+		$data = count($result) > 0 ? current($result) : null;
+		$this->processItem($data);
+		return $data;
 	}
+
 	/**
 	 * 查询多条数据
 	 * @access public
