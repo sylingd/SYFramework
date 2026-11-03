@@ -87,6 +87,14 @@ jobs:
       run: |
         set -o pipefail
         composer test 2>&1 | tee phpunit-output.txt
+        rc=$?
+        if [ $rc -ne 0 ]; then
+          # surface the failure summary as workflow annotations
+          sed -n '/There w/,$p' phpunit-output.txt | head -80 | while IFS= read -r line; do
+            echo "::error::${line:0:250}"
+          done
+        fi
+        exit $rc
 
     - name: Upload test output
       if: always()
