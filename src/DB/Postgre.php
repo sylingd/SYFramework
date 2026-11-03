@@ -16,7 +16,7 @@ use Sy\Exception\DBException;
 use Latitude\QueryBuilder\QueryFactory;
 use Latitude\QueryBuilder\Engine\PostgresEngine;
 
-class Postgre extends PDOAbstract {
+class Postgre extends PDOAbstract implements DBInterface {
 	/**
 	 * 连接
 	 * @access protected
