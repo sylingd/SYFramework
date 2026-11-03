@@ -27,11 +27,16 @@ class Postgre extends PDOAbstract {
 		if (isset($this->config['database'])) {
 			$dsn .= 'dbname=' . $this->config['database'] . ';';
 		}
-		$dsn .= 'charset=' . strtolower(str_replace('-', '', App::$config->get('charset')));
+		// "charset" is not a valid libpq connection option, so set the
+		// client encoding after connecting instead
+		$charset = strtolower(str_replace('-', '', App::$config->get('charset')));
 		try {
 			$this->connection = new \PDO($dsn, $this->config['user'], $this->config['password']);
 		} catch (\PDOException $e) {
 			throw new DBException($e->getMessage());
+		}
+		if (!empty($charset)) {
+			$this->connection->exec('SET NAMES ' . $charset);
 		}
 	}
 	/**

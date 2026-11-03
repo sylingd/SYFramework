@@ -16,7 +16,7 @@ use Sy\Exception\DBException;
 use Latitude\QueryBuilder\QueryFactory;
 use Latitude\QueryBuilder\Engine\SqliteEngine;
 
-class Sqlite extends PDOAbstract {
+class Sqlite extends PDOAbstract implements DBInterface {
 	/**
 	 * 连接到MySQL
 	 * @access protected

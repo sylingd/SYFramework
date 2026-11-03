@@ -52,6 +52,13 @@ class PostgreTest extends DriverTestBase {
 		return 'CREATE TABLE pdo_test (id BIGSERIAL PRIMARY KEY, name VARCHAR(60), num INTEGER)';
 	}
 
+	public function testClientEncoding() {
+		// connect() must apply the configured charset via SET NAMES
+		$driver = $this->createDriver();
+		$row = $driver->get("SELECT current_setting('client_encoding') AS enc");
+		$this->assertEquals('UTF8', strtoupper($row['enc']));
+	}
+
 	public function testGetAppendsPostgresLimit() {
 		$driver = $this->createDriver();
 		$this->freshTable($driver);
