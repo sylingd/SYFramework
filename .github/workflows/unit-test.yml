@@ -11,8 +11,22 @@ jobs:
       matrix:
         php-version: [8.1, 8.2, 8.3, 8.4, 8.5]
     env:
-      PHP_EXTENSIONS: mbstring, redis, curl, yac, memcached, yaconf, yaf
-      PHP_EXTENSIONS_KEY: v1
+      PHP_EXTENSIONS: mbstring, redis, curl, yac, memcached, yaconf, yaf, pdo_mysql, pdo_sqlite, pdo_pgsql
+      PHP_EXTENSIONS_KEY: v2
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U root"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
     - uses: actions/checkout@v6
 
@@ -38,7 +52,7 @@ jobs:
         extensions: ${{ env.PHP_EXTENSIONS }}
         coverage: pcov
         tools: composer:v2
-        ini-values: yac.enable = On, yac.enable_cli = On
+        ini-values: yac.enable = On, yac.enable_cli = On, yaconf.directory = ${{ github.workspace }}/tests/App/yaconf
 
     - name: Get composer cache directory
       id: composer-cache
