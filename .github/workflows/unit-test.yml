@@ -110,3 +110,26 @@ jobs:
         name: report-${{ matrix.php-version }}
         retention-days: 1
         path: report/
+
+    - name: Coveralls Parallel
+      uses: coverallsapp/github-action@v2
+      with:
+        file: report/cobertura.xml
+        format: cobertura
+        flag-name: php-${{ matrix.php-version }}
+        parallel: true
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
+  coveralls-finished:
+    needs: unit-test
+    if: ${{ always() && needs.unit-test.result != 'skipped' }}
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@v2
+      with:
+        parallel-finished: true
+        carryforward: "php-8.1,php-8.2,php-8.3,php-8.4,php-8.5"
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
