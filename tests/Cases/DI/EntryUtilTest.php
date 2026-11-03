@@ -37,7 +37,8 @@ class EntryUtilTest extends TestCase {
 	}
 
 	public function testController() {
-		$this->assertEquals('SyApp\Module\Index\Controller\Test', EntryUtil::controller('index', 'test'));
+		// By design, dispatch passes an already ucfirst'd module name
+		$this->assertEquals('SyApp\Module\Index\Controller\Test', EntryUtil::controller('Index', 'test'));
 	}
 
 	public function testInitAliasFromDefaultConfig() {

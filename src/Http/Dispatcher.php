@@ -77,7 +77,7 @@ class Dispatcher {
 		}
 		//触发beforeDispatch事件
 		if (null === Plugin::trigger('beforeDispatch', [$request])) {
-			$module = $request->module;
+			$module = ucfirst($request->module);
 			$controller = ucfirst($request->controller);
 			$action = ucfirst($request->action);
 			try {

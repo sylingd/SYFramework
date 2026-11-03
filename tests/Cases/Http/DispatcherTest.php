@@ -78,6 +78,19 @@ class DispatcherTest extends TestCase {
 		$this->assertNotEquals('', $output);
 	}
 
+	public function testModuleIsUcfirstByDesign() {
+		// Design: the request module is ucfirst'd before matching the
+		// capitalized module list (modules: ['Index']). A lowercase
+		// request module 'index' must resolve to module 'Index'.
+		// This test locks that convention in place.
+		$request = $this->makeRequest('sample', 'index');
+		$this->assertEquals('hello', $this->dispatch($request));
+		// a module that does not exist (even after ucfirst) is rejected
+		$request = $this->makeRequest('sample', 'index');
+		$request->module = 'not-exists';
+		$this->assertNotEquals('hello', $this->dispatch($request));
+	}
+
 	public function testBeforeDispatchPluginCanStop() {
 		Plugin::register('beforeDispatch', function () {
 			return true;
