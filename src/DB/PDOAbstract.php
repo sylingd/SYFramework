@@ -76,7 +76,13 @@ abstract class PDOAbstract {
 				'_affected_rows' => $st->rowCount()
 			];
 			if (stripos($sql, 'insert') === 0) {
-				$result['_insert_id'] = $this->connection->lastInsertId();
+				try {
+					$result['_insert_id'] = $this->connection->lastInsertId();
+				} catch (\PDOException $e) {
+					// postgres raises "lastval is not yet defined" when the
+					// insert did not consume a sequence; MySQL returns 0 there
+					$result['_insert_id'] = 0;
+				}
 			}
 			return $result;
 		}
