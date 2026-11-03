@@ -44,7 +44,11 @@ abstract class PDOAbstract {
 	 * @return array
 	 */
 	public function query(string $sql, $data = null) {
-		$st = $this->connection->prepare($sql);
+		try {
+			$st = $this->connection->prepare($sql);
+		} catch (\PDOException $e) {
+			throw new DBException($e->getMessage());
+		}
 		if ($st === FALSE) {
 			$e = $this->connection->errorInfo();
 			throw new DBException($e[2]);

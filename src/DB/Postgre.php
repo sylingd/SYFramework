@@ -36,7 +36,12 @@ class Postgre extends PDOAbstract {
 			throw new DBException($e->getMessage());
 		}
 		if (!empty($charset)) {
-			$this->connection->exec('SET NAMES ' . $charset);
+			try {
+				// postgres requires the encoding as a string literal
+				$this->connection->exec("SET NAMES '" . $charset . "'");
+			} catch (\PDOException $e) {
+				throw new DBException($e->getMessage());
+			}
 		}
 	}
 	/**

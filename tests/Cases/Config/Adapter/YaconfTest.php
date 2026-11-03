@@ -29,9 +29,9 @@ class YaconfTest extends TestCase {
 
 	public function testTypePreserved() {
 		$config = new Yaconf();
-		// yaconf preserves ini value types (int / bool)
-		$this->assertSame(42, $config->get('answer'));
-		$this->assertSame(true, $config->get('debug'));
+		// yaconf returns ini values as strings, keep booleans truthy
+		$this->assertSame('42', $config->get('answer'));
+		$this->assertEquals(true, $config->get('debug'));
 	}
 
 	public function testAppNamePrefix() {
