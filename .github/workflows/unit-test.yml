@@ -84,7 +84,17 @@ jobs:
         mysql -uroot -proot < $GITHUB_WORKSPACE/tests/App/mysql.sql
 
     - name: Test unit tests
-      run: composer test
+      run: |
+        set -o pipefail
+        composer test 2>&1 | tee phpunit-output.txt
+
+    - name: Upload test output
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: phpunit-output-${{ matrix.php-version }}
+        retention-days: 3
+        path: phpunit-output.txt
 
     - name: Upload reports
       uses: actions/upload-artifact@v7
