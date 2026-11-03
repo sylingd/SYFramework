@@ -1,5 +1,16 @@
 # ChangeLog
 
+## 3.0
+
+* Feat. 升级基础PHP版本为8.1
+* Feat. 升级Latitude
+* Feat. Cache 支持 TTL
+* Fix. Yaf, Yaconf, Memcached, PostgreSQL, SQL 等组件的BUG
+
+Break Change:
+* PHP版本需不低于8.1
+* Latitude组件语法有变更，若直接使用了该组件需更新代码
+
 ## 2.0
 
 * 重写绝大部分代码
