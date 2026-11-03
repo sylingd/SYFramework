@@ -7,8 +7,9 @@ jobs:
   unit-test:
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
-        php-version: [8.1, 8.5]
+        php-version: [8.1, 8.2, 8.3, 8.4, 8.5]
     env:
       PHP_EXTENSIONS: mbstring, redis, curl, yac, memcached, yaconf, yaf
       PHP_EXTENSIONS_KEY: v1
@@ -19,7 +20,7 @@ jobs:
       id: extcache
       uses: shivammathur/cache-extensions@v1
       with:
-        php-version: ${{ matrix.php-versions }}
+        php-version: ${{ matrix.php-version }}
         extensions: ${{ env.PHP_EXTENSIONS }}
         key: ${{ env.PHP_EXTENSIONS_KEY }}
 
@@ -35,6 +36,7 @@ jobs:
       with:
         php-version: ${{ matrix.php-version }}
         extensions: ${{ env.PHP_EXTENSIONS }}
+        coverage: pcov
         tools: composer:v2
         ini-values: yac.enable = On, yac.enable_cli = On
 
@@ -48,7 +50,7 @@ jobs:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: ${{ runner.os }}-composer-
-      
+
     - name: Start Redis
       uses: supercharge/redis-github-action@1.8.1
       with:
@@ -73,6 +75,6 @@ jobs:
     - name: Upload reports
       uses: actions/upload-artifact@v7
       with:
-        name: report
+        name: report-${{ matrix.php-version }}
         retention-days: 1
-        path: report-{{ matrix.php-version }}
+        path: report/

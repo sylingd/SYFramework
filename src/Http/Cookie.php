@@ -43,7 +43,7 @@ class Cookie {
 		!isset($param['httponly']) && $param['httponly'] = false;
 		//HTTPS
 		if (!isset($param['https'])) {
-			if ($_SERVER['HTTPS'] === 'on') {
+			if (($_SERVER['HTTPS'] ?? '') === 'on') {
 				$param['https'] = true;
 			} else {
 				$param['https'] = false;

@@ -33,9 +33,9 @@ class Container implements ContainerInterface {
 	/** @var array $creating Creating beans, for cyclic dependency check */
 	private $creating = [];
 
-	private static Container $_instance;
+	private static ?Container $_instance = null;
 	public static function getInstance(): Container {
-		if (!self::$_instance) {
+		if (self::$_instance === null) {
 			self::$_instance = new self;
 		}
 		return self::$_instance;
@@ -203,15 +203,8 @@ class Container implements ContainerInterface {
 				$comment = $property->getDocComment();
 				$is_autowire = preg_match('/@Autowired\s+([\w\\\\]+)\s+/', $comment, $autowire);
 				if ($is_autowire) {
-					$is_public = $property->isPublic();
-					if (!$is_public) {
-						$property->setAccessible(true);
-					}
 					if ($property->getValue($instance) === null) {
 						$property->setValue($instance, $this->get($autowire[1]));
-					}
-					if (!$is_public) {
-						$property->setAccessible(false);
 					}
 				}
 			}

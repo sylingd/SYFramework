@@ -25,7 +25,9 @@ class Session implements ArrayAccess {
 	 * @param string $sess Saved session content
 	 */
 	public function __construct() {
-		session_start();
+		if (session_status() !== PHP_SESSION_ACTIVE) {
+			session_start();
+		}
 	}
 	public function id() {
 		return session_id();

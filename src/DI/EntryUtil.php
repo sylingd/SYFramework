@@ -27,7 +27,7 @@ use Psr\SimpleCache\CacheInterface as PsrCacheInterface;
 
 class EntryUtil {
 	public static function controller($module, $controller) {
-		return App::$cfgNamespace . 'Module\\' . $module . '\\Controller\\' . ucfirst($controller);
+		return App::$cfgNamespace . 'Module\\' . ucfirst($module) . '\\Controller\\' . ucfirst($controller);
 	}
 	public static function initAlias() {
 		$database = App::$config->get('database');
